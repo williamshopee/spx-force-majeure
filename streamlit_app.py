@@ -13,7 +13,7 @@ import streamlit as st
 
 st.set_page_config(
     page_title="SPX Force Majeure Watch",
-    page_icon="https://vectorseek.com/wp-content/uploads/2023/11/SPX-Express-Indonesia-white-Logo-Vector.svg-.png",
+    page_icon="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Shopee_logo.svg/120px-Shopee_logo.svg.png",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -25,6 +25,13 @@ st.markdown("""
     #MainMenu { visibility: hidden; }
     iframe { width: 100%; min-height: 90vh; border: none; }
     [data-testid="stSidebar"] { background: #0f1b2a; }
+    /* main app background — without this, the area around the sidebar and
+       iframe stays Streamlit's default light background */
+    [data-testid="stAppViewContainer"],
+    [data-testid="stAppViewContainer"] > .main,
+    .stApp {
+        background: #08131f;
+    }
     [data-testid="stSidebar"] .stMarkdown p,
     [data-testid="stSidebar"] .stMarkdown li,
     [data-testid="stSidebar"] .stCaption { color: #b0c4d8; }
