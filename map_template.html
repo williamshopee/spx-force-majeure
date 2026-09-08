@@ -651,11 +651,11 @@
   map.createPane('crater').style.zIndex = 640;   // above it, below popups
 
   var tiles = L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
+    'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
     {subdomains:'abcd', maxZoom:19, attribution:'&copy; OpenStreetMap contributors &copy; CARTO'}
   ).addTo(map);
   var labels = L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png',
+    'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png',
     {subdomains:'abcd', maxZoom:19, opacity:.85, pane:'shadowPane'}
   ).addTo(map);
   tiles.once('load', function(){ boot.classList.add('gone'); });
