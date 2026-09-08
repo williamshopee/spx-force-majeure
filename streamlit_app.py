@@ -28,7 +28,6 @@ st.markdown("""
     [data-testid="stSidebar"] .stMarkdown p,
     [data-testid="stSidebar"] .stMarkdown li,
     [data-testid="stSidebar"] .stCaption { color: #b0c4d8; }
-    /* title visible on dark sidebar */
     [data-testid="stSidebar"] h3 { color: #e8f0f8 !important; font-size: 17px; }
     .ev-item { padding: 6px 0; border-bottom: 1px solid #1c3045; }
     .ev-name { font-weight: 600; font-size: 13.5px; color: #dce8f2; }
@@ -38,10 +37,48 @@ st.markdown("""
     .feed-ok { color: #4caf80; }
     .feed-fail { color: #e05555; }
     .feed-off { color: #666; }
+    /* filter pills */
+    .hazard-filters { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0 12px; }
+    .hazard-pill {
+        display: inline-block; font-size: 12px; padding: 4px 10px;
+        border-radius: 3px; border: 1px solid #2a3f55; color: #8aa; cursor: default;
+    }
+    .hazard-pill.active { border-color: #5a8ab0; color: #e0ecf5; background: #1a3048; }
+    .hazard-pill .dot {
+        display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+        margin-right: 5px; vertical-align: middle;
+    }
+    .ev-empty { color: #667; font-size: 13px; padding: 10px 0; }
 </style>
 """, unsafe_allow_html=True)
 
 HERE = Path(__file__).resolve().parent
+
+HAZARD_COLORS = {
+    "earthquake": "#e05555",
+    "volcano": "#ff5b2b",
+    "flood": "#3d9bff",
+    "cyclone": "#8f6bff",
+    "wildfire": "#ff9a1f",
+    "weather": "#4ccfc4",
+    "airport_closure": "#5b8fd6",
+    "unrest": "#ff6fae",
+    "other": "#8fa6b8",
+}
+
+HAZARD_LABELS = {
+    "earthquake": "Earthquake",
+    "volcano": "Volcano",
+    "flood": "Flood",
+    "cyclone": "Cyclone",
+    "wildfire": "Wildfire",
+    "weather": "Weather",
+    "airport_closure": "Airport closure",
+    "unrest": "Unrest",
+    "other": "Other",
+}
+
+ALERT_COLORS = {"red": "#e05555", "orange": "#e08a30", "green": "#4caf80"}
 
 
 def ensure_deps():
@@ -69,8 +106,6 @@ def run_ingest() -> dict:
             "code": result.returncode,
         }
     except subprocess.TimeoutExpired:
-        # MAGMA is the usual cause — it retries 3x against a flaky server.
-        # If events.json already exists from a prior run, the map still works.
         return {
             "ok": False,
             "stdout": "",
@@ -126,7 +161,9 @@ def time_bucket():
     return int(time.time()) // 600
 
 
-ALERT_COLORS = {"red": "#e05555", "orange": "#e08a30", "green": "#4caf80"}
+# ---------------------------------------------------------------------------
+# sidebar
+# ---------------------------------------------------------------------------
 
 with st.sidebar:
     st.markdown("### SPX L&D — Force Majeure Watch")
@@ -140,7 +177,6 @@ with st.sidebar:
         report = cached_ingest(ts)
 
     if not report["ok"]:
-        # Show warning but still try to load whatever data exists
         st.warning(f"Ingestion issue: {report['stderr'][:120]}")
         with st.expander("Details"):
             st.code(report["stderr"] or report["stdout"] or "No output",
@@ -188,31 +224,65 @@ with st.sidebar:
 
         st.markdown("---")
 
-        for ev in events.get("events", []):
-            imp = ev.get("impact") or {}
-            air = ev.get("air") or {}
-            total = (imp.get("total", 0) + air.get("direct_count", 0)
-                     + air.get("via_hub_count", 0))
+        # --- hazard type filters ---
+        all_events = events.get("events", [])
+        present = sorted(set(ev.get("hazard", "other") for ev in all_events))
 
-            alert = ev.get("alert", "")
-            color = ALERT_COLORS.get(alert, "#666")
-            unv = ev.get("status") == "unverified"
-            cls = "ev-item ev-unverified" if unv else "ev-item"
+        if "hazard_filter" not in st.session_state:
+            st.session_state.hazard_filter = set(present)
 
-            name = ev.get("name", "Unknown")[:58]
-            meta_parts = [ev.get("severity", ""), ev.get("source", "")]
-            if unv:
-                meta_parts.append("unverified")
-            meta = " · ".join(p for p in meta_parts if p)
+        filter_cols = st.columns(min(len(present), 4))
+        for i, h in enumerate(present):
+            col = filter_cols[i % len(filter_cols)]
+            label = HAZARD_LABELS.get(h, h.title())
+            count = sum(1 for ev in all_events if ev.get("hazard") == h)
+            active = h in st.session_state.hazard_filter
+            if col.checkbox(f"{label} ({count})", value=active, key=f"f_{h}"):
+                st.session_state.hazard_filter.add(h)
+            else:
+                st.session_state.hazard_filter.discard(h)
 
-            st.markdown(
-                f'<div class="{cls}">'
-                f'<span class="ev-count">{total:,}</span>'
-                f'<span style="color:{color}">●</span> '
-                f'<span class="ev-name">{name}</span><br>'
-                f'<span class="ev-meta">{meta}</span>'
-                f'</div>',
-                unsafe_allow_html=True)
+        filtered = [ev for ev in all_events
+                    if ev.get("hazard", "other") in st.session_state.hazard_filter]
+
+        st.markdown("---")
+
+        # --- event list ---
+        if not filtered:
+            st.markdown('<div class="ev-empty">No events match the selected types.</div>',
+                        unsafe_allow_html=True)
+        else:
+            for ev in filtered:
+                imp = ev.get("impact") or {}
+                air = ev.get("air") or {}
+                total = (imp.get("total", 0) + air.get("direct_count", 0)
+                         + air.get("via_hub_count", 0))
+
+                hazard = ev.get("hazard", "other")
+                color = HAZARD_COLORS.get(hazard, "#666")
+                alert = ev.get("alert", "")
+                alert_color = ALERT_COLORS.get(alert, color)
+                unv = ev.get("status") == "unverified"
+                cls = "ev-item ev-unverified" if unv else "ev-item"
+
+                name = ev.get("name", "Unknown")[:58]
+                meta_parts = [
+                    HAZARD_LABELS.get(hazard, hazard),
+                    ev.get("severity", ""),
+                    ev.get("source", ""),
+                ]
+                if unv:
+                    meta_parts.append("unverified")
+                meta = " · ".join(p for p in meta_parts if p)
+
+                st.markdown(
+                    f'<div class="{cls}">'
+                    f'<span class="ev-count">{total:,}</span>'
+                    f'<span style="color:{color}">●</span> '
+                    f'<span class="ev-name">{name}</span><br>'
+                    f'<span class="ev-meta">{meta}</span>'
+                    f'</div>',
+                    unsafe_allow_html=True)
 
         st.markdown("---")
 
