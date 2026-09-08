@@ -1245,11 +1245,11 @@ def main(argv=None) -> int:
     base = a.config.parent
     fac_path = Path(cfg["facilities"])
     if not fac_path.is_absolute():
-        fac_path = base / fac_path if (base / fac_path).exists() else base.parent / fac_path
+        fac_path = base / fac_path if (base / fac_path).exists() else base.parent / fac_path if (base.parent / fac_path).exists() else base / Path(fac_path).name
     facilities = load_facilities(fac_path)
 
     http = Http(cfg, a.fixtures, a.save_fixtures)
-    state_path = (base.parent / cfg.get("state", "out/state.json"))
+    state_path = base / Path(cfg.get("state", "state.json")).name
     state = {}
     if state_path.exists():
         try:
@@ -1359,10 +1359,10 @@ def main(argv=None) -> int:
         LOG.info("dry run: nothing written")
         return 0
 
-    out_path = base.parent / cfg["output"]
+    out_path = base / Path(cfg["output"]).name
     atomic_write_json(out_path, payload)
     atomic_write_json(state_path, state)
-    csv_path = out_path.with_name("impacted_facilities.csv")
+    csv_path = base / "impacted_facilities.csv"
     rows = write_impact_csv(csv_path, events)
     LOG.info("wrote %s — %d facility rows", csv_path, rows)
     LOG.info("wrote %s — %d events (%d verified), %d/%d sources ok",
