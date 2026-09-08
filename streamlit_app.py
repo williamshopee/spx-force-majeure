@@ -55,7 +55,7 @@ st.markdown("""
 HERE = Path(__file__).resolve().parent
 
 HAZARD_COLORS = {
-    "earthquake": "#e05555",
+    "earthquake": "#f4d35e",  
     "volcano": "#ff5b2b",
     "flood": "#3d9bff",
     "cyclone": "#8f6bff",
