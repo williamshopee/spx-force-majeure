@@ -1,7 +1,7 @@
 """
 SPX Force Majeure Watch — Streamlit app.
 
-    Local:   streamlit run streamlit_app.py
+    Local:   python -m streamlit run streamlit_app.py
     Deploy:  push to GitHub → connect at share.streamlit.io
 """
 
@@ -14,10 +14,6 @@ from pathlib import Path
 
 import streamlit as st
 
-# ---------------------------------------------------------------------------
-# layout
-# ---------------------------------------------------------------------------
-
 st.set_page_config(
     page_title="SPX Force Majeure Watch",
     page_icon="🌋",
@@ -25,29 +21,22 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# kill the default Streamlit padding so the map fills the viewport
 st.markdown("""
 <style>
-    /* remove top padding and footer */
     .block-container { padding-top: 0.5rem; padding-bottom: 0; }
     footer { display: none; }
-    /* make the iframe (map) fill the space */
     iframe[title="streamlit_app.static_map"] {
         width: 100%; min-height: 88vh; border: none;
     }
 </style>
 """, unsafe_allow_html=True)
 
+# All files are in the same directory (flat layout)
 HERE = Path(__file__).resolve().parent
-INGEST = HERE / "ingest"
-OUT = HERE / "out"
+OUT = HERE  # output goes to the same folder
 
-# ---------------------------------------------------------------------------
-# helpers
-# ---------------------------------------------------------------------------
 
 def ensure_deps():
-    """Install pyyaml if missing (needed for config parsing)."""
     try:
         import yaml  # noqa: F401
     except ImportError:
@@ -56,12 +45,13 @@ def ensure_deps():
 
 
 def run_ingest() -> dict:
-    """Run the ingestion pipeline and return the health report."""
     ensure_deps()
-    OUT.mkdir(parents=True, exist_ok=True)
+    script = HERE / "ingest.py"
+    if not script.exists():
+        return {"ok": False, "stdout": "", "stderr": f"ingest.py not found at {script}", "code": 1}
 
     result = subprocess.run(
-        [sys.executable, str(INGEST / "ingest.py")],
+        [sys.executable, str(script), "--config", str(HERE / "config.yaml")],
         capture_output=True, text=True, timeout=120,
     )
     return {
@@ -73,20 +63,26 @@ def run_ingest() -> dict:
 
 
 def build_map_html() -> str:
-    """Build the map with events embedded and return the HTML string."""
+    script = HERE / "build_map.py"
+    if not script.exists():
+        return ""
     subprocess.run(
-        [sys.executable, str(INGEST / "build_map.py"),
-         "--embed", "--out", str(OUT / "map.html")],
+        [sys.executable, str(script),
+         "--template", str(HERE / "map_template.html"),
+         "--stations", str(HERE / "latlong.csv"),
+         "--airports", str(HERE / "airports.csv"),
+         "--events", str(HERE / "events.json"),
+         "--embed", "--out", str(HERE / "map.html")],
         capture_output=True, text=True, timeout=60,
     )
-    p = OUT / "map.html"
+    p = HERE / "map.html"
     if p.exists():
         return p.read_text(encoding="utf-8")
     return ""
 
 
 def load_events() -> dict | None:
-    p = OUT / "events.json"
+    p = HERE / "events.json"
     if not p.exists():
         return None
     try:
@@ -96,22 +92,14 @@ def load_events() -> dict | None:
 
 
 def load_csv() -> bytes | None:
-    p = OUT / "impacted_facilities.csv"
+    p = HERE / "impacted_facilities.csv"
     if p.exists():
         return p.read_bytes()
     return None
 
 
-# ---------------------------------------------------------------------------
-# ingest (cached for 10 minutes so page interactions don't re-fetch)
-# ---------------------------------------------------------------------------
-
 @st.cache_data(ttl=600, show_spinner=False)
 def cached_ingest(_ts: int) -> dict:
-    """
-    _ts is a 10-minute bucket so the cache expires naturally.
-    The underscore prefix tells Streamlit not to hash it.
-    """
     return run_ingest()
 
 
@@ -121,7 +109,6 @@ def cached_map(_ts: int) -> str:
 
 
 def time_bucket():
-    """Returns a value that changes every 10 minutes."""
     return int(time.time()) // 600
 
 
@@ -136,7 +123,6 @@ with st.sidebar:
         st.cache_data.clear()
         st.rerun()
 
-    # run ingest
     ts = time_bucket()
     with st.spinner("Fetching events from BMKG, GDACS, MAGMA..."):
         report = cached_ingest(ts)
@@ -153,7 +139,6 @@ with st.sidebar:
             n = events.get("event_count", 0)
             v = events.get("verified_event_count", 0)
 
-            # age
             try:
                 dt = datetime.fromisoformat(gen.replace("Z", "+00:00"))
                 mins = int((datetime.now(timezone.utc) - dt).total_seconds() / 60)
@@ -165,7 +150,6 @@ with st.sidebar:
             if n > v:
                 st.caption(f"+ {n - v} unverified news lead(s)")
 
-            # source health
             with st.expander("Feed status"):
                 for h in events.get("source_health", []):
                     icon = "✅" if h["state"] == "ok" else \
@@ -175,7 +159,6 @@ with st.sidebar:
                         detail += f" — {h['error'][:80]}"
                     st.text(f"{icon} {h['source']}{detail}")
 
-            # event list
             st.divider()
             st.caption("ACTIVE EVENTS")
             for ev in events.get("events", []):
@@ -198,7 +181,6 @@ with st.sidebar:
                     unsafe_allow_html=True,
                 )
 
-            # downloads
             st.divider()
             csv_data = load_csv()
             if csv_data:
@@ -211,7 +193,6 @@ with st.sidebar:
                     use_container_width=True,
                 )
 
-            # attribution
             with st.expander("Attribution"):
                 for a in events.get("attribution", []):
                     st.caption(a)
@@ -235,6 +216,6 @@ if html:
     st.components.v1.html(html, height=920, scrolling=False)
 else:
     st.error(
-        "Could not build the map. Make sure `ingest/map_template.html` "
-        "and `ingest/latlong.csv` exist."
+        "Could not build the map. Make sure `map_template.html` "
+        "and `latlong.csv` exist in the same folder."
     )
