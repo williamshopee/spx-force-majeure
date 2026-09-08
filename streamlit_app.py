@@ -29,6 +29,31 @@ st.markdown("""
     [data-testid="stSidebar"] .stMarkdown li,
     [data-testid="stSidebar"] .stCaption { color: #b0c4d8; }
     [data-testid="stSidebar"] h3 { color: #e8f0f8 !important; font-size: 17px; }
+
+    /* --- widget text visibility fix ---
+       Streamlit renders checkbox/expander/label text with its own default
+       (near-black) color, which does not inherit page CSS and is invisible
+       against this dark sidebar. Force it everywhere, broadly, since the
+       exact internal data-testid nesting varies by Streamlit version. */
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] label *,
+    [data-testid="stSidebar"] [data-testid="stCheckbox"],
+    [data-testid="stSidebar"] [data-testid="stCheckbox"] *,
+    [data-testid="stSidebar"] [data-testid="stWidgetLabel"],
+    [data-testid="stSidebar"] [data-testid="stWidgetLabel"] *,
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"],
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] * {
+        color: #dce8f2 !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stExpander"] summary,
+    [data-testid="stSidebar"] [data-testid="stExpander"] summary * {
+        color: #dce8f2 !important;
+        background: transparent;
+    }
+    [data-testid="stSidebar"] [data-testid="stExpander"] svg {
+        fill: #7b96ac;
+    }
+
     .ev-item { padding: 6px 0; border-bottom: 1px solid #1c3045; }
     .ev-name { font-weight: 600; font-size: 13.5px; color: #dce8f2; }
     .ev-meta { color: #7b96ac; font-size: 12px; }
@@ -55,7 +80,7 @@ st.markdown("""
 HERE = Path(__file__).resolve().parent
 
 HAZARD_COLORS = {
-    "earthquake": "#f4d35e",  
+    "earthquake": "#f4d35e",
     "volcano": "#ff5b2b",
     "flood": "#3d9bff",
     "cyclone": "#8f6bff",
