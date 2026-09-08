@@ -1,0 +1,215 @@
+# ---------------------------------------------------------------------------
+# SPX force-majeure watch — configuration
+#
+# Everything an ops person needs to tune lives here. ingest.py reads it and
+# never hardcodes a threshold. Change a number, rerun, done.
+# ---------------------------------------------------------------------------
+
+facilities: latlong.csv          # station_name,latitude,longitude
+output: out/events.json
+state: out/state.json            # dedup ledger + first_seen timestamps
+
+# Only keep events whose impact zone actually reaches a facility.
+# An M5 quake in the Banda Sea 400 km from anything is not an ops event.
+drop_events_with_zero_facilities: true
+
+# How long an event stays on the map after its last update.
+# Quakes are instants; eruptions and floods run for weeks.
+retention_hours:
+  earthquake: 72
+  volcano: 336        # 14 days
+  flood: 240
+  cyclone: 120
+  wildfire: 168
+  weather: 48
+  unrest: 72
+  airport_closure: 72
+  other: 72
+
+http:
+  timeout_seconds: 25
+  retries: 3
+  backoff_seconds: 4
+  # BMKG and GDACS both ask to be identified. Put a real contact here.
+  user_agent: "SPX-LnD-ForceMajeureWatch/1.0 (ops-contact@example.com)"
+
+indonesia_bbox: [94.0, -11.5, 141.5, 6.5]   # west, south, east, north
+
+# ---------------------------------------------------------------------------
+# Air linehaul
+#
+# The impact a distance model cannot see. When an event shuts an airport, every
+# facility that flies through it is exposed, however far away. The Anak
+# Krakatau eruption closed Soekarno-Hatta; a facility in Makassar routing via
+# CGK was affected at 1,500 km.
+#
+# Two ways an event reaches an airport: an airport_closure event names IATA
+# codes outright, or an airport falls inside an event's own impact zone, which
+# is detected automatically.
+#
+# These counts are reported SEPARATELY from the distance bands and never summed
+# into them. Ashfall at a hub 40 km away and SLA risk at a facility 1,500 km
+# away that routes through it are different problems.
+# ---------------------------------------------------------------------------
+air_linehaul:
+  enabled: true
+  sla_days: 1
+  # A facility further than this from any airport is treated as road-fed.
+  gateway_max_km: 400
+
+# Optional. Real facility-to-airport routing, which beats the nearest-airport
+# proxy entirely. Columns: station_name,gateway_iata,hub_iata
+# This is the single highest-value file you can add to this pipeline.
+lanes: lanes.csv
+
+# ---------------------------------------------------------------------------
+# Sources
+# ---------------------------------------------------------------------------
+sources:
+
+  bmkg_quake:
+    enabled: true
+    # Verified live 2026-09-07. Schema: {"Infogempa":{"gempa":{...}}} for
+    # autogempa (single object), array of gempa for the other two.
+    # BMKG REQUIRES visible attribution wherever this data is displayed.
+    endpoints:
+      - https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json
+      - https://data.bmkg.go.id/DataMKG/TEWS/gempadirasakan.json
+      - https://data.bmkg.go.id/DataMKG/TEWS/gempaterkini.json
+    min_magnitude: 4.5
+
+  gdacs:
+    enabled: true
+    # Verified live 2026-09-07. Use SEARCH, not EVENTS4APP: EVENTS4APP caps at
+    # 100 global events over 4 days and green wildfires crowd Indonesia out.
+    search_url: https://www.gdacs.org/gdacsapi/api/Events/geteventlist/SEARCH
+    geometry_url: https://www.gdacs.org/gdacsapi/api/polygons/getgeometry
+    event_types: [EQ, TC, FL, VO, WF]
+    alert_levels: [Green, Orange, Red]
+    lookback_days: 14
+    # Pull the real affected-area polygon instead of guessing a radius.
+    # Costs one extra request per event, so cap it.
+    fetch_geometry_for: [FL, TC, VO]
+    max_geometry_fetches: 25
+
+  magma_volcano:
+    enabled: true
+    # NO PUBLIC JSON API EXISTS. PVMBG publishes volcano alert levels as HTML
+    # only, so this parses a page and WILL break when they restyle it.
+    # It is marked degraded-tolerant: a failure here never fails the run.
+    # If it breaks, volcano events still arrive via GDACS VO, just without
+    # the Indonesian alert level and the official exclusion radius.
+    activity_url: https://magma.esdm.go.id/v1/gunung-api/tingkat-aktivitas
+    optional: true
+
+  gdelt_news:
+    enabled: true
+    # Free, no key. Covers what official feeds never will: demos blocking a
+    # road, port congestion, a strike, a bridge collapse.
+    # NOT verified live from this environment — smoke-test before trusting.
+    url: https://api.gdeltproject.org/api/v2/doc/doc
+    timespan: 48h
+    max_records: 60
+    optional: true
+    queries:
+      - '(banjir OR "jalan tertutup" OR "akses terputus") sourcecountry:indonesia'
+      - '(demo OR unjuk rasa OR kerusuhan) (jalan OR tol OR pelabuhan) sourcecountry:indonesia'
+      - '("pelabuhan" OR "bandara") (ditutup OR lumpuh) sourcecountry:indonesia'
+      - '(longsor OR "tanah bergerak") (jalan OR jembatan) sourcecountry:indonesia'
+    # News is a lead, never a fact. Everything from here lands as
+    # status: unverified and is excluded from SLA totals until a human
+    # promotes it. See README, "Why news is quarantined".
+
+  x_twitter:
+    enabled: false
+    # Deliberately off. See README, "On scraping X".
+    # Scraping x.com breaks their ToS and the endpoints rotate constantly.
+    # The paid API v2 works if you have a key; recent-search only, and the
+    # accounts worth reading (@infoBMKG, @id_magma, @BNPB_Indonesia) publish
+    # the same facts to the official feeds above, usually earlier.
+    bearer_token_env: X_BEARER_TOKEN
+    accounts: [infoBMKG, id_magma, BNPB_Indonesia]
+
+# ---------------------------------------------------------------------------
+# Impact models — how a hazard becomes an affected-facility list
+#
+# bands: distance rings in km, outermost last. sla_days is the DEFAULT
+# extension proposal; the map lets you override before exporting.
+# corridors: bearing wedges in degrees from the epicentre. Empty = all
+# directions. Used for wind-driven hazards (ash, smoke).
+# ---------------------------------------------------------------------------
+impact_models:
+
+  volcano:
+    # Ash is wind-driven, so radial rings alone overstate one side and
+    # understate the other. corridors get set per-event from the observed
+    # plume bearing when we have it; these are the fallback.
+    bands:
+      - {to_km: 80,  label: "Heavy ashfall",       sla_days: 3}
+      - {to_km: 150, label: "Moderate ash",        sla_days: 2}
+      - {to_km: 250, label: "Plume / airfreight",  sla_days: 1}
+    corridors: []
+    exclusion_km: 3
+
+  earthquake:
+    # Radii by magnitude, NOT a physics model. These are rules of thumb for
+    # "where parcels and staff are plausibly disrupted", to be recalibrated
+    # against your own incident history. Where BMKG publishes a felt-intensity
+    # (MMI) list for the quake, that observed data is attached to the event and
+    # should beat these numbers.
+    magnitude_radius_km:
+      4.5: [15, 40, 80]
+      5.0: [25, 60, 120]
+      5.5: [40, 90, 170]
+      6.0: [60, 130, 240]
+      6.5: [90, 180, 320]
+      7.0: [130, 250, 430]
+      7.5: [180, 340, 550]
+      8.0: [240, 450, 700]
+    band_labels: ["Strong shaking", "Moderate shaking", "Felt"]
+    band_sla_days: [3, 2, 1]
+    # Deep quakes shake a wider area but far less hard at any given point.
+    deep_km: 300
+    deep_radius_multiplier: 0.55
+
+  flood:
+    # Prefer the GDACS affected-area polygon. Bands only apply when we
+    # could not get one.
+    bands:
+      - {to_km: 25, label: "Inundation area", sla_days: 3}
+      - {to_km: 60, label: "Access disrupted", sla_days: 2}
+    corridors: []
+
+  cyclone:
+    bands:
+      - {to_km: 100, label: "Damaging wind", sla_days: 3}
+      - {to_km: 250, label: "Storm / rain",  sla_days: 1}
+    corridors: []
+
+  wildfire:
+    # Burn scar is small; the ops problem is haze closing airports.
+    bands:
+      - {to_km: 30,  label: "Active fire",  sla_days: 2}
+      - {to_km: 120, label: "Haze / visibility", sla_days: 1}
+    corridors: []
+
+  weather:
+    bands:
+      - {to_km: 50, label: "Severe weather", sla_days: 1}
+    corridors: []
+
+  unrest:
+    bands:
+      - {to_km: 15, label: "Local disruption", sla_days: 1}
+    corridors: []
+
+  airport_closure:
+    # No radius. The affected set is the airports' catchment, so bands are
+    # empty on purpose and air_linehaul above does the work.
+    bands: []
+    corridors: []
+
+  other:
+    bands:
+      - {to_km: 40, label: "Reported impact", sla_days: 1}
+    corridors: []

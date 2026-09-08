@@ -1,0 +1,1 @@
+{"articles": [{"url": "https://example.co.id/news/2889", "title": "Banjir tutup akses jalan di Bekasi, distribusi logistik terhambat", "seendate": "20260907T010000Z", "domain": "example.co.id"}]}

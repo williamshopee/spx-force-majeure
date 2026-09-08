@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<title>SPX Indonesia — station distribution</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#08131f;
+    --sea:#0b1a29;
+    --panel:#0f2233;
+    --line:#1c3547;
+    --line-soft:#152b3c;
+    --text:#dbe8f2;
+    --muted:#7b96ac;
+    --dim:#4f6d84;
+    --hub:#4ccfc4;
+    --fm:#ff7f43;
+    --dc:#ffd166;
+    --sev1:#ff3b4d;
+    --sev2:#ff8b2b;
+    --sev3:#ffc94d;
+    --off:#2c4457;
+    --focus:#8fd4ff;
+    --sans:'Barlow','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --cond:'Barlow Semi Condensed','Barlow','Segoe UI',Roboto,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;background:var(--ink);color:var(--text);
+    font-family:var(--sans);font-size:14px;line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+    font-variant-numeric:tabular-nums;
+  }
+  #app{display:flex;height:100dvh;overflow:hidden}
+
+  /* ---------- sidebar ---------- */
+  #side{
+    width:326px;flex:0 0 326px;background:var(--panel);
+    border-right:1px solid var(--line);
+    display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain;
+  }
+  .pad{padding:18px 20px}
+  .masthead{border-bottom:1px solid var(--line);padding-bottom:16px}
+  .masthead h1{
+    margin:0;font-family:var(--cond);font-weight:600;font-size:23px;
+    letter-spacing:.01em;line-height:1.15;
+  }
+  .masthead p{margin:5px 0 0;color:var(--muted);font-size:12.5px;max-width:34ch}
+  .tally{display:flex;align-items:baseline;gap:9px;margin-top:15px}
+  .tally b{font-family:var(--cond);font-weight:600;font-size:38px;line-height:.9;letter-spacing:-.015em}
+  .tally span{color:var(--muted);font-size:12.5px;max-width:12ch}
+
+  .block{border-bottom:1px solid var(--line);padding:16px 20px}
+  .block:last-child{border-bottom:0}
+  .block > h2{
+    margin:0 0 11px;font-size:12.5px;font-weight:600;color:var(--muted);
+    letter-spacing:.005em;
+  }
+
+  /* search */
+  .searchwrap{position:relative}
+  #q{
+    width:100%;background:var(--sea);border:1px solid var(--line);
+    border-radius:3px;color:var(--text);font:inherit;padding:8px 10px;
+  }
+  #q::placeholder{color:var(--dim)}
+  #q:focus{outline:2px solid var(--focus);outline-offset:1px;border-color:transparent}
+  #hits{
+    list-style:none;margin:4px 0 0;padding:0;position:absolute;z-index:900;
+    left:0;right:0;background:#12283b;border:1px solid var(--line);
+    border-radius:3px;max-height:236px;overflow-y:auto;display:none;
+    box-shadow:0 14px 30px rgba(0,0,0,.5);
+  }
+  #hits.on{display:block}
+  #hits li button{
+    display:block;width:100%;text-align:left;background:none;border:0;
+    color:var(--text);font:inherit;padding:7px 10px;cursor:pointer;
+    border-bottom:1px solid var(--line-soft);
+  }
+  #hits li:last-child button{border-bottom:0}
+  #hits li button:hover,#hits li button:focus{background:#1a3a52;outline:none}
+  #hits em{font-style:normal;color:var(--dim);font-size:12px;display:block}
+  .nohit{padding:8px 10px;color:var(--muted);font-size:12.5px}
+
+  /* segmented view control */
+  .seg{display:flex;background:var(--sea);border:1px solid var(--line);border-radius:3px;padding:2px}
+  .seg button{
+    flex:1;background:none;border:0;color:var(--muted);font:inherit;font-size:13px;
+    padding:6px 4px;cursor:pointer;border-radius:2px;
+  }
+  .seg button[aria-pressed="true"]{background:#1e3b52;color:var(--text);font-weight:500}
+  .seg button:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
+
+  /* type filters */
+  .types{list-style:none;margin:0;padding:0}
+  .types li + li{margin-top:2px}
+  .types label{
+    display:grid;grid-template-columns:11px 1fr auto;align-items:center;gap:10px;
+    padding:6px 6px 6px 2px;border-radius:3px;cursor:pointer;
+  }
+  .types label:hover{background:#14293b}
+  .types input{position:absolute;opacity:0;width:0;height:0}
+  .swatch{width:11px;height:11px;border-radius:50%;background:var(--c);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 22%,transparent)}
+  .types input:not(:checked) ~ .swatch{background:transparent;box-shadow:inset 0 0 0 1.5px var(--dim)}
+  .types input:not(:checked) ~ .tname,.types input:not(:checked) ~ .tnum{color:var(--dim)}
+  .types input:focus-visible ~ .tname{outline:2px solid var(--focus);outline-offset:3px;border-radius:2px}
+  .tnum{font-family:var(--cond);font-size:14px;color:var(--muted)}
+
+  /* island bars */
+  .isl{list-style:none;margin:0;padding:0}
+  .isl li + li{margin-top:1px}
+  .isl button{
+    display:block;width:100%;background:none;border:0;color:inherit;font:inherit;
+    text-align:left;padding:7px 6px 8px;border-radius:3px;cursor:pointer;
+  }
+  .isl button:hover{background:#14293b}
+  .isl button:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
+  .isl .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .isl .nm{font-size:13.5px}
+  .isl .ct{font-family:var(--cond);color:var(--muted);font-size:13.5px}
+  .isl .ct i{font-style:normal;color:var(--dim);font-size:12px;margin-left:5px}
+  .isl .foot-note{color:var(--dim)}
+  .bar{display:flex;height:4px;margin-top:7px;border-radius:2px;overflow:hidden;
+    background:var(--line-soft);width:100%}
+  .bar i{display:block;height:100%}
+
+  /* eruption panel */
+  .alert{background:#1b1620;border-bottom:1px solid #3a2530}
+  .alert h2{color:#ffb0a0}
+  .alert-hd{display:flex;align-items:flex-start;gap:9px;margin:0 0 4px}
+  .alert-hd .tri{
+    width:0;height:0;flex:0 0 auto;margin-top:4px;
+    border-left:7px solid transparent;border-right:7px solid transparent;
+    border-bottom:12px solid var(--sev1)
+  }
+  .alert-hd b{font-family:var(--cond);font-size:19px;font-weight:600;line-height:1.15}
+  .alert-st{color:#e9a99b;font-size:12px;margin:0 0 12px;line-height:1.5}
+  .alert-st span{color:var(--sev1);font-weight:600}
+  .alert-st.stale{
+    color:#ffd9a8;background:#3a2a12;border:1px solid #7a5416;
+    border-radius:3px;padding:8px 10px
+  }
+  .alert-st.dead{color:#ffd3cc;background:#43181c;border-color:#8c2a30}
+  .alert-st.stale b{display:block;font-weight:600;margin-bottom:3px;font-family:var(--cond);font-size:14px}
+
+  .switch{display:flex;align-items:center;gap:10px;cursor:pointer;padding:2px 0 12px}
+  .switch input{position:absolute;opacity:0;width:0;height:0}
+  .switch .track{
+    width:38px;height:21px;border-radius:11px;background:#33232b;flex:0 0 38px;
+    border:1px solid #4a3038;position:relative;transition:background .18s
+  }
+  .switch .track::after{
+    content:'';position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;
+    background:var(--muted);transition:transform .18s,background .18s
+  }
+  .switch input:checked + .track{background:#5c1f28;border-color:var(--sev1)}
+  .switch input:checked + .track::after{transform:translateX(17px);background:var(--sev1)}
+  .switch input:focus-visible + .track{outline:2px solid var(--focus);outline-offset:2px}
+  .switch .lb{font-size:13.5px}
+
+  .ctl{padding-top:2px}
+  .ctl[hidden]{display:none}
+  .ctl label.sl{display:flex;justify-content:space-between;align-items:baseline;
+    font-size:12.5px;color:var(--muted);margin-bottom:5px}
+  .ctl label.sl b{font-family:var(--cond);font-size:15px;color:var(--text);font-weight:600}
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;width:100%;height:3px;border-radius:2px;
+    background:#3f2a32;margin:7px 0 13px
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:15px;height:15px;border-radius:50%;
+    background:var(--sev1);cursor:pointer;border:2px solid #1b1620
+  }
+  input[type=range]::-moz-range-thumb{
+    width:13px;height:13px;border-radius:50%;background:var(--sev1);
+    cursor:pointer;border:2px solid #1b1620
+  }
+  input[type=range]:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+
+  .chk{display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-size:12.5px;
+    color:var(--muted);margin-bottom:14px;line-height:1.45}
+  .chk input{margin:2px 0 0;accent-color:var(--sev1);flex:0 0 auto}
+  .chk:hover{color:var(--text)}
+  .chk[hidden]{display:none}
+
+  table.bands{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:12px}
+  table.bands th{
+    text-align:left;font-weight:500;color:var(--dim);font-size:11px;
+    padding:0 0 5px;border-bottom:1px solid #3a2530
+  }
+  table.bands th.n,table.bands td.n{text-align:right}
+  table.bands td{padding:6px 0;border-bottom:1px solid #2a1f26;vertical-align:middle}
+  table.bands tr:last-child td{border-bottom:0}
+  table.bands .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px}
+  table.bands .cnt{font-family:var(--cond);font-size:14px;color:var(--text)}
+  table.bands .rng{color:var(--dim);font-size:11px;display:block}
+  table.bands input{
+    width:44px;background:var(--sea);border:1px solid #4a3038;border-radius:3px;
+    color:var(--text);font:inherit;font-size:12px;padding:3px 5px;text-align:right
+  }
+  table.bands input:focus{outline:2px solid var(--focus);outline-offset:1px}
+  table.bands tfoot td{border-top:1px solid #3a2530;border-bottom:0;padding-top:8px;color:var(--muted)}
+
+  .dl{
+    width:100%;background:#5c1f28;border:1px solid var(--sev1);color:#ffdcd5;
+    font:inherit;font-size:13px;font-weight:500;padding:9px;border-radius:3px;cursor:pointer
+  }
+  .dl:hover{background:#77262f;color:#fff}
+  .dl:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  .dl[disabled]{opacity:.45;cursor:not-allowed}
+
+  details.src{margin-top:13px;font-size:11.5px;color:var(--dim);line-height:1.55}
+  details.src summary{cursor:pointer;color:var(--muted);font-size:12px;padding:3px 0}
+  details.src summary:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  details.src p{margin:7px 0 0}
+  details.src a{color:#e9a99b}
+
+  .evlist{list-style:none;margin:0 0 12px;padding:0;max-height:250px;overflow-y:auto}
+  .evlist li + li{margin-top:1px}
+  .evlist button{
+    display:grid;grid-template-columns:9px 1fr auto;gap:9px;align-items:baseline;
+    width:100%;background:none;border:0;color:var(--text);font:inherit;
+    text-align:left;padding:7px 6px;border-radius:3px;cursor:pointer
+  }
+  .evlist button:hover{background:#241a20}
+  .evlist button[aria-current="true"]{background:#3a2028;box-shadow:inset 2px 0 0 var(--sev1)}
+  .evlist button:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
+  .evlist .hz{width:9px;height:9px;border-radius:50%;margin-top:5px}
+  .evlist .t{font-size:13px;line-height:1.3}
+  .evlist .t em{font-style:normal;display:block;color:var(--muted);font-size:11.5px;margin-top:2px}
+  .evlist .c{font-family:var(--cond);font-size:14px;color:var(--muted)}
+  .evlist .unv{opacity:.62}
+  .evlist .unv .t em{color:#b98b7f}
+  .evempty{color:var(--muted);font-size:12.5px;padding:2px 0 10px}
+
+  .evhead{margin:0 0 12px}
+  .evhead b{font-family:var(--cond);font-size:17px;font-weight:600;display:block;line-height:1.2}
+  .evhead span{color:var(--muted);font-size:12px;display:block;margin-top:3px}
+  .polynote{color:var(--muted);font-size:12px;margin:0 0 13px;line-height:1.45}
+  #evRadial[hidden]{display:none}
+
+  .air{border-top:1px solid #3a2530;margin-top:2px;padding-top:12px}
+  .air[hidden]{display:none}
+  .air h3{margin:0 0 7px;font-size:12.5px;font-weight:600;color:#ffb0a0}
+  .air p{margin:0 0 9px;color:var(--muted);font-size:11.5px;line-height:1.5}
+  .air .apl{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 10px}
+  .air .apl span{
+    font-family:var(--cond);font-size:12px;background:#2a3a52;color:#cfe3f5;
+    border:1px solid #3d5470;border-radius:3px;padding:2px 6px
+  }
+  .air .apl span.dec{background:#4a2030;border-color:var(--sev1);color:#ffd9d2}
+
+  .sevkey{list-style:none;margin:11px 0 0;padding:0;font-size:12px;color:var(--muted)}
+  .sevkey li{display:flex;align-items:center;gap:8px;padding:2px 0}
+  .sevkey i{width:9px;height:9px;border-radius:50%;flex:0 0 9px}
+
+  /* crater marker */
+  .crater{position:relative}
+  .crater .pin{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;
+    border-bottom:14px solid var(--sev1);filter:drop-shadow(0 0 4px rgba(0,0,0,.9))
+  }
+  .crater .ring{
+    position:absolute;left:50%;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;
+    border-radius:50%;border:2px solid var(--sev1);animation:pulse 2.6s ease-out infinite
+  }
+  @keyframes pulse{
+    0%{transform:scale(1);opacity:.85}
+    100%{transform:scale(4.2);opacity:0}
+  }
+  .crater .cap{
+    position:absolute;left:14px;top:-9px;white-space:nowrap;
+    font-family:var(--cond);font-size:12.5px;font-weight:600;color:#ffd9d2;
+    text-shadow:0 1px 3px #000,0 0 8px #000
+  }
+  .ringlab{
+    font-family:var(--cond);font-size:11px;color:#ffb0a0;white-space:nowrap;
+    text-shadow:0 1px 3px #000,0 0 6px #000
+  }
+  .foot{padding:14px 20px 22px;color:var(--dim);font-size:11.5px;line-height:1.5}
+
+  /* ---------- map ---------- */
+  #mapwrap{flex:1;position:relative;min-width:0}
+  #map{position:absolute;inset:0;background:var(--sea)}
+  .leaflet-container{background:var(--sea);font-family:var(--sans)}
+  .leaflet-control-zoom a{
+    background:#12283b;color:var(--text);border-color:var(--line)
+  }
+  .leaflet-control-zoom a:hover{background:#1c3a52;color:#fff}
+  .leaflet-control-attribution{
+    background:rgba(8,19,31,.8);color:var(--dim);font-size:10.5px
+  }
+  .leaflet-control-attribution a{color:var(--muted)}
+
+  .inview{
+    position:absolute;z-index:600;top:14px;left:14px;
+    background:rgba(10,26,41,.9);border:1px solid var(--line);border-radius:3px;
+    padding:8px 13px 9px;backdrop-filter:blur(6px);pointer-events:none;
+  }
+  .inview b{font-family:var(--cond);font-size:22px;font-weight:600;display:block;line-height:1}
+  .inview span{color:var(--muted);font-size:11.5px}
+
+  .ramp{
+    position:absolute;z-index:600;left:14px;bottom:20px;
+    background:rgba(10,26,41,.9);border:1px solid var(--line);border-radius:3px;
+    padding:9px 12px 10px;display:none;
+  }
+  .ramp.on{display:block}
+  .ramp i{
+    display:block;width:150px;height:7px;border-radius:2px;
+    background:linear-gradient(90deg,#123a5c,#1f7a8c,#4ccfc4,#ffd166,#ff7f43,#fff3e6);
+  }
+  .ramp .lab{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:5px}
+
+  /* popup */
+  .leaflet-popup-content-wrapper{
+    background:#12283b;color:var(--text);border-radius:3px;
+    border:1px solid var(--line);box-shadow:0 16px 36px rgba(0,0,0,.55)
+  }
+  .leaflet-popup-tip{background:#12283b;border:1px solid var(--line)}
+  .leaflet-popup-content{margin:12px 14px;font-size:13px;line-height:1.5;min-width:172px}
+  .pop-n{font-family:var(--cond);font-size:17px;font-weight:600;line-height:1.2}
+  .pop-t{margin-top:5px;color:var(--muted);font-size:12.5px;display:flex;align-items:center;gap:7px}
+  .pop-t i{width:9px;height:9px;border-radius:50%;background:var(--c);flex:0 0 9px}
+  .pop-c{margin-top:9px;padding-top:9px;border-top:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .pop-c code{font-family:var(--cond);font-size:13px;color:var(--text);letter-spacing:.01em}
+  .pop-c button{
+    background:none;border:1px solid var(--line);color:var(--muted);font:inherit;font-size:11.5px;
+    padding:3px 8px;border-radius:3px;cursor:pointer
+  }
+  .pop-c button:hover{color:var(--text);border-color:var(--dim)}
+  .leaflet-popup-close-button{color:var(--muted)!important}
+
+  #boot{
+    position:absolute;inset:0;display:grid;place-content:center;text-align:center;
+    padding:32px;color:var(--muted);z-index:700;background:var(--sea);
+  }
+  #boot h3{font-family:var(--cond);color:var(--text);font-size:19px;margin:0 0 8px;font-weight:600}
+  #boot p{margin:0;max-width:46ch;font-size:13px}
+  #boot.gone{display:none}
+
+  .station-canvas{position:absolute;left:0;top:0;pointer-events:none;will-change:transform}
+  .reveal{animation:fade .9s ease both}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.001ms!important;transition-duration:.001ms!important}
+  }
+  @media (max-width:860px){
+    #app{flex-direction:column-reverse}
+    #side{width:100%;flex:1 1 auto;border-right:0;border-bottom:1px solid var(--line)}
+    #mapwrap{flex:0 0 56dvh}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <aside id="side">
+    <div class="pad masthead">
+      <h1>Where SPX touches the ground</h1>
+      <p>Every hub and distribution centre in the Indonesian network, plotted from its coordinates.</p>
+      <div class="tally"><b id="total">0</b><span>stations mapped</span></div>
+    </div>
+
+    <div class="block alert" id="fmBlock">
+      <h2>Force majeure watch</h2>
+      <p class="alert-st" id="fmStatus">Loading events&hellip;</p>
+      <ul class="evlist" id="evlist"></ul>
+
+      <div class="ctl" id="impCtl" hidden>
+        <p class="evhead"><b id="evName"></b><span id="evMeta"></span></p>
+
+        <div id="evRadial">
+          <label class="sl" for="impR">Impact radius<b id="impRv">&mdash;</b></label>
+          <input type="range" id="impR" min="20" max="400" step="10" value="200">
+        </div>
+        <p class="polynote" id="evPoly" hidden>Using the reported affected-area
+          footprint, so there is no radius to set.</p>
+
+        <label class="chk" id="evCorrWrap" hidden>
+          <input type="checkbox" id="impC" checked>
+          <span>Limit to the reported dispersal corridors instead of every
+            direction from the source</span>
+        </label>
+
+        <table class="bands">
+          <thead><tr><th>Severity</th><th class="n">Sites</th><th class="n">+ Days</th></tr></thead>
+          <tbody id="bandRows"></tbody>
+          <tfoot><tr><td>Total impacted</td><td class="n cnt" id="bandTot">0</td><td></td></tr></tfoot>
+        </table>
+
+        <button type="button" class="dl" id="impDl">Download impacted facilities (CSV)</button>
+
+        <div class="air" id="airBlock" hidden>
+          <h3>Air linehaul exposure</h3>
+          <div class="apl" id="airList"></div>
+          <table class="bands">
+            <tbody id="airRows"></tbody>
+          </table>
+          <p id="airNote"></p>
+        </div>
+
+        <ul class="sevkey">
+          <li><i style="background:var(--off)"></i>Dots turn grey outside the zone</li>
+        </ul>
+
+        <details class="src" id="evNotes"></details>
+      </div>
+
+      <details class="src" id="fmSources"></details>
+    </div>
+
+    <div class="block">
+      <h2>Find a station</h2>
+      <div class="searchwrap">
+        <input id="q" type="search" autocomplete="off" placeholder="Type a station name" aria-label="Search stations by name" aria-expanded="false" aria-controls="hits" role="combobox">
+        <ul id="hits" role="listbox" aria-label="Matching stations"></ul>
+      </div>
+    </div>
+
+    <div class="block">
+      <h2>How to draw it</h2>
+      <div class="seg" role="group" aria-label="Map style">
+        <button id="mPoints" aria-pressed="true">One dot per station</button>
+        <button id="mHeat" aria-pressed="false">Density</button>
+      </div>
+    </div>
+
+    <div class="block">
+      <h2>Station type</h2>
+      <ul class="types" id="types"></ul>
+    </div>
+
+    <div class="block">
+      <h2>Islands</h2>
+      <ul class="isl" id="islands"></ul>
+    </div>
+
+    <div class="foot">
+      Regions are derived from each station's coordinates, so island totals here are geographic, not administrative.
+    </div>
+  </aside>
+
+  <div id="mapwrap">
+    <div id="map"></div>
+    <div class="inview" id="inview" hidden><b>0</b><span>in view</span></div>
+    <div class="ramp" id="ramp"><i></i><div class="lab"><span>sparse</span><span>dense</span></div></div>
+    <div id="boot"><h3>Loading the map</h3><p>Fetching Leaflet and the basemap tiles.</p></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script id="data" type="application/json">__DATA__</script>
+<!-- build_map.py replaces the contents of this tag with events.json so the
+     page works when opened as a local file (fetch is blocked by CORS there). -->
+<script id="airports" type="application/json">__AIRPORTS__</script>
+<script id="events-embedded" type="application/json">__EVENTS__</script>
+<script>
+(function(){
+  "use strict";
+
+  var boot = document.getElementById('boot');
+  if (!window.L) {
+    boot.innerHTML = '<h3>The map library did not load</h3><p>This page pulls Leaflet from cdnjs.cloudflare.com. Reconnect to the internet, or allow that domain, then reload.</p>';
+    return;
+  }
+
+  var RAW  = JSON.parse(document.getElementById('data').textContent);
+  var TYPE = [
+    {name:'Hub',                key:'hub', c:'#4ccfc4'},
+    {name:'First mile hub',     key:'fm',  c:'#ff7f43'},
+    {name:'Distribution centre',key:'dc',  c:'#ffd166'}
+  ];
+  var ISL = ['Sumatera','Jawa','Kalimantan','Sulawesi','Bali & Nusa Tenggara','Maluku','Papua'];
+
+  // name, lat, lng, type, region  ->  flat typed arrays for speed
+  var N = RAW.length;
+  var lat = new Float32Array(N), lng = new Float32Array(N);
+  var typ = new Uint8Array(N),   reg = new Uint8Array(N);
+  var nameOf = new Array(N);
+  for (var i = 0; i < N; i++) {
+    nameOf[i] = RAW[i][0]; lat[i] = RAW[i][1]; lng[i] = RAW[i][2];
+    typ[i] = RAW[i][3];    reg[i] = RAW[i][4];
+  }
+  var lower = nameOf.map(function(s){ return s.toLowerCase(); });
+  var on = [true, true, true];               // type filter state
+  var mode = 'points';
+  var fmt = function(n){ return n.toLocaleString('en-US'); };
+
+  /* ---------------- force majeure events ---------------- */
+  // Everything here is driven by events.json from the ingest pipeline.
+  // Nothing about any single hazard is hardcoded.
+  var RKM = 6371.0088, D2R = Math.PI / 180;
+  var SEVC = ['#ff3b4d', '#ff8b2b', '#ffc94d', '#ffe9a8'];   // band 0..3
+  var HAZC = {
+    volcano:'#ff5b2b', earthquake:'#ff3b4d', flood:'#3d9bff', cyclone:'#8f6bff',
+    wildfire:'#ff9a1f', weather:'#4ccfc4', unrest:'#ff6fae', other:'#8fa6b8'
+  };
+
+  // Airports, and each facility's gateway + via-hub. Assigned once: this is
+  // the nearest-airport proxy the pipeline uses, recomputed here so the map
+  // can highlight a catchment without shipping thousands of names.
+  var AIR = [];
+  try {
+    var _ae = document.getElementById('airports');
+    if (_ae && _ae.textContent.trim().charAt(0) === '[') AIR = JSON.parse(_ae.textContent);
+  } catch (e) { AIR = []; }
+  var GW = new Int16Array(N), HUB = new Int16Array(N);
+  var GATEWAY_MAX_KM = 400;          // keep in step with config.yaml
+
+  (function assignCatchments(){
+    GW.fill(-1); HUB.fill(-1);
+    if (!AIR.length) return;
+    var hubIx = [];
+    for (var h = 0; h < AIR.length; h++) if (AIR[h][5]) hubIx.push(h);
+    if (!hubIx.length) hubIx = AIR.map(function(_, k){ return k; });
+
+    function km(la1, lo1, la2, lo2){
+      var p1 = la1 * Math.PI / 180, p2 = la2 * Math.PI / 180;
+      var a = Math.sin((p2 - p1) / 2), b = Math.sin((lo2 - lo1) * Math.PI / 360);
+      return 2 * 6371.0088 * Math.asin(Math.sqrt(
+        a * a + Math.cos(p1) * Math.cos(p2) * b * b));
+    }
+    // nearest hub for each airport, once
+    var hubOfAp = new Int16Array(AIR.length);
+    for (var a2 = 0; a2 < AIR.length; a2++) {
+      var bi = -1, bd = 1e9;
+      for (var k = 0; k < hubIx.length; k++) {
+        var d = km(AIR[a2][1], AIR[a2][2], AIR[hubIx[k]][1], AIR[hubIx[k]][2]);
+        if (d < bd) { bd = d; bi = hubIx[k]; }
+      }
+      hubOfAp[a2] = bi;
+    }
+    for (var i = 0; i < N; i++) {
+      var best = -1, bdd = 1e9;
+      for (var j = 0; j < AIR.length; j++) {
+        var dd = km(lat[i], lng[i], AIR[j][1], AIR[j][2]);
+        if (dd < bdd) { bdd = dd; best = j; }
+      }
+      if (best < 0 || bdd > GATEWAY_MAX_KM) continue;   // road-fed
+      GW[i] = best; HUB[i] = hubOfAp[best];
+    }
+  })();
+
+  var AIRC = ['#5b8fd6', '#3f6699'];   // direct catchment, via-hub
+  var airHit = null;                   // Set of affected IATA codes
+
+  // 0 = gateway closed, 1 = via-hub closed, -1 = unaffected
+  function airBandOf(i){
+    if (!airHit || !airHit.size) return -1;
+    if (GW[i] >= 0 && airHit.has(AIR[GW[i]][0])) return 0;
+    if (HUB[i] >= 0 && airHit.has(AIR[HUB[i]][0])) return 1;
+    return -1;
+  }
+
+  var EVENTS = [];            // as loaded
+  var EV = null;              // selected event
+  var IMP = {on:false, radius:200, corridor:true};
+
+  // per-facility distance and bearing to the selected event, recomputed on
+  // selection. 8k points is a few ms, so there is no need to cache per event.
+  var dkm = new Float32Array(N), dbrg = new Float32Array(N);
+  var inPoly = new Uint8Array(N);
+
+  function project(ev){
+    var p1 = ev.lat * D2R, l1 = ev.lng * D2R, sp1 = Math.sin(p1), cp1 = Math.cos(p1);
+    for (var i = 0; i < N; i++) {
+      var p2 = lat[i] * D2R, dl = lng[i] * D2R - l1;
+      var sp2 = Math.sin(p2), cp2 = Math.cos(p2);
+      var a = Math.sin((p2 - p1) / 2), b = Math.sin(dl / 2);
+      dkm[i] = 2 * RKM * Math.asin(Math.sqrt(a * a + cp1 * cp2 * b * b));
+      dbrg[i] = (Math.atan2(Math.sin(dl) * cp2, cp1 * sp2 - sp1 * cp2 * Math.cos(dl)) / D2R + 360) % 360;
+    }
+    var rings = (ev.polygons || []);
+    if (!rings.length) { inPoly.fill(0); return; }
+    for (var j = 0; j < N; j++) inPoly[j] = ptInRings(lat[j], lng[j], rings) ? 1 : 0;
+  }
+
+  // ray casting; rings are GeoJSON [lon,lat] order
+  function ptInRings(la, lo, rings){
+    for (var r = 0; r < rings.length; r++) {
+      var ring = rings[r], inside = false, n = ring.length;
+      for (var i = 0, k = n - 1; i < n; k = i++) {
+        var xi = ring[i][0], yi = ring[i][1], xk = ring[k][0], yk = ring[k][1];
+        if ((yi > la) !== (yk > la)) {
+          var xint = xi + (la - yi) * (xk - xi) / ((yk - yi) || 1e-12);
+          if (lo < xint) inside = !inside;
+        }
+      }
+      if (inside) return true;
+    }
+    return false;
+  }
+
+  function bands(){ return (EV && EV.impact && EV.impact.bands) || []; }
+  function corridors(){ return (EV && EV.impact && EV.impact.corridors) || []; }
+  function isPolygon(){ return !!(EV && EV.polygons && EV.polygons.length); }
+
+  function inLobe(b){
+    var L = corridors();
+    if (!L.length) return true;
+    for (var k = 0; k < L.length; k++) {
+      var a1 = L[k][0], a2 = L[k][1];
+      if (a1 <= a2 ? (b >= a1 && b <= a2) : (b >= a1 || b <= a2)) return true;
+    }
+    return false;
+  }
+
+  // -1 = not impacted, otherwise the severity band index
+  function bandOf(i){
+    if (!IMP.on || !EV) return -1;
+    var B = bands();
+    if (!B.length) return -1;
+    if (isPolygon()) {
+      // inside the footprint is a fact; severity within it still tracks distance
+      if (!inPoly[i]) return -1;
+      for (var k = 0; k < B.length; k++) if (dkm[i] <= B[k].to_km) return k;
+      return B.length - 1;
+    }
+    if (dkm[i] > IMP.radius) return -1;
+    if (IMP.corridor && !inLobe(dbrg[i])) return -1;
+    var scale = IMP.radius / (B[B.length - 1].to_km || 1);
+    for (var j = 0; j < B.length; j++) if (dkm[i] <= B[j].to_km * scale) return j;
+    return -1;
+  }
+  function bandColor(k){ return SEVC[Math.min(k, SEVC.length - 1)]; }
+
+  function dest(brg, km){
+    var d = km / RKM, b = brg * D2R, p1 = EV.lat * D2R, l1 = EV.lng * D2R;
+    var p2 = Math.asin(Math.sin(p1) * Math.cos(d) + Math.cos(p1) * Math.sin(d) * Math.cos(b));
+    var l2 = l1 + Math.atan2(Math.sin(b) * Math.sin(d) * Math.cos(p1),
+                             Math.cos(d) - Math.sin(p1) * Math.sin(p2));
+    return [p2 / D2R, l2 / D2R];
+  }
+
+  /* ---------------- map ---------------- */
+  var map = L.map('map', {
+    zoomControl:false, preferCanvas:true, minZoom:3, maxZoom:17,
+    worldCopyJump:false, attributionControl:true
+  }).setView([-2.4, 118], 5);
+  L.control.zoom({position:'bottomright'}).addTo(map);
+  map.createPane('hazard').style.zIndex = 380;   // below the station canvas (400)
+  map.createPane('crater').style.zIndex = 640;   // above it, below popups
+
+  var tiles = L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
+    {subdomains:'abcd', maxZoom:19, attribution:'&copy; OpenStreetMap contributors &copy; CARTO'}
+  ).addTo(map);
+  var labels = L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png',
+    {subdomains:'abcd', maxZoom:19, opacity:.85, pane:'shadowPane'}
+  ).addTo(map);
+  tiles.once('load', function(){ boot.classList.add('gone'); });
+  setTimeout(function(){ boot.classList.add('gone'); }, 2600);  // points stand alone if tiles stall
+
+  /* ---------------- station layer ---------------- */
+  var StationLayer = L.Layer.extend({
+    onAdd: function(m){
+      this._map = m;
+      var c = this._canvas = L.DomUtil.create('canvas','station-canvas reveal');
+      this._ctx = c.getContext('2d');
+      m.getPanes().overlayPane.appendChild(c);
+      m.on('moveend zoomend resize viewreset', this._reset, this);
+      if (m.options.zoomAnimation) m.on('zoomanim', this._zoomAnim, this);
+      this._reset();
+    },
+    onRemove: function(m){
+      L.DomUtil.remove(this._canvas);
+      m.off('moveend zoomend resize viewreset', this._reset, this);
+      m.off('zoomanim', this._zoomAnim, this);
+    },
+    _zoomAnim: function(e){
+      var s = this._map.getZoomScale(e.zoom, this._map.getZoom());
+      var o = this._map._latLngBoundsToNewLayerBounds(this._map.getBounds(), e.zoom, e.center).min;
+      L.DomUtil.setTransform(this._canvas, o, s);
+    },
+    _reset: function(){
+      var m = this._map, size = m.getSize(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var min = m.containerPointToLayerPoint(size.multiplyBy(-0.22)).round();
+      var w = Math.round(size.x * 1.44), h = Math.round(size.y * 1.44);
+      this._origin = min;
+      var c = this._canvas;
+      c.width = w * dpr; c.height = h * dpr;
+      c.style.width = w + 'px'; c.style.height = h + 'px';
+      L.DomUtil.setTransform(this._canvas, min, 1);
+      this._ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      this._w = w; this._h = h;
+      this.redraw();
+    },
+    redraw: function(){
+      if (!this._map) return;
+      var ctx = this._ctx, m = this._map, w = this._w, h = this._h, o = this._origin;
+      ctx.clearRect(0, 0, w, h);
+
+      // project only what can land on the canvas
+      var px = this._px = [], py = this._py = [], pi = this._pi = [];
+      var pad = 1.44, sz = m.getSize();
+      var b = m.getBounds().pad(0.22);
+      var s = b.getSouth(), n = b.getNorth(), e = b.getEast(), wd = b.getWest();
+      for (var i = 0; i < N; i++) {
+        if (!on[typ[i]]) continue;
+        if (lat[i] < s || lat[i] > n || lng[i] < wd || lng[i] > e) continue;
+        var p = m.latLngToLayerPoint([lat[i], lng[i]]);
+        px.push(p.x - o.x); py.push(p.y - o.y); pi.push(i);
+      }
+      (mode === 'points' ? this._drawPoints : this._drawHeat).call(this, ctx, px, py, pi, w, h);
+    },
+    _drawPoints: function(ctx, px, py, pi, w, h){
+      var z = this._map.getZoom();
+      var r = Math.max(1.3, Math.min(8.5, (z - 2.3) * 0.92));
+      var halo = z >= 9;
+      ctx.globalCompositeOperation = 'source-over';
+
+      // groups: by station type normally, by ash severity while the impact zone is shown
+      var groups;
+      if (IMP.on) {
+        groups = [{c:'#2c4457', a:0.55, r:r * 0.82, k:-1}];
+        // air catchment sits below the physical bands: a facility with real
+        // ashfall or shaking should never be drawn as a mere routing problem
+        if (airHit && airHit.size) {
+          groups.push({c:AIRC[1], a:0.7, r:r * 0.9, k:-1, air:1});
+          groups.push({c:AIRC[0], a:0.8, r:r * 0.9, k:-1, air:0});
+        }
+        for (var g = 0; g < bands().length; g++) groups.push({c:bandColor(g), a:0.95, r:r, k:g});
+      } else {
+        groups = TYPE.map(function(t, g){ return {c:t.c, a:z < 7 ? 0.8 : 0.92, r:r, t:g}; });
+      }
+
+      for (var q = 0; q < groups.length; q++) {
+        var G = groups[q];
+        ctx.fillStyle = G.c; ctx.globalAlpha = G.a;
+        ctx.beginPath();
+        var drew = false;
+        for (var k = 0; k < pi.length; k++) {
+          var i = pi[k];
+          if (IMP.on) {
+            if (bandOf(i) !== G.k) continue;
+            if (G.air === undefined) {
+              // the plain "outside the zone" group must skip air-affected dots
+              if (G.k === -1 && airBandOf(i) > -1) continue;
+            } else if (airBandOf(i) !== G.air) continue;
+          } else if (typ[i] !== G.t) continue;
+          ctx.moveTo(px[k] + G.r, py[k]);
+          ctx.arc(px[k], py[k], G.r, 0, 6.2832);
+          drew = true;
+        }
+        if (!drew) continue;
+        ctx.fill();
+        if (halo) { ctx.globalAlpha = .5; ctx.lineWidth = 1; ctx.strokeStyle = '#08131f'; ctx.stroke(); }
+      }
+      ctx.globalAlpha = 1;
+    },
+    _drawHeat: function(ctx, px, py, pi, w, h){
+      var z = this._map.getZoom();
+      var rad = Math.max(9, Math.min(46, 7 + (z - 4) * 5.5));
+      var brush = this._brush(rad);
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = 0.14;
+      for (var k = 0; k < px.length; k++) ctx.drawImage(brush, px[k] - rad, py[k] - rad);
+      ctx.globalAlpha = 1;
+      if (!px.length) return;
+      var img = ctx.getImageData(0, 0, this._canvas.width, this._canvas.height);
+      var d = img.data, ramp = this._ramp(), lut = this._lut();
+      for (var i = 0; i < d.length; i += 4) {
+        var a = d[i + 3];
+        if (!a) continue;
+        var t = lut[a], j = t * 4;
+        d[i] = ramp[j]; d[i + 1] = ramp[j + 1]; d[i + 2] = ramp[j + 2];
+        d[i + 3] = 58 + ((t * 197) >> 8);
+      }
+      ctx.putImageData(img, 0, 0);
+    },
+    _lut: function(){
+      if (this._lt) return this._lt;
+      var l = this._lt = new Uint8Array(256);
+      for (var i = 0; i < 256; i++) l[i] = Math.round(Math.pow(i / 255, 0.62) * 255);
+      return l;
+    },
+    _brush: function(r){
+      if (this._bR === r) return this._bC;
+      var c = document.createElement('canvas'), x = c.getContext('2d');
+      c.width = c.height = r * 2;
+      var g = x.createRadialGradient(r, r, 0, r, r, r);
+      g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+      x.fillStyle = g; x.fillRect(0, 0, r * 2, r * 2);
+      this._bR = r; this._bC = c;
+      return c;
+    },
+    _ramp: function(){
+      if (this._rp) return this._rp;
+      var c = document.createElement('canvas'); c.width = 256; c.height = 1;
+      var x = c.getContext('2d'), g = x.createLinearGradient(0, 0, 256, 0);
+      g.addColorStop(0.00, '#0e2f4d'); g.addColorStop(0.22, '#1f7a8c');
+      g.addColorStop(0.45, '#4ccfc4'); g.addColorStop(0.68, '#ffd166');
+      g.addColorStop(0.86, '#ff7f43'); g.addColorStop(1.00, '#fff3e6');
+      x.fillStyle = g; x.fillRect(0, 0, 256, 1);
+      this._rp = x.getImageData(0, 0, 256, 1).data;
+      return this._rp;
+    },
+    nearest: function(layerPt){
+      if (!this._px) return -1;
+      var cx = layerPt.x - this._origin.x, cy = layerPt.y - this._origin.y;
+      var best = -1, bd = 14 * 14;
+      for (var k = 0; k < this._px.length; k++) {
+        var dx = this._px[k] - cx, dy = this._py[k] - cy, d = dx * dx + dy * dy;
+        if (d < bd) { bd = d; best = this._pi[k]; }
+      }
+      return best;
+    }
+  });
+
+  var layer = new StationLayer().addTo(map);
+
+  /* ---------------- popup ---------------- */
+  var pop = L.popup({closeButton:true, autoPan:true, maxWidth:280});
+  map.on('click', function(e){
+    if (mode !== 'points') return;
+    var i = layer.nearest(e.layerPoint);
+    if (i < 0) { map.closePopup(); return; }
+    openStation(i);
+  });
+
+  function openStation(i){
+    var t = TYPE[typ[i]], co = lat[i].toFixed(5) + ', ' + lng[i].toFixed(5);
+    var el = document.createElement('div');
+    el.innerHTML =
+      '<div class="pop-n"></div>' +
+      '<div class="pop-t" style="--c:' + t.c + '"><i></i><span></span></div>' +
+      '<div class="pop-c"><code></code><button type="button">Copy</button></div>';
+    el.querySelector('.pop-n').textContent = nameOf[i];
+    el.querySelector('.pop-t span').textContent = t.name + ' in ' + ISL[reg[i]];
+    if (IMP.on) {
+      var b = bandOf(i), d = document.createElement('div');
+      d.className = 'pop-t';
+      d.style.setProperty('--c', b > -1 ? bandColor(b) : '#2c4457');
+      d.innerHTML = '<i></i><span></span>';
+      d.querySelector('span').textContent = dkm[i].toFixed(0) + ' km from ' +
+        (EV ? EV.name.split(' \u2014 ')[0] : 'the source') + ', ' +
+        (b > -1 ? (bands()[b] ? bands()[b].label.toLowerCase() : 'affected')
+                : 'outside the zone');
+      el.querySelector('.pop-t').insertAdjacentElement('afterend', d);
+    }
+    el.querySelector('code').textContent = co;
+    var btn = el.querySelector('button');
+    btn.addEventListener('click', function(){
+      navigator.clipboard && navigator.clipboard.writeText(co).then(
+        function(){ btn.textContent = 'Copied'; setTimeout(function(){ btn.textContent = 'Copy'; }, 1400); },
+        function(){ btn.textContent = 'Copy failed'; }
+      );
+    });
+    pop.setLatLng([lat[i], lng[i]]).setContent(el).openOn(map);
+  }
+
+  /* ---------------- sidebar ---------------- */
+  document.getElementById('total').textContent = fmt(N);
+
+  var counts = [0, 0, 0], islCount = new Array(7).fill(0);
+  var islMix = [];
+  for (var m0 = 0; m0 < 7; m0++) islMix.push([0, 0, 0]);
+  for (var i2 = 0; i2 < N; i2++) {
+    counts[typ[i2]]++; islCount[reg[i2]]++; islMix[reg[i2]][typ[i2]]++;
+  }
+
+  var ul = document.getElementById('types');
+  TYPE.forEach(function(t, idx){
+    var li = document.createElement('li');
+    li.innerHTML =
+      '<label style="--c:' + t.c + '"><input type="checkbox" checked>' +
+      '<span class="swatch"></span><span class="tname"></span>' +
+      '<span class="tnum">' + fmt(counts[idx]) + '</span></label>';
+    li.querySelector('.tname').textContent = t.name;
+    li.querySelector('input').addEventListener('change', function(){
+      on[idx] = this.checked;
+      if (!on[0] && !on[1] && !on[2]) { this.checked = true; on[idx] = true; return; }
+      layer.redraw(); tallyView();
+      if (IMP.on) { tallyImpact(); tallyAir(); }
+    });
+    ul.appendChild(li);
+  });
+
+  var order = islCount.map(function(c, i){ return i; })
+                      .sort(function(a, b){ return islCount[b] - islCount[a]; });
+  var maxI = Math.max.apply(null, islCount);
+  var ilist = document.getElementById('islands');
+  order.forEach(function(r){
+    var li = document.createElement('li'), pct = (islCount[r] / N * 100);
+    var len = islCount[r] / maxI;                       // bar length = volume
+    var seg = TYPE.map(function(t, k){                  // segments = type mix
+      return '<i style="background:' + t.c + ';width:' +
+             (islMix[r][k] / islCount[r] * len * 100).toFixed(2) + '%"></i>';
+    }).join('');
+    li.innerHTML =
+      '<button type="button"><span class="row"><span class="nm"></span>' +
+      '<span class="ct">' + fmt(islCount[r]) + '<i>' + pct.toFixed(pct < 1 ? 1 : 0) + '%</i></span></span>' +
+      '<span class="bar">' + seg + '</span></button>';
+    li.querySelector('.nm').textContent = ISL[r];
+    li.querySelector('button').addEventListener('click', function(){ zoomRegion(r); });
+    li.querySelector('button').title =
+      ISL[r] + ': ' + TYPE.map(function(t, k){ return fmt(islMix[r][k]) + ' ' + t.name.toLowerCase(); }).join(', ');
+    ilist.appendChild(li);
+  });
+
+  function zoomRegion(r){
+    var pts = [];
+    for (var i = 0; i < N; i++) if (reg[i] === r) pts.push([lat[i], lng[i]]);
+    map.closePopup();
+    map.fitBounds(L.latLngBounds(pts).pad(0.06), {animate:true, duration:.7});
+  }
+
+  /* ---------------- view mode ---------------- */
+  var bP = document.getElementById('mPoints'), bH = document.getElementById('mHeat'),
+      ramp = document.getElementById('ramp');
+  function setMode(m){
+    mode = m;
+    bP.setAttribute('aria-pressed', m === 'points');
+    bH.setAttribute('aria-pressed', m === 'heat');
+    ramp.classList.toggle('on', m === 'heat');
+    if (m === 'heat') map.closePopup();
+    layer.redraw();
+  }
+  bP.addEventListener('click', function(){ setMode('points'); });
+  bH.addEventListener('click', function(){ setMode('heat'); });
+
+  /* ---------------- hazard geometry ---------------- */
+  var hz = L.layerGroup();
+
+  function buildHazard(){
+    hz.clearLayers();
+    if (!EV) return;
+
+    // A closure has no geometry of its own; the airports are the geometry.
+    if (EV.hazard === 'airport_closure' || (EV.lat === null || EV.lat === undefined)) {
+      (EV.air && EV.air.airports || []).forEach(function(c){
+        var ap = AIR.filter(function(x){ return x[0] === c.iata; })[0];
+        if (!ap) return;
+        L.circleMarker([ap[1], ap[2]], {
+          pane:'crater', radius:7, color:'#ff3b4d', weight:2,
+          fillColor:'#ff3b4d', fillOpacity:.35, interactive:false
+        }).addTo(hz);
+        L.marker([ap[1], ap[2]], {pane:'crater', interactive:false, keyboard:false,
+          icon:L.divIcon({className:'ringlab', html:c.iata, iconSize:[34, 12]})
+        }).addTo(hz);
+      });
+      return;
+    }
+
+    var col = HAZC[EV.hazard] || HAZC.other;
+    var excl = EV.impact && EV.impact.exclusion_km;
+
+    // exclusion / no-go zone, where the authority has declared one
+    if (excl) {
+      L.circle([EV.lat, EV.lng], {
+        radius: excl * 1000, pane:'hazard', color:'#ff3b4d', weight:1.4,
+        fillColor:'#ff3b4d', fillOpacity:.3, interactive:false
+      }).addTo(hz);
+    }
+
+    if (isPolygon()) {
+      EV.polygons.forEach(function(ring){
+        L.polygon(ring.map(function(p){ return [p[1], p[0]]; }), {
+          pane:'hazard', color:col, weight:1.2, opacity:.7, dashArray:'4 4',
+          fillColor:col, fillOpacity:.12, interactive:false
+        }).addTo(hz);
+      });
+    } else {
+      var B = bands();
+      if (!B.length) { addPin(col); return; }
+      var R = IMP.radius, scale = R / (B[B.length - 1].to_km || 1);
+
+      if (IMP.corridor && corridors().length) {
+        corridors().forEach(function(c){
+          var a1 = c[0], a2 = c[1] < c[0] ? c[1] + 360 : c[1];
+          var pts = [[EV.lat, EV.lng]];
+          for (var a = a1; a <= a2; a += 2) pts.push(dest(a % 360, R));
+          pts.push(dest(a2 % 360, R));
+          L.polygon(pts, {pane:'hazard', color:col, weight:1, opacity:.55,
+            dashArray:'4 4', fillColor:col, fillOpacity:.10, interactive:false}).addTo(hz);
+        });
+        L.circle([EV.lat, EV.lng], {radius:R * 1000, pane:'hazard', color:col,
+          weight:1, opacity:.28, dashArray:'2 6', fill:false, interactive:false}).addTo(hz);
+      } else {
+        L.circle([EV.lat, EV.lng], {radius:R * 1000, pane:'hazard', color:col,
+          weight:1, opacity:.55, dashArray:'4 4', fillColor:col,
+          fillOpacity:.08, interactive:false}).addTo(hz);
+      }
+
+      // inner severity boundaries, labelled due south where it is usually clear
+      B.slice(0, -1).forEach(function(b, ix){
+        var km = b.to_km * scale;
+        if (km >= R) return;
+        L.circle([EV.lat, EV.lng], {radius:km * 1000, pane:'hazard',
+          color:bandColor(ix), weight:1, opacity:.5, dashArray:'2 5',
+          fill:false, interactive:false}).addTo(hz);
+        L.marker(dest(180, km), {pane:'crater', interactive:false, keyboard:false,
+          icon:L.divIcon({className:'ringlab', html:Math.round(km) + ' km',
+          iconSize:[46, 12]})}).addTo(hz);
+      });
+      L.marker(dest(180, R), {pane:'crater', interactive:false, keyboard:false,
+        icon:L.divIcon({className:'ringlab', html:Math.round(R) + ' km',
+        iconSize:[46, 12]})}).addTo(hz);
+    }
+    addPin(col);
+  }
+
+  function addPin(col){
+    L.marker([EV.lat, EV.lng], {
+      pane:'crater', interactive:false, keyboard:false,
+      icon: L.divIcon({className:'crater', html:
+        '<span class="ring" style="border-color:' + col + '"></span>' +
+        '<span class="pin" style="border-bottom-color:' + col + '"></span>' +
+        '<span class="cap"></span>', iconSize:[0,0]})
+    }).addTo(hz);
+    var cap = hz.getLayers().slice(-1)[0].getElement();
+    if (cap) cap.querySelector('.cap').textContent = EV.name.split(' \u2014 ')[0];
+  }
+
+  /* ---------------- impact tallies ---------------- */
+  var rowsEl = document.getElementById('bandRows'),
+      totEl = document.getElementById('bandTot'),
+      dlBtn = document.getElementById('impDl');
+  var slaIn = [];
+
+  function buildBandRows(){
+    rowsEl.innerHTML = ''; slaIn = [];
+    var B = bands(), scale = isPolygon() ? 1 : IMP.radius / (B.length ? (B[B.length-1].to_km || 1) : 1);
+    B.forEach(function(b, ix){
+      var lo = ix ? B[ix - 1].to_km * scale : 0, hi = b.to_km * scale;
+      var rng = isPolygon()
+        ? (ix ? Math.round(lo) + '\u2013' + Math.round(hi) + ' km inside footprint'
+              : 'within ' + Math.round(hi) + ' km inside footprint')
+        : (ix ? Math.round(lo) + '\u2013' + Math.round(hi) + ' km'
+              : 'source to ' + Math.round(hi) + ' km');
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td><span class="dot" style="background:' + bandColor(ix) + '"></span>' +
+        b.label + '<span class="rng">' + rng + '</span></td>' +
+        '<td class="n cnt" data-c="' + ix + '">0</td>' +
+        '<td class="n"><input type="number" min="0" max="30" step="1" value="' +
+        (b.sla_days == null ? 1 : b.sla_days) + '" aria-label="Extra SLA days for ' +
+        b.label + '"></td>';
+      rowsEl.appendChild(tr);
+      slaIn.push(tr.querySelector('input'));
+    });
+  }
+
+  function impacted(){
+    var out = [];
+    for (var i = 0; i < N; i++) {
+      if (!on[typ[i]]) continue;
+      var b = bandOf(i);
+      if (b > -1) out.push([i, b]);
+    }
+    return out;
+  }
+  function countImpact(){
+    var c = new Array(Math.max(bands().length, 1)).fill(0), tot = 0;
+    if (IMP.on && EV) {
+      for (var i = 0; i < N; i++) {
+        if (!on[typ[i]]) continue;
+        var b = bandOf(i);
+        if (b > -1) { c[b]++; tot++; }
+      }
+    }
+    return {c:c, tot:tot};
+  }
+  function tallyImpact(){
+    var r = countImpact();
+    rowsEl.querySelectorAll('[data-c]').forEach(function(td){
+      td.textContent = fmt(r.c[+td.dataset.c] || 0); });
+    var a = countAir(), grand = r.tot + a.direct + a.via;
+    totEl.textContent = fmt(r.tot);
+    dlBtn.disabled = !grand;
+    dlBtn.textContent = grand ? 'Download ' + fmt(grand) + ' impacted facilities (CSV)'
+                              : 'No facilities in this zone';
+    return r.tot;
+  }
+
+  /* ---------------- air linehaul ---------------- */
+  var airBlock = document.getElementById('airBlock'),
+      airListEl = document.getElementById('airList'),
+      airRowsEl = document.getElementById('airRows'),
+      airNoteEl = document.getElementById('airNote');
+  var airSla = null;
+
+  function setupAir(){
+    var air = EV && EV.air;
+    airHit = null; airSla = null;
+    if (!air || !air.airports || !air.airports.length || !AIR.length) {
+      airBlock.hidden = true;
+      return;
+    }
+    airHit = new Set(air.airports.map(function(c){ return c.iata; }));
+
+    airListEl.innerHTML = '';
+    air.airports.forEach(function(c){
+      var sp = document.createElement('span');
+      if (c.how && c.how.indexOf('declared') === 0) sp.className = 'dec';
+      sp.textContent = c.iata + (c.km == null ? '' : ' \u00b7 ' + Math.round(c.km) + ' km');
+      sp.title = c.name + ' \u2014 ' + c.how;
+      airListEl.appendChild(sp);
+    });
+
+    var r = countAir();
+    airRowsEl.innerHTML = '';
+    [['Gateway airport closed', 0, r.direct],
+     ['Routes via a closed hub', 1, r.via]].forEach(function(row){
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td><span class="dot" style="background:' + AIRC[row[1]] + '"></span>' +
+        row[0] + '<span class="rng">not counted in the bands above</span></td>' +
+        '<td class="n cnt">' + fmt(row[2]) + '</td>' +
+        '<td class="n">' + (row[1] === 0
+          ? '<input type="number" min="0" max="30" step="1" value="' +
+            (air.sla_days == null ? 1 : air.sla_days) +
+            '" aria-label="Extra SLA days for air linehaul">'
+          : '') + '</td>';
+      airRowsEl.appendChild(tr);
+      if (row[1] === 0) airSla = tr.querySelector('input');
+    });
+    airNoteEl.textContent = air.note || '';
+    airBlock.hidden = false;
+  }
+
+  // Facilities exposed only through routing: a dot already inside the physical
+  // zone is that event's problem, not a separate routing problem.
+  function countAir(){
+    var direct = 0, via = 0;
+    if (airHit && airHit.size) {
+      for (var i = 0; i < N; i++) {
+        if (!on[typ[i]]) continue;
+        if (bandOf(i) > -1) continue;
+        var a = airBandOf(i);
+        if (a === 0) direct++; else if (a === 1) via++;
+      }
+    }
+    return {direct:direct, via:via};
+  }
+
+  function tallyAir(){
+    if (airBlock.hidden) return;
+    var r = countAir(), tds = airRowsEl.querySelectorAll('.cnt');
+    if (tds[0]) tds[0].textContent = fmt(r.direct);
+    if (tds[1]) tds[1].textContent = fmt(r.via);
+  }
+
+  /* ---------------- event list ---------------- */
+  var listEl = document.getElementById('evlist'),
+      statusEl = document.getElementById('fmStatus'),
+      ctlEl = document.getElementById('impCtl'),
+      impR = document.getElementById('impR'), impRv = document.getElementById('impRv'),
+      impC = document.getElementById('impC'), corrWrap = document.getElementById('evCorrWrap'),
+      radialWrap = document.getElementById('evRadial'), polyNote = document.getElementById('evPoly');
+
+  function quickCount(ev){
+    // cheap pre-count for the list, using the event's own default geometry
+    var save = EV, saveOn = IMP.on, saveR = IMP.radius;
+    var saveFilter = on.slice();
+    on[0] = on[1] = on[2] = true;
+    EV = ev; IMP.on = true;
+    var B = ev.impact && ev.impact.bands || [];
+    IMP.radius = B.length ? B[B.length - 1].to_km : 0;
+    if (ev.lat != null) project(ev);
+    var t = countImpact().tot;
+    if (ev.air && ev.air.airports) {
+      t += (ev.air.direct_count || 0) + (ev.air.via_hub_count || 0);
+    }
+    EV = save; IMP.on = saveOn; IMP.radius = saveR;
+    on[0] = saveFilter[0]; on[1] = saveFilter[1]; on[2] = saveFilter[2];
+    if (EV) project(EV);
+    return t;
+  }
+
+  function renderList(){
+    listEl.innerHTML = '';
+    if (!EVENTS.length) {
+      listEl.innerHTML = '<li class="evempty">No active events reach a facility.</li>';
+      return;
+    }
+    EVENTS.forEach(function(ev, ix){
+      var li = document.createElement('li'), b = document.createElement('button');
+      b.type = 'button';
+      b.className = ev.status === 'unverified' ? 'unv' : '';
+      b.setAttribute('aria-current', EV === ev);
+      var when = ev.age_hours == null ? '' :
+        (ev.age_hours < 24 ? Math.round(ev.age_hours) + 'h ago'
+                           : Math.round(ev.age_hours / 24) + 'd ago');
+      b.innerHTML =
+        '<span class="hz" style="background:' + (HAZC[ev.hazard] || HAZC.other) + '"></span>' +
+        '<span class="t"></span><span class="c"></span>';
+      b.querySelector('.t').appendChild(document.createTextNode(ev.name));
+      var em = document.createElement('em');
+      em.textContent = [ev.severity, ev.source, when,
+                        ev.status === 'unverified' ? 'unverified lead' : ''
+                       ].filter(Boolean).join(' \u00b7 ');
+      b.querySelector('.t').appendChild(em);
+      b.querySelector('.c').textContent = ev._n == null ? '' : fmt(ev._n);
+      b.addEventListener('click', function(){ selectEvent(ix); });
+      li.appendChild(b); listEl.appendChild(li);
+    });
+  }
+
+  function selectEvent(ix){
+    var ev = EVENTS[ix];
+    if (!ev) return;
+    if (EV === ev) {                       // clicking the selected one turns it off
+      EV = null; IMP.on = false; airHit = null;
+      ctlEl.hidden = true; airBlock.hidden = true; hz.remove();
+      renderList(); layer.redraw(); return;
+    }
+    EV = ev; IMP.on = true;
+    if ((ev.lat === null || ev.lat === undefined) && !(ev.air && ev.air.airports)) {
+      ctlEl.hidden = true; hz.remove(); IMP.on = false;
+      statusEl.textContent = 'This lead has no coordinates, so it cannot be placed '
+        + 'on the map or counted. Open the source to check where it is.';
+      renderList(); layer.redraw(); return;
+    }
+
+    project(ev);
+    var B = ev.impact && ev.impact.bands || [];
+    IMP.radius = B.length ? B[B.length - 1].to_km : 100;
+    IMP.corridor = true;
+
+    document.getElementById('evName').textContent = ev.name;
+    document.getElementById('evMeta').textContent =
+      [ev.severity, ev.alert && ev.alert !== 'unknown' ? 'alert: ' + ev.alert : '',
+       ev.source].filter(Boolean).join(' \u00b7 ');
+
+    var poly = isPolygon(), noGeom = !bands().length;
+    radialWrap.hidden = poly || noGeom;
+    polyNote.hidden = !poly;
+    document.querySelector('#impCtl table.bands').hidden = noGeom;
+    corrWrap.hidden = poly || !corridors().length;
+    impC.checked = true;
+    impR.max = Math.max(400, Math.round(IMP.radius * 2));
+    impR.value = IMP.radius;
+    impRv.textContent = IMP.radius + ' km';
+
+    var nt = document.getElementById('evNotes');
+    nt.innerHTML = '<summary>Source and caveats</summary>';
+    (ev.notes || []).forEach(function(n){
+      var p = document.createElement('p'); p.textContent = n; nt.appendChild(p);
+    });
+    if (ev.observed && ev.observed.length) {
+      var p = document.createElement('p');
+      p.textContent = 'Observed intensity: ' + ev.observed.map(function(o){
+        return o.mmi_text + ' ' + o.place; }).join(', ') +
+        '. Observed readings beat the modelled bands above.';
+      nt.appendChild(p);
+    }
+    if (ev.source_url) {
+      var a = document.createElement('p');
+      a.innerHTML = '<a target="_blank" rel="noopener">Open source report</a>';
+      a.querySelector('a').href = ev.source_url;
+      nt.appendChild(a);
+    }
+    if (ev.attribution) {
+      var at = document.createElement('p');
+      at.textContent = ev.attribution; nt.appendChild(at);
+    }
+
+    ctlEl.hidden = false;
+    buildBandRows(); setupAir(); buildHazard(); hz.addTo(map);
+    tallyImpact(); layer.redraw(); renderList();
+
+    var pts = impacted().map(function(p){ return [lat[p[0]], lng[p[0]]]; });
+    if (ev.lat != null) pts.push([ev.lat, ev.lng]);
+    if (airHit) {
+      for (var ai = 0; ai < N; ai++) if (airBandOf(ai) > -1) pts.push([lat[ai], lng[ai]]);
+      (ev.air.airports || []).forEach(function(c){
+        var ap = AIR.filter(function(x){ return x[0] === c.iata; })[0];
+        if (ap) pts.push([ap[1], ap[2]]);
+      });
+    }
+    if (!pts.length) return;
+    map.closePopup();
+    setMode('points');
+    map.fitBounds(L.latLngBounds(pts).pad(0.10), {animate:true, duration:.8});
+  }
+
+  impR.addEventListener('input', function(){
+    IMP.radius = +this.value; impRv.textContent = IMP.radius + ' km';
+    buildBandRows(); buildHazard(); tallyImpact(); tallyAir(); layer.redraw();
+  });
+  impC.addEventListener('change', function(){
+    IMP.corridor = this.checked; buildHazard(); tallyImpact(); tallyAir(); layer.redraw();
+  });
+
+  /* ---------------- CSV of the impacted list ---------------- */
+  function csvCell(v){
+    v = String(v == null ? '' : v);
+    return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+  }
+  dlBtn.addEventListener('click', function(){
+    if (!EV) return;
+    var rows = impacted();
+    var hasAir = !!(airHit && airHit.size);
+    if (!rows.length && !hasAir) return;      // a closure has no band rows at all
+    if (EV.lat != null) rows.sort(function(a, b){ return dkm[a[0]] - dkm[b[0]]; });
+    var days = slaIn.map(function(el){ return Math.max(0, +el.value || 0); });
+    var B = bands();
+    var out = [['event_name','hazard','event_source','event_started','station_name',
+                'station_type','island','latitude','longitude','distance_km',
+                'bearing_deg','severity_band','sla_extension_days','impact_model'
+               ].join(',')];
+    var listed = {};
+    rows.forEach(function(p){
+      var i = p[0], b = p[1];
+      listed[i] = 1;
+      out.push([EV.name, EV.hazard, EV.source, EV.started || '', nameOf[i],
+                TYPE[typ[i]].name, ISL[reg[i]], lat[i].toFixed(5), lng[i].toFixed(5),
+                EV.lat == null ? '' : dkm[i].toFixed(1),
+                EV.lat == null ? '' : dbrg[i].toFixed(1),
+                B[b] ? B[b].label : '', days[b] == null ? '' : days[b],
+                isPolygon() ? 'polygon' : 'radial'
+               ].map(csvCell).join(','));
+    });
+    if (airHit && airHit.size) {
+      var adays = airSla ? Math.max(0, +airSla.value || 0) : 1;
+      var codes = Array.from(airHit).join(' ');
+      for (var i2 = 0; i2 < N; i2++) {
+        if (!on[typ[i2]] || listed[i2]) continue;
+        var ab = airBandOf(i2);
+        if (ab < 0) continue;
+        out.push([EV.name, EV.hazard, EV.source, EV.started || '', nameOf[i2],
+                  TYPE[typ[i2]].name, ISL[reg[i2]], lat[i2].toFixed(5), lng[i2].toFixed(5),
+                  '', '',
+                  'Air linehaul (' + (ab === 0 ? 'gateway' : 'via hub') + ': ' + codes + ')',
+                  adays, 'catchment'].map(csvCell).join(','));
+      }
+    }
+    var stamp = new Date().toISOString().slice(0, 10);
+    var slug = EV.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
+    var url = URL.createObjectURL(new Blob(['\ufeff' + out.join('\r\n')],
+                                  {type:'text/csv;charset=utf-8'}));
+    var a = document.createElement('a');
+    a.href = url; a.download = 'spx-impact-' + slug + '-' + stamp + '.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+  });
+
+  /* ---------------- load events.json ---------------- */
+  function renderSources(payload){
+    var el = document.getElementById('fmSources');
+    el.innerHTML = '<summary>Feeds and attribution</summary>';
+    (payload.source_health || []).forEach(function(h){
+      var p = document.createElement('p');
+      p.textContent = h.source + ': ' + h.state +
+        (h.state === 'ok' ? ' (' + h.events + ')' : '') +
+        (h.error ? ' \u2014 ' + h.error : '');
+      el.appendChild(p);
+    });
+    (payload.attribution || []).forEach(function(a){
+      var p = document.createElement('p'); p.textContent = a; el.appendChild(p);
+    });
+  }
+
+  // How old events.json may get before we stop trusting it. The ingest job is
+  // meant to run every ~10 minutes, so 45 means it has missed several runs.
+  var STALE_MIN = 45, DEAD_MIN = 180;
+  var fetchFails = 0, lastGood = null;
+
+  function showAge(payload){
+    var gen = payload && payload.generated_at ? new Date(payload.generated_at) : null;
+    var mins = gen ? Math.round((Date.now() - gen.getTime()) / 60000) : null;
+    statusEl.className = 'alert-st';
+    if (mins == null) return null;
+    if (mins >= DEAD_MIN || mins >= STALE_MIN) {
+      statusEl.className = 'alert-st stale' + (mins >= DEAD_MIN ? ' dead' : '');
+      statusEl.innerHTML = '';
+      var b = document.createElement('b');
+      b.textContent = 'Data is ' + (mins < 120 ? mins + ' minutes' : Math.round(mins / 60) + ' hours') + ' old';
+      statusEl.appendChild(b);
+      statusEl.appendChild(document.createTextNode(
+        'The ingest job runs every 10 minutes, so it has stopped or lost network. ' +
+        'What you see below is the last good snapshot \u2014 do not treat it as current. ' +
+        'Check the ingest log before acting on any of it.'));
+      return mins;
+    }
+    return mins;
+  }
+
+  function ingest(payload){
+    var evs = (payload.events || []).filter(function(e){ return e && e.impact; });
+    EVENTS = evs;
+    EVENTS.forEach(function(e){
+      e._n = (e.lat === null || e.lat === undefined) ? null : quickCount(e);
+    });
+    EVENTS.sort(function(a, b){ return (b._n || 0) - (a._n || 0); });
+
+    lastGood = payload;
+    var mins = showAge(payload);
+    var ver = payload.verified_event_count == null
+      ? EVENTS.length : payload.verified_event_count;
+    if (mins == null || mins < STALE_MIN) {
+      var failed = (payload.source_health || []).filter(function(h){
+        return h.state === 'failed'; });
+      statusEl.textContent = (EVENTS.length
+        ? ver + ' verified event' + (ver === 1 ? '' : 's') +
+          (EVENTS.length > ver ? ' and ' + (EVENTS.length - ver) + ' unverified lead'
+            + (EVENTS.length - ver === 1 ? '' : 's') : '') +
+          (mins == null ? '' : ', updated ' + (mins < 60 ? mins + ' min'
+            : Math.round(mins / 60) + ' h') + ' ago') + '. Pick one to see the zone.'
+        : 'No active events currently reach a facility.')
+        + (failed.length ? ' ' + failed.length + ' feed' + (failed.length === 1 ? '' : 's')
+            + ' failed this run \u2014 see Feeds and attribution.' : '');
+    }
+    renderSources(payload);
+    renderList();
+    if (EV) {                       // keep the selection across a refresh
+      var same = EVENTS.filter(function(e){ return e.id === EV.id; })[0];
+      EV = null;
+      if (same) selectEvent(EVENTS.indexOf(same));
+      else { IMP.on = false; ctlEl.hidden = true; hz.remove(); layer.redraw(); }
+    }
+  }
+
+  function loadEvents(){
+    // Served over HTTP: fetch, and keep polling. Opened as a local file:
+    // fetch is blocked by CORS, so fall back to the embedded copy that
+    // build_map.py writes in.
+    var live = location.protocol === 'http:' || location.protocol === 'https:';
+    if (live) {
+      fetch('events.json', {cache:'no-store'})
+        .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function(p){ fetchFails = 0; ingest(p); })
+        .catch(function(e){
+          fetchFails++;
+          if (lastGood) {
+            // keep showing the last good data, but stop implying it is current
+            statusEl.className = 'alert-st stale' + (fetchFails > 3 ? ' dead' : '');
+            statusEl.innerHTML = '';
+            var b = document.createElement('b');
+            b.textContent = 'Last ' + fetchFails + ' refresh' +
+              (fetchFails === 1 ? '' : 'es') + ' failed';
+            statusEl.appendChild(b);
+            statusEl.appendChild(document.createTextNode(
+              'events.json is unreachable (' + e.message + '). Showing the last ' +
+              'snapshot that loaded. Reload once the host is back.'));
+          } else {
+            embedded('Could not fetch events.json (' + e.message + ').');
+          }
+        });
+    } else {
+      embedded('');
+    }
+  }
+
+  function embedded(prefix){
+    var el = document.getElementById('events-embedded');
+    var txt = el ? el.textContent.trim() : '';
+    if (txt && txt.charAt(0) === '{') {
+      try {
+        var p = JSON.parse(txt);
+        ingest(p);
+        if (prefix) statusEl.textContent = prefix + ' ' + statusEl.textContent;
+        return;
+      } catch (e) { /* fall through */ }
+    }
+    EVENTS = [];
+    renderList();
+    statusEl.textContent = (prefix ? prefix + ' ' : '') +
+      'No event data. Run ingest.py, then either serve this folder over HTTP ' +
+      'or run build_map.py to embed the events.';
+  }
+
+  loadEvents();
+  if (location.protocol.indexOf('http') === 0) setInterval(loadEvents, 5 * 60 * 1000);
+
+  /* ---------------- in-view counter ---------------- */
+  var iv = document.getElementById('inview');
+  function tallyView(){
+    var b = map.getBounds(), s = b.getSouth(), n = b.getNorth(), e = b.getEast(), w = b.getWest(), c = 0;
+    for (var i = 0; i < N; i++) {
+      if (!on[typ[i]]) continue;
+      if (lat[i] >= s && lat[i] <= n && lng[i] >= w && lng[i] <= e) c++;
+    }
+    iv.hidden = false;
+    iv.querySelector('b').textContent = fmt(c);
+    iv.querySelector('span').textContent = c === N ? 'the whole network' : 'stations in view';
+  }
+  map.on('moveend zoomend', tallyView);
+
+  /* ---------------- search ---------------- */
+  var q = document.getElementById('q'), hits = document.getElementById('hits');
+  function closeHits(){ hits.classList.remove('on'); hits.innerHTML = ''; q.setAttribute('aria-expanded', 'false'); }
+  q.addEventListener('input', function(){
+    var v = q.value.trim().toLowerCase();
+    if (v.length < 2) { closeHits(); return; }
+    var out = [];
+    for (var i = 0; i < N && out.length < 9; i++) if (lower[i].indexOf(v) > -1) out.push(i);
+    hits.innerHTML = '';
+    if (!out.length) {
+      hits.innerHTML = '<li class="nohit">No station matches that name.</li>';
+    } else {
+      out.forEach(function(i){
+        var li = document.createElement('li'), b = document.createElement('button');
+        b.type = 'button'; b.setAttribute('role', 'option');
+        b.appendChild(document.createTextNode(nameOf[i]));
+        var em = document.createElement('em');
+        em.textContent = TYPE[typ[i]].name + ' in ' + ISL[reg[i]];
+        b.appendChild(em);
+        b.addEventListener('click', function(){
+          on[typ[i]] = true;
+          ul.querySelectorAll('input')[typ[i]].checked = true;
+          setMode('points');
+          map.flyTo([lat[i], lng[i]], 14, {duration:.9});
+          map.once('moveend', function(){ layer.redraw(); openStation(i); });
+          closeHits(); q.blur();
+        });
+        li.appendChild(b); hits.appendChild(li);
+      });
+    }
+    hits.classList.add('on'); q.setAttribute('aria-expanded', 'true');
+  });
+  q.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') { closeHits(); q.value = ''; }
+    if (e.key === 'ArrowDown') { var f = hits.querySelector('button'); if (f) { e.preventDefault(); f.focus(); } }
+  });
+  hits.addEventListener('keydown', function(e){
+    var bs = Array.prototype.slice.call(hits.querySelectorAll('button')), k = bs.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown' && k < bs.length - 1) { e.preventDefault(); bs[k + 1].focus(); }
+    if (e.key === 'ArrowUp')   { e.preventDefault(); (k > 0 ? bs[k - 1] : q).focus(); }
+    if (e.key === 'Escape')    { closeHits(); q.focus(); }
+  });
+  document.addEventListener('click', function(e){
+    if (!e.target.closest || !e.target.closest('.searchwrap')) closeHits();
+  });
+
+  /* ---------------- go ---------------- */
+  var all = [];
+  for (var i3 = 0; i3 < N; i3++) all.push([lat[i3], lng[i3]]);
+  map.fitBounds(L.latLngBounds(all).pad(0.02), {animate:false});
+  tallyView();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+# Indonesian airports with scheduled service, used for the air-linehaul
+# impact model. Source: OurAirports (ourairports.com), public domain, filtered
+# to iso_country=ID, scheduled_service=yes, type in (large_airport,
+# medium_airport). CGK cross-checked against Wikipedia: -6.12556, 106.65583.
+#
+# tier: 'hub' = OurAirports large_airport, used as the via-hub for routing.
+#       This is a PROXY for cargo importance, not your actual network. If SPX
+#       treats a different set as air hubs, edit the tier column -- the model
+#       reads it, it does not infer it.
+iata,icao,name,latitude,longitude,city,province,tier
+AMQ,WAPP,Pattimura,-3.71026,128.089,Ambon,Maluku,hub
+BDJ,WAOO,Syamsudin Noor,-3.44011,114.76121,Banjarbaru,Kalimantan Selatan,hub
+BPN,WALL,Sultan Aji Muhammad Sulaiman Sepinggan,-1.26834,116.89452,Balikpapan,Kalimantan Timur,hub
+BTH,WIDD,Hang Nadim,1.12103,104.119,Batam,Kep. Riau,hub
+BTJ,WITT,Sultan Iskandar Muda,5.52509,95.41997,Banda Aceh,Aceh,hub
+CGK,WIII,Soekarno-Hatta,-6.12557,106.656,Jakarta,Banten,hub
+DJJ,WAJJ,Dortheys Hiyo Eluay,-2.57963,140.51986,Sentani,Papua,hub
+DPS,WADD,Denpasar I Gusti Ngurah Rai,-8.74841,115.16712,"Kuta, Badung",Bali,hub
+HLP,WIHH,Halim Perdanakusuma,-6.26699,106.89032,Jakarta,DKI Jakarta,hub
+KNO,WIMM,Kualanamu,3.63785,98.87057,Beringin,Sumatera Utara,hub
+LOP,WADL,Lombok,-8.75996,116.27817,"Mataram (Pujut, Lombok Tengah)",Nusa Tenggara Barat,hub
+MDC,WAMM,Sam Ratulangi,1.54859,124.92625,Manado,Sulawesi Utara,hub
+PDG,WIEE,Minangkabau,-0.78596,100.28038,Padang (Katapiang),Sumatera Barat,hub
+PNK,WIOO,Supadio,-0.15226,109.40449,Pontianak,Kalimantan Barat,hub
+SOC,WAHQ,Adisoemarmo,-7.51604,110.75749,Surakarta,Jawa Tengah,hub
+SRG,WAHS,Jenderal Ahmad Yani,-6.97073,110.37324,Semarang,Jawa Tengah,hub
+SUB,WARR,Juanda,-7.37983,112.787,Surabaya,Jawa Timur,hub
+UPG,WAAA,Sultan Hasanuddin,-5.07554,119.5537,Makassar,Sulawesi Selatan,hub
+YIA,WAHI,Yogyakarta,-7.90534,110.05726,Yogyakarta,DI Yogyakarta,hub
+AAP,WALS,Aji Pangeran Tumenggung Pranoto,-0.37448,117.25013,Samarinda,Kalimantan Timur,regional
+BDO,WICC,Husein Sastranegara,-6.90063,107.576,Bandung,Jawa Barat,regional
+BEJ,WAQT,Kalimarau,2.14776,117.43071,Tanjung Redeb - Borneo Island,Kalimantan Timur,regional
+BIK,WABB,Frans Kaisiepo,-1.19002,136.108,Biak,Papua,regional
+BKS,WIGG,Fatmawati Soekarno,-3.8637,102.339,Bengkulu,Bengkulu,regional
+BMU,WADB,Sultan Muhammad Salahuddin,-8.53718,118.685,Bima,Nusa Tenggara Barat,regional
+CXP,WAHL,Tunggul Wulung,-7.64506,109.034,Cilacap,Jawa Tengah,regional
+DHX,WARD,Dhoho,-7.74953,111.94683,Kediri,Jawa Timur,regional
+DUM,WIBD,Pinang Kampai,1.60903,101.43349,Dumai,Riau,regional
+FKQ,WASF,Fakfak,-2.92051,132.26701,Fakfak,Papua Barat,regional
+FLZ,WIMS,Dr. Ferdinand Lumban Tobing,1.55713,98.88715,Sibolga (Pinangsori),Sumatera Utara,regional
+GNS,WIMB,Binaka,1.16627,97.7052,Gunungsitoli,Sumatera Utara,regional
+JOG,WAHH,Adisutjipto,-7.78818,110.432,Yogyakarta,DI Yogyakarta,regional
+KJT,WICA,Kertajati,-6.64738,108.16556,Kertajati,Jawa Barat,regional
+KNG,WASK,Utarom,-3.6446,133.69512,Kaimana,Papua Barat,regional
+KOE,WATT,El Tari,-10.1716,123.671,Kupang,Nusa Tenggara Timur,regional
+KTG,WIOK,Rahadi Osman,-1.81716,109.96347,Ketapang,Kalimantan Barat,regional
+KXB,WAWP,Sangia Nibandera,-4.33816,121.52405,Kolaka,Sulawesi Tenggara,regional
+LSR,WIMU,Alas Leuser,3.39146,97.86373,Kutacane,Aceh,regional
+LUV,WAPF,Karel Sadsuitubun,-5.76028,132.75944,Langgur,Maluku,regional
+MEQ,WITC,Cut Nyak Dhien,4.041,96.25331,Kuala Pesisir,Aceh,regional
+MKQ,WAKK,Mopah,-8.5239,140.41969,Merauke,Papua Selatan,regional
+MKW,WAUU,Rendani,-0.89183,134.049,Manokwari,Papua Barat,regional
+MLG,WARA,Abdul Rachman Saleh,-7.9291,112.71423,Malang,Jawa Timur,regional
+NAH,WAMH,Naha,3.68478,125.52716,"Tabukan Utara, Sangihe Islands",Sulawesi Utara,regional
+NAM,WAPN,Namniwel,-3.14316,126.97647,Namniwel,Maluku,regional
+NPO,WIOG,Nanga Pinoh,-0.34864,111.74616,Nanga Pinoh-Borneo Island,Kalimantan Barat,regional
+NTX,WIDO,Ranai,3.90871,108.388,Ranai-Natuna Besar Island,Kep. Riau,regional
+OKL,WAJO,Oksibil,-4.9071,140.6277,Oksibil,ID-PP,regional
+PDO,WIPQ,Pendopo,-3.28607,103.88,Talang Gudang-Sumatra Island,Sumatera Selatan,regional
+PGK,WIKK,Depati Amir,-2.1622,106.139,Pangkal Pinang,Kep. Bangka Belitung,regional
+PKU,WIBB,Sultan Syarif Kasim II / Roesmin Nurjadin AFB,0.45865,101.44432,Pekanbaru,Riau,regional
+PKY,WAGG,Tjilik Riwut,-2.22715,113.94339,Palangkaraya,Kalimantan Tengah,regional
+PLM,WIPP,Sultan Mahmud Badaruddin II,-2.89765,104.69815,Palembang,Sumatera Selatan,regional
+PLW,WAFF,Mutiara - SIS Al-Jufrie,-0.91646,119.90865,Palu,Sulawesi Tengah,regional
+PSU,WIOP,Pangsuma,0.83458,112.94022,Putussibau-Borneo Island,Kalimantan Barat,regional
+SOQ,WASS,Domine Eduard Osok,-0.894,131.287,Sorong,Papua Barat,regional
+SQG,WIOS,Tebelian,-0.04521,111.45805,Sintang,Kalimantan Barat,regional
+TIM,WAYY,Mozes Kilangin,-4.52978,136.88739,Timika,Papua Tengah,regional
+TJG,WAON,Warukin,-2.21656,115.436,Tanta-Tabalong,Kalimantan Selatan,regional
+TKG,WILL,Radin Inten II,-5.2468,105.18253,Bandar Lampung,Lampung,regional
+TMH,WAKT,Tanah Merah,-6.09669,140.30352,Tanah Merah,Papua Selatan,regional
+TNJ,WIDN,Raja Haji Fisabilillah,0.92397,104.53341,Tanjung Pinang-Bintan Island,Kep. Riau,regional
+TRK,WAQQ,Juwata / Suharnoko Harbani AFB,3.32515,117.56417,Tarakan,Kalimantan Utara,regional
+TRT,WAFB,Toraja,-3.18436,119.9191,Toraja,Sulawesi Selatan,regional
+TTE,WAEE,Sultan Babullah,0.83101,127.38161,Ternate,Maluku Utara,regional
+TXE,WITK,Rembele,4.72113,96.85194,Takengon,Aceh,regional
+UGU,ID-ZGP,Bilorai,-3.7395,137.03118,Bilogai,Papua Tengah,regional
+WMX,WAVV,Wamena,-4.09732,138.95242,Wamena,ID-PP,regional
+WNI,WAWD,Matahora,-5.29212,123.63623,Wangi-wangi Island,Sulawesi Tenggara,regional

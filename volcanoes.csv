@@ -1,0 +1,45 @@
+# Volcano gazetteer — maps PVMBG/MAGMA volcano names to coordinates.
+#
+# MAGMA publishes alert levels as HTML with no coordinates, so we need this to
+# place a Level III/IV volcano on the map. GDACS VO events DO carry coordinates,
+# so for any volcano that GDACS is also tracking this file is only a fallback.
+#
+# INCOMPLETE ON PURPOSE. Indonesia has 127 active volcanoes; this covers the
+# ones most often above Level II. Any name ingest.py cannot resolve is logged
+# as "volcano not in gazetteer" — add it here when you see one. Verify
+# coordinates against the Smithsonian Global Volcanism Program
+# (volcano.si.edu) or MAGMA's own data-dasar page before adding.
+#
+# aliases: pipe-separated, lowercased on load. MAGMA is inconsistent about the
+# "G." prefix and about hyphens, so include the variants you have seen.
+name,latitude,longitude,province,aliases
+Anak Krakatau,-6.102,105.423,Lampung,krakatau|gunung anak krakatau|g. anak krakatau|anak krakatoa
+Merapi,-7.540,110.446,DI Yogyakarta / Jawa Tengah,g. merapi|gunung merapi
+Semeru,-8.108,112.922,Jawa Timur,g. semeru|gunung semeru
+Bromo,-7.942,112.950,Jawa Timur,g. bromo|tengger caldera
+Kelud,-7.930,112.308,Jawa Timur,kelut|g. kelud
+Raung,-8.125,114.042,Jawa Timur,g. raung
+Ijen,-8.058,114.242,Jawa Timur,kawah ijen|g. ijen
+Slamet,-7.242,109.208,Jawa Tengah,g. slamet
+Sinabung,3.170,98.392,Sumatera Utara,g. sinabung|gunung sinabung
+Marapi,-0.381,100.473,Sumatera Barat,g. marapi|merapi sumbar
+Kerinci,-1.697,101.264,Jambi / Sumatera Barat,g. kerinci
+Dempo,-4.030,103.130,Sumatera Selatan,g. dempo
+Agung,-8.343,115.508,Bali,g. agung|gunung agung
+Batur,-8.242,115.375,Bali,g. batur
+Rinjani,-8.420,116.470,Nusa Tenggara Barat,g. rinjani|barujari
+Tambora,-8.250,117.990,Nusa Tenggara Barat,g. tambora
+Sangeang Api,-8.200,119.070,Nusa Tenggara Barat,sangeang|g. sangeang api
+Lewotobi Laki-laki,-8.542,122.775,Nusa Tenggara Timur,lewotobi|lewotobi laki laki|g. lewotobi laki-laki
+Ile Lewotolok,-8.272,123.505,Nusa Tenggara Timur,lewotolok|ili lewotolok|g. ile lewotolok
+Egon,-8.676,122.455,Nusa Tenggara Timur,g. egon
+Iya,-8.897,121.645,Nusa Tenggara Timur,g. iya
+Soputan,1.112,124.737,Sulawesi Utara,g. soputan
+Lokon-Empung,1.358,124.792,Sulawesi Utara,lokon|empung|g. lokon-empung
+Karangetang,2.781,125.407,Sulawesi Utara,g. karangetang|api siau
+Ruang,2.300,125.370,Sulawesi Utara,g. ruang
+Awu,3.689,125.447,Sulawesi Utara,g. awu
+Dukono,1.693,127.894,Maluku Utara,g. dukono
+Ibu,1.488,127.630,Maluku Utara,g. ibu
+Gamalama,1.380,127.330,Maluku Utara,g. gamalama
+Banda Api,-4.525,129.871,Maluku,g. banda api

@@ -1,0 +1,1 @@
+{"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"Class": "Poly_Affected", "polygonlabel": "Affected area"}, "geometry": {"type": "Polygon", "coordinates": [[[106.72, -6.02], [107.1, -6.02], [107.1, -6.32], [106.72, -6.32], [106.72, -6.02]]]}}]}

@@ -1,0 +1,5 @@
+<html><body>
+<h3>Level IV (Awas)</h3><ul><li><a>Lewotobi Laki-laki</a></li></ul>
+<h3>Level III (Siaga)</h3><ul><li><a>Anak Krakatau</a></li><li><a>Merapi</a></li><li><a>Semeru</a></li></ul>
+<h3>Level II (Waspada)</h3><ul><li><a>Bromo</a></li></ul>
+</body></html>

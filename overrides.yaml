@@ -1,0 +1,77 @@
+# ---------------------------------------------------------------------------
+# Manual events.
+#
+# Two jobs:
+#   1. Promote a news lead into a real event, once a human has confirmed it and
+#      found coordinates. The automated pipeline deliberately will not guess
+#      coordinates from a headline.
+#   2. Record things no feed publishes: an airport closure, a road cut, a
+#      strike, a port backlog.
+#
+# Everything here flows through the same impact model as the automated feeds,
+# so an override is a first-class event, not an annotation.
+#
+# ingest.py reads this every run. Delete or comment out an entry when it is
+# over; entries also expire on their own via `until`.
+# ---------------------------------------------------------------------------
+
+events:
+
+  # ---- worked example: the airport closures from the Anak Krakatau eruption
+  # on 6 Sep 2026. Left in as a template. Delete once it is no longer true.
+  - id: manual:krakatau-airport-closure-2026-09-06
+    hazard: airport_closure
+    name: Ash closures — Soekarno-Hatta, Halim, Radin Inten II, Husein Sastranegara
+    # For airport_closure the airports list IS the geometry. lat/lng are
+    # optional and only used to place the map pin; omit and the first airport
+    # is used.
+    airports: [CGK, HLP, TKG, BDO, PCB, KJT]
+    severity: 6 airports closed for volcanic ash
+    alert: red
+    started: 2026-09-06T05:00:00+07:00
+    until: 2026-09-08T00:00:00+07:00
+    source: Kementerian Perhubungan
+    source_url: https://www.gdacs.org
+    notes:
+      - Closures were extended in four-hour increments; confirm current status
+        with the airport authority before applying an SLA change.
+      - PCB (Pondok Cabe) and Budiarto Curug were also closed. Budiarto has no
+        IATA code in the gazetteer, so it is not modelled.
+
+  # ---- template: a confirmed flood, promoted from a news lead
+  # - id: manual:flood-bekasi-2026-09-07
+  #   hazard: flood
+  #   name: Flood — Bekasi, akses jalan terputus
+  #   lat: -6.2383
+  #   lng: 106.9756
+  #   severity: Road access cut, depth not reported
+  #   alert: orange
+  #   started: 2026-09-07T04:00:00+07:00
+  #   until: 2026-09-10T00:00:00+07:00
+  #   source: Ops report / BPBD Kota Bekasi
+  #   bands:                      # optional; omit to use config.yaml defaults
+  #     - {to_km: 10, label: "Access cut", sla_days: 3}
+  #     - {to_km: 25, label: "Detour required", sla_days: 1}
+
+  # ---- template: unrest or a blockade, with a tight radius
+  # - id: manual:demo-tol-cikampek-2026-09-07
+  #   hazard: unrest
+  #   name: Demonstration blocking Cikampek toll access
+  #   lat: -6.4194
+  #   lng: 107.4531
+  #   severity: Toll gate closed both directions
+  #   alert: orange
+  #   started: 2026-09-07T08:00:00+07:00
+  #   until: 2026-09-07T20:00:00+07:00
+  #   source: Ops report
+
+  # ---- template: wind-driven hazard with observed dispersal corridors,
+  #      in degrees clockwise from north, as seen from lat/lng
+  # - id: manual:ashfall-corridors-2026-09-07
+  #   hazard: volcano
+  #   name: Anak Krakatau — observed ash corridors
+  #   lat: -6.102
+  #   lng: 105.423
+  #   corridors: [[295, 60], [80, 135]]
+  #   severity: Level III (Siaga), plume west-southwest and east
+  #   source: BMKG / VAAC Darwin
