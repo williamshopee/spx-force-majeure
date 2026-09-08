@@ -20,10 +20,11 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    .block-container { padding-top: 0.5rem; padding-bottom: 0; }
+    .block-container { padding: 0 !important; max-width: 100% !important; }
+    [data-testid="stAppViewContainer"] { gap: 0 !important; }
     footer, header { visibility: hidden; }
     #MainMenu { visibility: hidden; }
-    iframe { width: 100%; min-height: 90vh; border: none; }
+    iframe { width: 100%; min-height: 97vh; border: none; display: block; }
     [data-testid="stSidebar"] { background: #0f1b2a; }
     /* main app background — without this, the area around the sidebar and
        iframe stays Streamlit's default light background */
@@ -346,6 +347,6 @@ with st.spinner("Loading map..."):
     html = cached_map(ts)
 
 if html:
-    st.components.v1.html(html, height=920, scrolling=False)
+    st.components.v1.html(html, height=1080, scrolling=False)
 else:
     st.error("Map could not be built. Verify map_template.html and latlong.csv exist.")
