@@ -15,7 +15,7 @@ st.set_page_config(
     page_title="SPX Force Majeure Watch",
     page_icon="https://vectorseek.com/wp-content/uploads/2023/11/SPX-Express-Indonesia-white-Logo-Vector.svg-.png",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",,
 )
 
 st.markdown("""
