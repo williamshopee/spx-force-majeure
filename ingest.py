@@ -815,7 +815,7 @@ def fetch_magma(http: Http, cfg: dict) -> list[dict]:
         if m:
             level = f"Level {m.group(1).upper()} ({m.group(2).title()})"
             continue
-        if not level or level.startswith("Level I ") or level.startswith("Level II "):
+        if not level or level.startswith("Level I "):
             continue
         # candidate volcano name: short, title-ish, no digits
         if 3 <= len(line) <= 40 and not re.search(r"\d", line) and line[0].isupper():
