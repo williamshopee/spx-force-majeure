@@ -20,43 +20,77 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    .block-container { padding-top: 0.5rem; padding-bottom: 0; }
-    footer, header { visibility: hidden; }
+    /* remove all padding and gaps */
+    .block-container { padding: 0 !important; margin: 0 !important; max-width: 100% !important; }
+    footer, header { visibility: hidden; height: 0; }
     #MainMenu { visibility: hidden; }
-    iframe { width: 100%; min-height: 90vh; border: none; }
-    [data-testid="stSidebar"] { background: #0f1b2a; }
-    [data-testid="stSidebar"] .stMarkdown p,
-    [data-testid="stSidebar"] .stMarkdown li,
-    [data-testid="stSidebar"] .stCaption { color: #b0c4d8; }
-    [data-testid="stSidebar"] h3 { color: #e8f0f8 !important; font-size: 17px; }
-    .ev-item { padding: 6px 0; border-bottom: 1px solid #1c3045; }
-    .ev-name { font-weight: 600; font-size: 13.5px; color: #dce8f2; }
-    .ev-meta { color: #7b96ac; font-size: 12px; }
-    .ev-count { float: right; font-family: monospace; color: #9bb; font-size: 13px; }
-    .ev-unverified .ev-name { color: #8a8a8a; }
+    .stAppDeployButton { display: none; }
+    /* kill the gap between sidebar and content */
+    section[data-testid="stSidebar"] + div { padding: 0 !important; }
+    .stMainBlockContainer { padding: 0 !important; }
+    iframe { width: 100%; min-height: 92vh; border: none; display: block; }
+
+    /* sidebar dark theme */
+    [data-testid="stSidebar"] { background: #0b1520; border-right: 1px solid #1a2a3a; }
+    [data-testid="stSidebar"] [data-testid="stSidebarContent"] { padding-top: 1rem; }
+
+    /* ALL sidebar text white/light */
+    [data-testid="stSidebar"] h3 { color: #f0f4f8 !important; font-size: 17px !important; }
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] span,
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] .stMarkdown,
+    [data-testid="stSidebar"] .stCaption p,
+    [data-testid="stSidebar"] [data-testid="stCaptionContainer"] p { color: #c0d0e0 !important; }
+
+    /* caption / status line */
+    [data-testid="stSidebar"] [data-testid="stCaptionContainer"] p { 
+        color: #90a8c0 !important; font-size: 13px !important; 
+    }
+
+    /* checkbox labels */
+    [data-testid="stSidebar"] .stCheckbox label p { color: #d8e4f0 !important; font-size: 13.5px !important; }
+    [data-testid="stSidebar"] .stCheckbox { margin-bottom: -8px; }
+
+    /* expander text */
+    [data-testid="stSidebar"] .stExpander summary span { color: #90a8c0 !important; }
+    [data-testid="stSidebar"] .stExpander div p { color: #90a8c0 !important; }
+
+    /* filter header */
+    .filter-head { color: #7090a8 !important; font-size: 11px; text-transform: uppercase;
+                   letter-spacing: 0.06em; margin: 6px 0 6px; }
+
+    /* event list items */
+    .ev-item { padding: 7px 0; border-bottom: 1px solid #182838; }
+    .ev-name { font-weight: 600; font-size: 13.5px; color: #e0eaf4; }
+    .ev-meta { color: #7892a8; font-size: 12px; }
+    .ev-count { float: right; font-family: monospace; color: #88aabb; font-size: 13px; }
+    .ev-unverified .ev-name { color: #707070; }
+    .ev-empty { color: #506878; font-size: 13px; padding: 10px 0; }
+
+    /* feed status dots */
     .feed-ok { color: #4caf80; }
     .feed-fail { color: #e05555; }
-    .feed-off { color: #666; }
-    .ev-empty { color: #667; font-size: 13px; padding: 10px 0; }
-    .filter-head { color: #7b96ac; font-size: 11.5px; text-transform: uppercase;
-                   letter-spacing: 0.04em; margin: 10px 0 4px; }
+    .feed-off { color: #505050; }
+
+    /* download button */
+    [data-testid="stSidebar"] .stDownloadButton button {
+        background: #152535 !important; border: 1px solid #2a4055 !important;
+        color: #c0d8e8 !important;
+    }
+    [data-testid="stSidebar"] .stDownloadButton button:hover {
+        background: #1a3045 !important; border-color: #3a5a75 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
 HERE = Path(__file__).resolve().parent
 
 HAZARD_COLORS = {
-    "earthquake": "#e05555",
-    "volcano": "#ff5b2b",
-    "flood": "#3d9bff",
-    "cyclone": "#8f6bff",
-    "wildfire": "#ff9a1f",
-    "weather": "#4ccfc4",
-    "airport_closure": "#5b8fd6",
-    "unrest": "#ff6fae",
-    "other": "#8fa6b8",
+    "earthquake": "#e05555", "volcano": "#ff5b2b", "flood": "#3d9bff",
+    "cyclone": "#8f6bff", "wildfire": "#ff9a1f", "weather": "#4ccfc4",
+    "airport_closure": "#5b8fd6", "unrest": "#ff6fae", "other": "#8fa6b8",
 }
-
 ALERT_COLORS = {"red": "#e05555", "orange": "#e08a30", "green": "#4caf80"}
 
 
@@ -64,8 +98,7 @@ def ensure_deps():
     try:
         import yaml  # noqa: F401
     except ImportError:
-        subprocess.check_call([sys.executable, "-m", "pip", "install",
-                               "pyyaml", "--quiet"])
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "pyyaml", "--quiet"])
 
 
 def run_ingest() -> dict:
@@ -76,20 +109,12 @@ def run_ingest() -> dict:
     try:
         result = subprocess.run(
             [sys.executable, str(script), "--config", str(HERE / "config.yaml")],
-            capture_output=True, text=True, timeout=180,
-        )
-        return {
-            "ok": result.returncode == 0,
-            "stdout": result.stdout,
-            "stderr": result.stderr,
-            "code": result.returncode,
-        }
+            capture_output=True, text=True, timeout=180)
+        return {"ok": result.returncode == 0, "stdout": result.stdout,
+                "stderr": result.stderr, "code": result.returncode}
     except subprocess.TimeoutExpired:
-        return {
-            "ok": False, "stdout": "",
-            "stderr": "Ingestion timed out (180s). MAGMA is likely unreachable.",
-            "code": -1,
-        }
+        return {"ok": False, "stdout": "",
+                "stderr": "Ingestion timed out (180s). MAGMA is likely unreachable.", "code": -1}
 
 
 def build_map_html() -> str:
@@ -103,8 +128,7 @@ def build_map_html() -> str:
          "--airports", str(HERE / "airports.csv"),
          "--events", str(HERE / "events.json"),
          "--embed", "--out", str(HERE / "map.html")],
-        capture_output=True, text=True, timeout=60,
-    )
+        capture_output=True, text=True, timeout=60)
     p = HERE / "map.html"
     return p.read_text(encoding="utf-8") if p.exists() else ""
 
@@ -139,10 +163,6 @@ def time_bucket():
 
 
 def classify_event(ev: dict) -> str:
-    """
-    Assign each event to a filter category. Volcanoes split by alert level,
-    everything else groups by hazard type.
-    """
     hazard = ev.get("hazard", "other")
     if hazard == "volcano":
         sev = (ev.get("severity") or ev.get("alert") or "").lower()
@@ -162,32 +182,25 @@ def classify_event(ev: dict) -> str:
 
 
 FILTER_CONFIG = [
-    ("gempa_bumi",       "Gempa Bumi",                        "earthquake",       "#e05555"),
-    ("volcano_iv",       "Gunung Api — Level IV (Awas)",       "volcano_iv",       "#ff2020"),
-    ("volcano_iii",      "Gunung Api — Level III (Siaga)",     "volcano_iii",      "#ff5b2b"),
-    ("volcano_ii",       "Gunung Api — Level II (Waspada)",    "volcano_ii",       "#ff9a1f"),
-    ("banjir",           "Banjir",                             "flood",            "#3d9bff"),
-    ("siklon",           "Siklon Tropis",                      "cyclone",          "#8f6bff"),
-    ("kebakaran",        "Kebakaran Hutan",                    "wildfire",         "#ff9a1f"),
-    ("airport",          "Airport Closure",                    "airport_closure",  "#5b8fd6"),
-    ("cuaca",            "Cuaca Ekstrem",                      "weather",          "#4ccfc4"),
-    ("kerusuhan",        "Kerusuhan / Unrest",                 "unrest",           "#ff6fae"),
-    ("lainnya",          "Lainnya",                            "other",            "#8fa6b8"),
+    ("gempa_bumi",  "Gempa Bumi",                      "earthquake",      "#e05555"),
+    ("volcano_iv",  "Gunung Api — Level IV (Awas)",     "volcano_iv",      "#ff2020"),
+    ("volcano_iii", "Gunung Api — Level III (Siaga)",   "volcano_iii",     "#ff5b2b"),
+    ("volcano_ii",  "Gunung Api — Level II (Waspada)",  "volcano_ii",      "#ff9a1f"),
+    ("banjir",      "Banjir",                           "flood",           "#3d9bff"),
+    ("siklon",      "Siklon Tropis",                    "cyclone",         "#8f6bff"),
+    ("kebakaran",   "Kebakaran Hutan",                  "wildfire",        "#ff9a1f"),
+    ("airport",     "Airport Closure",                  "airport_closure", "#5b8fd6"),
+    ("cuaca",       "Cuaca Ekstrem",                    "weather",         "#4ccfc4"),
+    ("kerusuhan",   "Kerusuhan / Unrest",               "unrest",          "#ff6fae"),
+    ("lainnya",     "Lainnya",                          "other",           "#8fa6b8"),
 ]
 
-# Map from classify_event output to filter key
-CATEGORY_TO_FILTER = {}
-for fkey, _, cat, _ in FILTER_CONFIG:
-    CATEGORY_TO_FILTER[cat] = fkey
-# earthquake is stored as "earthquake" by classify_event but filter key is "gempa_bumi"
-CATEGORY_TO_FILTER["earthquake"] = "gempa_bumi"
-CATEGORY_TO_FILTER["flood"] = "banjir"
-CATEGORY_TO_FILTER["cyclone"] = "siklon"
-CATEGORY_TO_FILTER["wildfire"] = "kebakaran"
-CATEGORY_TO_FILTER["airport_closure"] = "airport"
-CATEGORY_TO_FILTER["weather"] = "cuaca"
-CATEGORY_TO_FILTER["unrest"] = "kerusuhan"
-CATEGORY_TO_FILTER["other"] = "lainnya"
+CAT_TO_KEY = {
+    "earthquake": "gempa_bumi", "volcano_iv": "volcano_iv", "volcano_iii": "volcano_iii",
+    "volcano_ii": "volcano_ii", "flood": "banjir", "cyclone": "siklon",
+    "wildfire": "kebakaran", "airport_closure": "airport", "weather": "cuaca",
+    "unrest": "kerusuhan", "other": "lainnya",
+}
 
 
 # ---------------------------------------------------------------------------
@@ -208,8 +221,7 @@ with st.sidebar:
     if not report["ok"]:
         st.warning(f"Ingestion issue: {report['stderr'][:120]}")
         with st.expander("Details"):
-            st.code(report["stderr"] or report["stdout"] or "No output",
-                    language="text")
+            st.code(report["stderr"] or report["stdout"] or "No output", language="text")
 
     events = load_events()
     if events:
@@ -224,16 +236,13 @@ with st.sidebar:
         except (ValueError, AttributeError):
             age = "just now"
 
-        failed = [h for h in events.get("source_health", [])
-                  if h["state"] == "failed"]
-
+        failed = [h for h in events.get("source_health", []) if h["state"] == "failed"]
         status = f"{v} verified event{'s' if v != 1 else ''}"
         if n > v:
             status += f", {n - v} unverified"
         status += f" — updated {age}"
         if failed:
             status += f". {len(failed)} feed{'s' if len(failed) != 1 else ''} down."
-
         st.caption(status)
 
         with st.expander("Feed status"):
@@ -247,43 +256,31 @@ with st.sidebar:
                 detail = f" ({h['events']})" if h["state"] == "ok" else ""
                 if h.get("error"):
                     detail += f" — {h['error'][:60]}"
-                st.markdown(
-                    f"<span class='{cls}'>{icon}</span> {h['source']}{detail}",
-                    unsafe_allow_html=True)
+                st.markdown(f"<span class='{cls}'>{icon}</span> {h['source']}{detail}",
+                            unsafe_allow_html=True)
 
         st.markdown("---")
 
-        # --- classify all events ---
+        # classify events
         all_events = events.get("events", [])
         for ev in all_events:
             ev["_category"] = classify_event(ev)
-            ev["_filter_key"] = CATEGORY_TO_FILTER.get(ev["_category"], "lainnya")
+            ev["_filter_key"] = CAT_TO_KEY.get(ev["_category"], "lainnya")
 
-        # count per filter category
         counts = {}
         for ev in all_events:
-            k = ev["_filter_key"]
-            counts[k] = counts.get(k, 0) + 1
+            counts[ev["_filter_key"]] = counts.get(ev["_filter_key"], 0) + 1
 
-        # only show filters that have events
         active_filters = [f for f in FILTER_CONFIG if f[0] in counts]
 
         if active_filters:
-            st.markdown('<div class="filter-head">Filter by type</div>',
-                        unsafe_allow_html=True)
-
+            st.markdown('<p class="filter-head">Filter by type</p>', unsafe_allow_html=True)
             for fkey, label, cat, color in active_filters:
                 c = counts.get(fkey, 0)
-                default = True
-                st.checkbox(
-                    f"{label} ({c})",
-                    value=default,
-                    key=f"filter_{fkey}",
-                )
+                st.checkbox(f"{label} ({c})", value=True, key=f"filter_{fkey}")
 
-        # determine which filter keys are checked
         active_keys = set()
-        for fkey, label, cat, color in FILTER_CONFIG:
+        for fkey, _, _, _ in FILTER_CONFIG:
             if st.session_state.get(f"filter_{fkey}", True):
                 active_keys.add(fkey)
 
@@ -291,11 +288,9 @@ with st.sidebar:
 
         st.markdown("---")
 
-        # --- event list ---
         if not filtered:
-            st.markdown(
-                '<div class="ev-empty">No events match the selected filters.</div>',
-                unsafe_allow_html=True)
+            st.markdown('<div class="ev-empty">No events match the selected filters.</div>',
+                        unsafe_allow_html=True)
         else:
             for ev in filtered:
                 imp = ev.get("impact") or {}
@@ -303,17 +298,14 @@ with st.sidebar:
                 total = (imp.get("total", 0) + air.get("direct_count", 0)
                          + air.get("via_hub_count", 0))
 
-                hazard = ev.get("hazard", "other")
-                color = HAZARD_COLORS.get(hazard, "#666")
-                # use the filter color for volcanoes to distinguish levels
-                for fkey, _, cat, fcolor in FILTER_CONFIG:
-                    if fkey == ev["_filter_key"]:
-                        color = fcolor
+                color = HAZARD_COLORS.get(ev.get("hazard", "other"), "#666")
+                for fk, _, _, fc in FILTER_CONFIG:
+                    if fk == ev["_filter_key"]:
+                        color = fc
                         break
 
                 unv = ev.get("status") == "unverified"
                 cls = "ev-item ev-unverified" if unv else "ev-item"
-
                 name = ev.get("name", "Unknown")[:58]
                 meta_parts = [ev.get("severity", ""), ev.get("source", "")]
                 if unv:
@@ -326,21 +318,16 @@ with st.sidebar:
                     f'<span style="color:{color}">●</span> '
                     f'<span class="ev-name">{name}</span><br>'
                     f'<span class="ev-meta">{meta}</span>'
-                    f'</div>',
-                    unsafe_allow_html=True)
+                    f'</div>', unsafe_allow_html=True)
 
         st.markdown("---")
 
         csv_data = load_csv()
         if csv_data:
             stamp = datetime.now().strftime("%Y-%m-%d")
-            st.download_button(
-                "Download impacted facilities (.csv)",
-                data=csv_data,
-                file_name=f"spx-impacted-facilities-{stamp}.csv",
-                mime="text/csv",
-                use_container_width=True,
-            )
+            st.download_button("Download impacted facilities (.csv)", data=csv_data,
+                               file_name=f"spx-impacted-facilities-{stamp}.csv",
+                               mime="text/csv", use_container_width=True)
 
         with st.expander("Attribution"):
             for a in events.get("attribution", []):
@@ -352,13 +339,11 @@ with st.sidebar:
     st.caption("Select an event on the map to view the impact zone and export affected facilities.")
 
 # ---------------------------------------------------------------------------
-# map
+# map (full width, no gap)
 # ---------------------------------------------------------------------------
 
-with st.spinner("Loading map..."):
-    html = cached_map(ts)
-
+html = cached_map(ts)
 if html:
     st.components.v1.html(html, height=920, scrolling=False)
 else:
-    st.error("Map could not be built. Verify map_template.html and latlong.csv exist.")
+    st.error("Map could not be built.")
