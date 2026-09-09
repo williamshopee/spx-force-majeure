@@ -13,55 +13,22 @@ import streamlit as st
 
 st.set_page_config(
     page_title="SPX Force Majeure Watch",
-    page_icon="https://vectorseek.com/wp-content/uploads/2023/11/SPX-Express-Indonesia-white-Logo-Vector.svg-.png",
+    page_icon="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Shopee_logo.svg/120px-Shopee_logo.svg.png",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 st.markdown("""
 <style>
-    .block-container { padding: 0 !important; max-width: 100% !important; }
-    [data-testid="stAppViewContainer"] { gap: 0 !important; }
+    .block-container { padding-top: 0.5rem; padding-bottom: 0; }
     footer, header { visibility: hidden; }
     #MainMenu { visibility: hidden; }
-    iframe { width: 100%; min-height: 97vh; border: none; display: block; }
+    iframe { width: 100%; min-height: 90vh; border: none; }
     [data-testid="stSidebar"] { background: #0f1b2a; }
-    /* main app background — without this, the area around the sidebar and
-       iframe stays Streamlit's default light background */
-    [data-testid="stAppViewContainer"],
-    [data-testid="stAppViewContainer"] > .main,
-    .stApp {
-        background: #08131f;
-    }
     [data-testid="stSidebar"] .stMarkdown p,
     [data-testid="stSidebar"] .stMarkdown li,
     [data-testid="stSidebar"] .stCaption { color: #b0c4d8; }
     [data-testid="stSidebar"] h3 { color: #e8f0f8 !important; font-size: 17px; }
-
-    /* --- widget text visibility fix ---
-       Streamlit renders checkbox/expander/label text with its own default
-       (near-black) color, which does not inherit page CSS and is invisible
-       against this dark sidebar. Force it everywhere, broadly, since the
-       exact internal data-testid nesting varies by Streamlit version. */
-    [data-testid="stSidebar"] label,
-    [data-testid="stSidebar"] label *,
-    [data-testid="stSidebar"] [data-testid="stCheckbox"],
-    [data-testid="stSidebar"] [data-testid="stCheckbox"] *,
-    [data-testid="stSidebar"] [data-testid="stWidgetLabel"],
-    [data-testid="stSidebar"] [data-testid="stWidgetLabel"] *,
-    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"],
-    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] * {
-        color: #dce8f2 !important;
-    }
-    [data-testid="stSidebar"] [data-testid="stExpander"] summary,
-    [data-testid="stSidebar"] [data-testid="stExpander"] summary * {
-        color: #dce8f2 !important;
-        background: transparent;
-    }
-    [data-testid="stSidebar"] [data-testid="stExpander"] svg {
-        fill: #7b96ac;
-    }
-
     .ev-item { padding: 6px 0; border-bottom: 1px solid #1c3045; }
     .ev-name { font-weight: 600; font-size: 13.5px; color: #dce8f2; }
     .ev-meta { color: #7b96ac; font-size: 12px; }
@@ -70,25 +37,16 @@ st.markdown("""
     .feed-ok { color: #4caf80; }
     .feed-fail { color: #e05555; }
     .feed-off { color: #666; }
-    /* filter pills */
-    .hazard-filters { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0 12px; }
-    .hazard-pill {
-        display: inline-block; font-size: 12px; padding: 4px 10px;
-        border-radius: 3px; border: 1px solid #2a3f55; color: #8aa; cursor: default;
-    }
-    .hazard-pill.active { border-color: #5a8ab0; color: #e0ecf5; background: #1a3048; }
-    .hazard-pill .dot {
-        display: inline-block; width: 7px; height: 7px; border-radius: 50%;
-        margin-right: 5px; vertical-align: middle;
-    }
     .ev-empty { color: #667; font-size: 13px; padding: 10px 0; }
+    .filter-head { color: #7b96ac; font-size: 11.5px; text-transform: uppercase;
+                   letter-spacing: 0.04em; margin: 10px 0 4px; }
 </style>
 """, unsafe_allow_html=True)
 
 HERE = Path(__file__).resolve().parent
 
 HAZARD_COLORS = {
-    "earthquake": "#f4d35e",
+    "earthquake": "#e05555",
     "volcano": "#ff5b2b",
     "flood": "#3d9bff",
     "cyclone": "#8f6bff",
@@ -97,18 +55,6 @@ HAZARD_COLORS = {
     "airport_closure": "#5b8fd6",
     "unrest": "#ff6fae",
     "other": "#8fa6b8",
-}
-
-HAZARD_LABELS = {
-    "earthquake": "Earthquake",
-    "volcano": "Volcano",
-    "flood": "Flood",
-    "cyclone": "Cyclone",
-    "wildfire": "Wildfire",
-    "weather": "Weather",
-    "airport_closure": "Airport closure",
-    "unrest": "Unrest",
-    "other": "Other",
 }
 
 ALERT_COLORS = {"red": "#e05555", "orange": "#e08a30", "green": "#4caf80"}
@@ -140,10 +86,8 @@ def run_ingest() -> dict:
         }
     except subprocess.TimeoutExpired:
         return {
-            "ok": False,
-            "stdout": "",
-            "stderr": "Ingestion timed out (180s). MAGMA is likely unreachable. "
-                      "Other feeds may have written partial data.",
+            "ok": False, "stdout": "",
+            "stderr": "Ingestion timed out (180s). MAGMA is likely unreachable.",
             "code": -1,
         }
 
@@ -192,6 +136,58 @@ def cached_map(_ts: int) -> str:
 
 def time_bucket():
     return int(time.time()) // 600
+
+
+def classify_event(ev: dict) -> str:
+    """
+    Assign each event to a filter category. Volcanoes split by alert level,
+    everything else groups by hazard type.
+    """
+    hazard = ev.get("hazard", "other")
+    if hazard == "volcano":
+        sev = (ev.get("severity") or ev.get("alert") or "").lower()
+        if "awas" in sev or "level iv" in sev:
+            return "volcano_iv"
+        elif "siaga" in sev or "level iii" in sev:
+            return "volcano_iii"
+        elif "waspada" in sev or "level ii" in sev:
+            return "volcano_ii"
+        elif "red" in str(ev.get("alert", "")):
+            return "volcano_iv"
+        elif "orange" in str(ev.get("alert", "")):
+            return "volcano_iii"
+        else:
+            return "volcano_ii"
+    return hazard
+
+
+FILTER_CONFIG = [
+    ("gempa_bumi",       "Gempa Bumi",                        "earthquake",       "#e05555"),
+    ("volcano_iv",       "Gunung Api — Level IV (Awas)",       "volcano_iv",       "#ff2020"),
+    ("volcano_iii",      "Gunung Api — Level III (Siaga)",     "volcano_iii",      "#ff5b2b"),
+    ("volcano_ii",       "Gunung Api — Level II (Waspada)",    "volcano_ii",       "#ff9a1f"),
+    ("banjir",           "Banjir",                             "flood",            "#3d9bff"),
+    ("siklon",           "Siklon Tropis",                      "cyclone",          "#8f6bff"),
+    ("kebakaran",        "Kebakaran Hutan",                    "wildfire",         "#ff9a1f"),
+    ("airport",          "Airport Closure",                    "airport_closure",  "#5b8fd6"),
+    ("cuaca",            "Cuaca Ekstrem",                      "weather",          "#4ccfc4"),
+    ("kerusuhan",        "Kerusuhan / Unrest",                 "unrest",           "#ff6fae"),
+    ("lainnya",          "Lainnya",                            "other",            "#8fa6b8"),
+]
+
+# Map from classify_event output to filter key
+CATEGORY_TO_FILTER = {}
+for fkey, _, cat, _ in FILTER_CONFIG:
+    CATEGORY_TO_FILTER[cat] = fkey
+# earthquake is stored as "earthquake" by classify_event but filter key is "gempa_bumi"
+CATEGORY_TO_FILTER["earthquake"] = "gempa_bumi"
+CATEGORY_TO_FILTER["flood"] = "banjir"
+CATEGORY_TO_FILTER["cyclone"] = "siklon"
+CATEGORY_TO_FILTER["wildfire"] = "kebakaran"
+CATEGORY_TO_FILTER["airport_closure"] = "airport"
+CATEGORY_TO_FILTER["weather"] = "cuaca"
+CATEGORY_TO_FILTER["unrest"] = "kerusuhan"
+CATEGORY_TO_FILTER["other"] = "lainnya"
 
 
 # ---------------------------------------------------------------------------
@@ -257,33 +253,49 @@ with st.sidebar:
 
         st.markdown("---")
 
-        # --- hazard type filters ---
+        # --- classify all events ---
         all_events = events.get("events", [])
-        present = sorted(set(ev.get("hazard", "other") for ev in all_events))
+        for ev in all_events:
+            ev["_category"] = classify_event(ev)
+            ev["_filter_key"] = CATEGORY_TO_FILTER.get(ev["_category"], "lainnya")
 
-        if "hazard_filter" not in st.session_state:
-            st.session_state.hazard_filter = set(present)
+        # count per filter category
+        counts = {}
+        for ev in all_events:
+            k = ev["_filter_key"]
+            counts[k] = counts.get(k, 0) + 1
 
-        filter_cols = st.columns(min(len(present), 4))
-        for i, h in enumerate(present):
-            col = filter_cols[i % len(filter_cols)]
-            label = HAZARD_LABELS.get(h, h.title())
-            count = sum(1 for ev in all_events if ev.get("hazard") == h)
-            active = h in st.session_state.hazard_filter
-            if col.checkbox(f"{label} ({count})", value=active, key=f"f_{h}"):
-                st.session_state.hazard_filter.add(h)
-            else:
-                st.session_state.hazard_filter.discard(h)
+        # only show filters that have events
+        active_filters = [f for f in FILTER_CONFIG if f[0] in counts]
 
-        filtered = [ev for ev in all_events
-                    if ev.get("hazard", "other") in st.session_state.hazard_filter]
+        if active_filters:
+            st.markdown('<div class="filter-head">Filter by type</div>',
+                        unsafe_allow_html=True)
+
+            for fkey, label, cat, color in active_filters:
+                c = counts.get(fkey, 0)
+                default = True
+                st.checkbox(
+                    f"{label} ({c})",
+                    value=default,
+                    key=f"filter_{fkey}",
+                )
+
+        # determine which filter keys are checked
+        active_keys = set()
+        for fkey, label, cat, color in FILTER_CONFIG:
+            if st.session_state.get(f"filter_{fkey}", True):
+                active_keys.add(fkey)
+
+        filtered = [ev for ev in all_events if ev["_filter_key"] in active_keys]
 
         st.markdown("---")
 
         # --- event list ---
         if not filtered:
-            st.markdown('<div class="ev-empty">No events match the selected types.</div>',
-                        unsafe_allow_html=True)
+            st.markdown(
+                '<div class="ev-empty">No events match the selected filters.</div>',
+                unsafe_allow_html=True)
         else:
             for ev in filtered:
                 imp = ev.get("impact") or {}
@@ -293,17 +305,17 @@ with st.sidebar:
 
                 hazard = ev.get("hazard", "other")
                 color = HAZARD_COLORS.get(hazard, "#666")
-                alert = ev.get("alert", "")
-                alert_color = ALERT_COLORS.get(alert, color)
+                # use the filter color for volcanoes to distinguish levels
+                for fkey, _, cat, fcolor in FILTER_CONFIG:
+                    if fkey == ev["_filter_key"]:
+                        color = fcolor
+                        break
+
                 unv = ev.get("status") == "unverified"
                 cls = "ev-item ev-unverified" if unv else "ev-item"
 
                 name = ev.get("name", "Unknown")[:58]
-                meta_parts = [
-                    HAZARD_LABELS.get(hazard, hazard),
-                    ev.get("severity", ""),
-                    ev.get("source", ""),
-                ]
+                meta_parts = [ev.get("severity", ""), ev.get("source", "")]
                 if unv:
                     meta_parts.append("unverified")
                 meta = " · ".join(p for p in meta_parts if p)
@@ -347,6 +359,6 @@ with st.spinner("Loading map..."):
     html = cached_map(ts)
 
 if html:
-    st.components.v1.html(html, height=1080, scrolling=False)
+    st.components.v1.html(html, height=920, scrolling=False)
 else:
     st.error("Map could not be built. Verify map_template.html and latlong.csv exist.")
