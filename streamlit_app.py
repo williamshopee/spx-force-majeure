@@ -28,7 +28,10 @@ st.markdown("""
     /* kill the gap between sidebar and content */
     section[data-testid="stSidebar"] + div { padding: 0 !important; }
     .stMainBlockContainer { padding: 0 !important; }
-    iframe { width: 100%; min-height: 92vh; border: none; display: block; }
+    iframe { width: 100%; min-height: 100vh; border: none; display: block; margin: -1rem 0; }
+    .stElementContainer, [data-testid="element-container"] { padding: 0 !important; margin: 0 !important; }
+    [data-testid="stVerticalBlock"] { gap: 0 !important; }
+    .stApp > header { display: none; }
 
     /* sidebar dark theme */
     [data-testid="stSidebar"] { background: #0b1520; border-right: 1px solid #1a2a3a; }
