@@ -237,6 +237,12 @@
   .evlist .c{font-family:var(--cond);font-size:14px;color:var(--muted)}
   .evlist .unv{opacity:.62}
   .evlist .unv .t em{color:#b98b7f}
+  .fmfilters{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 10px}
+  .fmfilters .ffl{font-size:10.5px;width:100%;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+  .fmfilters label{font-size:11.5px;color:var(--muted);display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border:1px solid var(--line);border-radius:3px;cursor:pointer}
+  .fmfilters label:hover{border-color:var(--dim);color:var(--text)}
+  .fmfilters input{accent-color:var(--focus);margin:0;width:12px;height:12px}
+  .fmfilters label.off{opacity:.4}
   .evempty{color:var(--muted);font-size:12.5px;padding:2px 0 10px}
 
   .evhead{margin:0 0 12px}
@@ -290,6 +296,7 @@
   #mapwrap{flex:1;position:relative;min-width:0}
   #map{position:absolute;inset:0;background:var(--sea)}
   .leaflet-container{background:var(--sea);font-family:var(--sans)}
+  .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.75) contrast(1.3) saturate(.3)}
   .leaflet-control-zoom a{
     background:#12283b;color:var(--text);border-color:var(--line)
   }
@@ -372,6 +379,7 @@
 
     <div class="block alert" id="fmBlock">
       <h2>Force majeure watch</h2>
+      <div class="fmfilters" id="fmFilters"></div>
       <p class="alert-st" id="fmStatus">Loading events&hellip;</p>
       <ul class="evlist" id="evlist"></ul>
 
@@ -651,13 +659,10 @@
   map.createPane('crater').style.zIndex = 640;   // above it, below popups
 
   var tiles = L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
-    {subdomains:'abcd', maxZoom:19, attribution:'&copy; OpenStreetMap contributors &copy; CARTO'}
+        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {maxZoom:19, attribution:'&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'}
   ).addTo(map);
-  var labels = L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png',
-    {subdomains:'abcd', maxZoom:19, opacity:.85, pane:'shadowPane'}
-  ).addTo(map);
+  var labels = null;
   tiles.once('load', function(){ boot.classList.add('gone'); });
   setTimeout(function(){ boot.classList.add('gone'); }, 2600);  // points stand alone if tiles stall
 
@@ -1178,13 +1183,56 @@
     return t;
   }
 
+  var HAZF = {};
+  function buildFilters(){
+    var el = document.getElementById('fmFilters');
+    var counts = {};
+    EVENTS.forEach(function(e){
+      var h = e.hazard || 'other';
+      if (h === 'volcano') {
+        var s = (e.severity || e.alert || '').toLowerCase();
+        if (s.indexOf('awas') > -1 || s.indexOf('level iv') > -1) h = 'volcano_iv';
+        else if (s.indexOf('siaga') > -1 || s.indexOf('level iii') > -1) h = 'volcano_iii';
+        else h = 'volcano_ii';
+      }
+      e._fk = h;
+      counts[h] = (counts[h] || 0) + 1;
+    });
+    var cats = [
+      ['earthquake','Gempa Bumi'],['volcano_iv','Level IV (Awas)'],
+      ['volcano_iii','Level III (Siaga)'],['volcano_ii','Level II (Waspada)'],
+      ['flood','Banjir'],['cyclone','Siklon'],['wildfire','Kebakaran'],
+      ['airport_closure','Airport Closure'],['weather','Cuaca'],
+      ['unrest','Unrest'],['other','Lainnya']
+    ];
+    el.innerHTML = '<span class="ffl">Filter</span>';
+    HAZF = {};
+    cats.forEach(function(c){
+      if (!counts[c[0]]) return;
+      HAZF[c[0]] = true;
+      var lb = document.createElement('label');
+      var cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.checked = true;
+      cb.addEventListener('change', function(){
+        HAZF[c[0]] = this.checked;
+        lb.className = this.checked ? '' : 'off';
+        renderList();
+      });
+      lb.appendChild(cb);
+      lb.appendChild(document.createTextNode(' ' + c[1] + ' (' + counts[c[0]] + ')'));
+      el.appendChild(lb);
+    });
+  }
+
   function renderList(){
     listEl.innerHTML = '';
-    if (!EVENTS.length) {
-      listEl.innerHTML = '<li class="evempty">No active events reach a facility.</li>';
+    var shown = EVENTS.filter(function(e){ return HAZF[e._fk] !== false; });
+    if (!shown.length) {
+      listEl.innerHTML = '<li class="evempty">No events match the selected filters.</li>';
       return;
     }
-    EVENTS.forEach(function(ev, ix){
+    shown.forEach(function(ev){
+      var ix = EVENTS.indexOf(ev);
       var li = document.createElement('li'), b = document.createElement('button');
       b.type = 'button';
       b.className = ev.status === 'unverified' ? 'unv' : '';
@@ -1413,6 +1461,7 @@
             + ' failed this run \u2014 see Feeds and attribution.' : '');
     }
     renderSources(payload);
+    buildFilters();
     renderList();
     if (EV) {                       // keep the selection across a refresh
       var same = EVENTS.filter(function(e){ return e.id === EV.id; })[0];
