@@ -1,0 +1,34 @@
+name: Refresh events
+
+on:
+  schedule:
+    # Runs every 30 minutes during work hours (UTC+7)
+    - cron: '*/30 1-12 * * *'   # 08:00-19:00 WIB
+  workflow_dispatch:              # manual trigger button
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Run ingest
+        run: python ingest.py --config config.yaml
+
+      - name: Commit updated data
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add events.json impacted_facilities.csv state.json
+          git diff --cached --quiet || git commit -m "auto refresh $(date -u +%Y-%m-%dT%H:%M)"
+          git push
