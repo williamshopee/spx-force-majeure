@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-27T06:16:35+00:00",
+ "generated_at": "2026-09-27T12:19:14+00:00",
  "facility_count": 8853,
  "event_count": 14,
  "verified_event_count": 14,
@@ -7,26 +7,26 @@
   {
    "source": "bmkg_quake",
    "state": "ok",
-   "events": 24,
-   "seconds": 0.39
+   "events": 23,
+   "seconds": 0.26
   },
   {
    "source": "gdacs",
    "state": "ok",
    "events": 0,
-   "seconds": 0.98
+   "seconds": 0.62
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 41,
-   "seconds": 2.62
+   "seconds": 2.05
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 110.09
+   "seconds": 102.26
   },
   {
    "source": "overrides",
@@ -94,7 +94,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 69.5,
+   "age_hours": 75.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -179,7 +179,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 69.5,
+   "age_hours": 75.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -258,7 +258,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 69.5,
+   "age_hours": 75.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -331,7 +331,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 69.5,
+   "age_hours": 75.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -410,7 +410,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 69.5,
+   "age_hours": 75.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -477,7 +477,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 69.5,
+   "age_hours": 75.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -550,7 +550,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 69.5,
+   "age_hours": 75.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -617,7 +617,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 69.5,
+   "age_hours": 75.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -684,7 +684,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 69.5,
+   "age_hours": 75.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -751,7 +751,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 69.5,
+   "age_hours": 75.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -818,7 +818,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 69.5,
+   "age_hours": 75.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -875,7 +875,7 @@
     }
    ],
    "first_seen": "2026-09-26T05:53:26.459696+00:00",
-   "age_hours": 34.6,
+   "age_hours": 40.7,
    "impact": {
     "model": "radial",
     "bands": [
@@ -921,8 +921,6 @@
    "source_url": "https://data.bmkg.go.id/gempabumi",
    "attribution": "Data gempabumi: BMKG",
    "notes": [
-    "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-    "Shakemap: https://static.bmkg.go.id/20260927023702.mmi.jpg",
     "BMKG felt intensity (MMI): III Kab. Manggarai Barat"
    ],
    "polygons": [],
@@ -934,7 +932,7 @@
     }
    ],
    "first_seen": "2026-09-27T06:16:35.757416+00:00",
-   "age_hours": 10.7,
+   "age_hours": 16.7,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1021,7 +1019,7 @@
     }
    ],
    "first_seen": "2026-09-25T15:54:25.195905+00:00",
-   "age_hours": 40.5,
+   "age_hours": 46.5,
    "impact": {
     "model": "radial",
     "bands": [
