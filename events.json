@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-26T14:54:42+00:00",
+ "generated_at": "2026-09-27T06:16:35+00:00",
  "facility_count": 8853,
  "event_count": 14,
  "verified_event_count": 14,
@@ -7,26 +7,26 @@
   {
    "source": "bmkg_quake",
    "state": "ok",
-   "events": 23,
-   "seconds": 0.75
+   "events": 24,
+   "seconds": 0.39
   },
   {
    "source": "gdacs",
    "state": "ok",
    "events": 0,
-   "seconds": 0.71
+   "seconds": 0.98
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 41,
-   "seconds": 1.89
+   "seconds": 2.62
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 83.39
+   "seconds": 110.09
   },
   {
    "source": "overrides",
@@ -94,7 +94,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 54.1,
+   "age_hours": 69.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -179,7 +179,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 54.1,
+   "age_hours": 69.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -258,7 +258,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 54.1,
+   "age_hours": 69.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -331,7 +331,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 54.1,
+   "age_hours": 69.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -410,7 +410,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 54.1,
+   "age_hours": 69.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -477,7 +477,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 54.1,
+   "age_hours": 69.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -550,7 +550,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 54.1,
+   "age_hours": 69.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -617,7 +617,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 54.1,
+   "age_hours": 69.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -645,82 +645,6 @@
      77
     ],
     "total": 100
-   }
-  },
-  {
-   "id": "bmkg:2026-09-24T03:30:28+00:00_-8.320_119.250",
-   "hazard": "earthquake",
-   "name": "M 4.6 earthquake — Pusat gempa berada di laut 57 km timur Kota Bima",
-   "lat": -8.32,
-   "lng": 119.25,
-   "severity": "M 4.6, depth 12 km",
-   "severity_value": 4.6,
-   "alert": "green",
-   "status": "stale",
-   "started": "2026-09-24T03:30:28+00:00",
-   "updated": "2026-09-24T03:30:28+00:00",
-   "source": "BMKG",
-   "source_url": "https://data.bmkg.go.id/gempabumi",
-   "attribution": "Data gempabumi: BMKG",
-   "notes": [
-    "BMKG felt intensity (MMI): II - III Kota Bima, II - III Kabupaten Bima"
-   ],
-   "polygons": [],
-   "observed": [
-    {
-     "place": "Kota Bima",
-     "mmi_text": "II - III",
-     "mmi_max": 3
-    },
-    {
-     "place": "Kabupaten Bima",
-     "mmi_text": "II - III",
-     "mmi_max": 3
-    }
-   ],
-   "air": {
-    "airports": [
-     {
-      "iata": "BMU",
-      "name": "Sultan Muhammad Salahuddin",
-      "km": 66.7,
-      "how": "inside the impact zone"
-     }
-    ],
-    "direct_count": 115,
-    "via_hub_count": 0,
-    "sla_days": 1,
-    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
-   },
-   "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 59.4,
-   "impact": {
-    "model": "radial",
-    "bands": [
-     {
-      "to_km": 15,
-      "label": "Strong shaking",
-      "sla_days": 3
-     },
-     {
-      "to_km": 40,
-      "label": "Moderate shaking",
-      "sla_days": 2
-     },
-     {
-      "to_km": 80,
-      "label": "Felt",
-      "sla_days": 1
-     }
-    ],
-    "corridors": [],
-    "exclusion_km": null,
-    "counts": [
-     0,
-     4,
-     27
-    ],
-    "total": 31
    }
   },
   {
@@ -760,7 +684,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 54.1,
+   "age_hours": 69.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -827,7 +751,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 54.1,
+   "age_hours": 69.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -894,7 +818,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 54.1,
+   "age_hours": 69.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -940,20 +864,18 @@
    "source_url": "https://data.bmkg.go.id/gempabumi",
    "attribution": "Data gempabumi: BMKG",
    "notes": [
-    "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-    "Shakemap: https://static.bmkg.go.id/20260926023929.mmi.jpg",
-    "BMKG felt intensity (MMI): II - III Kab. Manggarai"
+    "BMKG felt intensity (MMI): III-IV Kab. Manggarai"
    ],
    "polygons": [],
    "observed": [
     {
      "place": "Kab. Manggarai",
-     "mmi_text": "II - III",
-     "mmi_max": 3
+     "mmi_text": "III-IV",
+     "mmi_max": 4
     }
    ],
    "first_seen": "2026-09-26T05:53:26.459696+00:00",
-   "age_hours": 19.3,
+   "age_hours": 34.6,
    "impact": {
     "model": "radial",
     "bands": [
@@ -981,6 +903,65 @@
      18
     ],
     "total": 19
+   }
+  },
+  {
+   "id": "bmkg:2026-09-26T19:37:02+00:00_-8.100_120.280",
+   "hazard": "earthquake",
+   "name": "M 4.9 earthquake — Pusat gempa berada di laut 61 km utara Ruteng, Manggarai",
+   "lat": -8.1,
+   "lng": 120.28,
+   "severity": "M 4.9, depth 10 km",
+   "severity_value": 4.9,
+   "alert": "green",
+   "status": "active",
+   "started": "2026-09-26T19:37:02+00:00",
+   "updated": "2026-09-26T19:37:02+00:00",
+   "source": "BMKG",
+   "source_url": "https://data.bmkg.go.id/gempabumi",
+   "attribution": "Data gempabumi: BMKG",
+   "notes": [
+    "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+    "Shakemap: https://static.bmkg.go.id/20260927023702.mmi.jpg",
+    "BMKG felt intensity (MMI): III Kab. Manggarai Barat"
+   ],
+   "polygons": [],
+   "observed": [
+    {
+     "place": "Kab. Manggarai Barat",
+     "mmi_text": "III",
+     "mmi_max": 3
+    }
+   ],
+   "first_seen": "2026-09-27T06:16:35.757416+00:00",
+   "age_hours": 10.7,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 15,
+      "label": "Strong shaking",
+      "sla_days": 3
+     },
+     {
+      "to_km": 40,
+      "label": "Moderate shaking",
+      "sla_days": 2
+     },
+     {
+      "to_km": 80,
+      "label": "Felt",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": null,
+    "counts": [
+     0,
+     1,
+     13
+    ],
+    "total": 14
    }
   },
   {
@@ -1040,7 +1021,7 @@
     }
    ],
    "first_seen": "2026-09-25T15:54:25.195905+00:00",
-   "age_hours": 25.1,
+   "age_hours": 40.5,
    "impact": {
     "model": "radial",
     "bands": [
