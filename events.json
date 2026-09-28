@@ -1,32 +1,32 @@
 {
- "generated_at": "2026-09-27T17:10:02+00:00",
+ "generated_at": "2026-09-28T06:21:50+00:00",
  "facility_count": 8853,
- "event_count": 3,
- "verified_event_count": 3,
+ "event_count": 15,
+ "verified_event_count": 15,
  "source_health": [
   {
    "source": "bmkg_quake",
    "state": "ok",
    "events": 23,
-   "seconds": 0.73
+   "seconds": 1.11
   },
   {
    "source": "gdacs",
    "state": "ok",
    "events": 0,
-   "seconds": 0.88
+   "seconds": 0.95
   },
   {
    "source": "magma_volcano",
    "state": "ok",
-   "events": 0,
-   "seconds": 4.93
+   "events": 41,
+   "seconds": 1.96
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 92.05
+   "seconds": 122.92
   },
   {
    "source": "overrides",
@@ -35,9 +35,819 @@
   }
  ],
  "attribution": [
-  "Data gempabumi: BMKG"
+  "Data gempabumi: BMKG",
+  "Pusat Vulkanologi dan Mitigasi Bencana Geologi (PVMBG), Badan Geologi ESDM"
  ],
  "events": [
+  {
+   "id": "magma:bromo-jawa-timur",
+   "hazard": "volcano",
+   "name": "Bromo — Level II (Waspada)",
+   "lat": -7.942,
+   "lng": 112.95,
+   "severity": "Level II (Waspada)",
+   "severity_value": null,
+   "alert": "Level II (Waspada)",
+   "status": "active",
+   "started": null,
+   "updated": null,
+   "source": "PVMBG / MAGMA Indonesia",
+   "source_url": "https://magma.esdm.go.id/v1/gunung-api/tingkat-aktivitas",
+   "attribution": "Pusat Vulkanologi dan Mitigasi Bencana Geologi (PVMBG), Badan Geologi ESDM",
+   "notes": [
+    "Alert level scraped from HTML; verify against MAGMA before acting.",
+    "Province: Jawa Timur",
+    "Alert level only — no eruption event from GDACS. Impact zone is the configured default, not an observed plume."
+   ],
+   "polygons": [],
+   "observed": [],
+   "air": {
+    "airports": [
+     {
+      "iata": "MLG",
+      "name": "Abdul Rachman Saleh",
+      "km": 26.0,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "SUB",
+      "name": "Juanda",
+      "km": 65.0,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "DHX",
+      "name": "Dhoho",
+      "km": 112.6,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "SOC",
+      "name": "Adisoemarmo",
+      "km": 246.2,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 1050,
+    "via_hub_count": 0,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-09-24T08:49:22.627121+00:00",
+   "age_hours": 93.5,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 80,
+      "label": "Heavy ashfall",
+      "sla_days": 3
+     },
+     {
+      "to_km": 150,
+      "label": "Moderate ash",
+      "sla_days": 2
+     },
+     {
+      "to_km": 250,
+      "label": "Plume / airfreight",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": 2.0,
+    "counts": [
+     315,
+     412,
+     376
+    ],
+    "total": 1103
+   }
+  },
+  {
+   "id": "magma:raung-jawa-timur",
+   "hazard": "volcano",
+   "name": "Raung — Level II (Waspada)",
+   "lat": -8.125,
+   "lng": 114.042,
+   "severity": "Level II (Waspada)",
+   "severity_value": null,
+   "alert": "Level II (Waspada)",
+   "status": "active",
+   "started": null,
+   "updated": null,
+   "source": "PVMBG / MAGMA Indonesia",
+   "source_url": "https://magma.esdm.go.id/v1/gunung-api/tingkat-aktivitas",
+   "attribution": "Pusat Vulkanologi dan Mitigasi Bencana Geologi (PVMBG), Badan Geologi ESDM",
+   "notes": [
+    "Alert level scraped from HTML; verify against MAGMA before acting.",
+    "Province: Jawa Timur",
+    "Alert level only — no eruption event from GDACS. Impact zone is the configured default, not an observed plume."
+   ],
+   "polygons": [],
+   "observed": [],
+   "air": {
+    "airports": [
+     {
+      "iata": "DPS",
+      "name": "Denpasar I Gusti Ngurah Rai",
+      "km": 141.8,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "MLG",
+      "name": "Abdul Rachman Saleh",
+      "km": 147.8,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "SUB",
+      "name": "Juanda",
+      "km": 161.2,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "DHX",
+      "name": "Dhoho",
+      "km": 234.5,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 962,
+    "via_hub_count": 0,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-09-24T08:49:22.627121+00:00",
+   "age_hours": 93.5,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 80,
+      "label": "Heavy ashfall",
+      "sla_days": 3
+     },
+     {
+      "to_km": 150,
+      "label": "Moderate ash",
+      "sla_days": 2
+     },
+     {
+      "to_km": 250,
+      "label": "Plume / airfreight",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": 2.0,
+    "counts": [
+     108,
+     206,
+     537
+    ],
+    "total": 851
+   }
+  },
+  {
+   "id": "magma:marapi-sumatera-barat",
+   "hazard": "volcano",
+   "name": "Marapi — Level II (Waspada)",
+   "lat": -0.381,
+   "lng": 100.473,
+   "severity": "Level II (Waspada)",
+   "severity_value": null,
+   "alert": "Level II (Waspada)",
+   "status": "active",
+   "started": null,
+   "updated": null,
+   "source": "PVMBG / MAGMA Indonesia",
+   "source_url": "https://magma.esdm.go.id/v1/gunung-api/tingkat-aktivitas",
+   "attribution": "Pusat Vulkanologi dan Mitigasi Bencana Geologi (PVMBG), Badan Geologi ESDM",
+   "notes": [
+    "Alert level scraped from HTML; verify against MAGMA before acting.",
+    "Province: Sumatera Barat",
+    "Alert level only — no eruption event from GDACS. Impact zone is the configured default, not an observed plume."
+   ],
+   "polygons": [],
+   "observed": [],
+   "air": {
+    "airports": [
+     {
+      "iata": "PDG",
+      "name": "Minangkabau",
+      "km": 49.9,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "PKU",
+      "name": "Sultan Syarif Kasim II / Roesmin Nurjadin AFB",
+      "km": 142.8,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "DUM",
+      "name": "Pinang Kampai",
+      "km": 245.7,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 502,
+    "via_hub_count": 165,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-09-24T08:49:22.627121+00:00",
+   "age_hours": 93.5,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 80,
+      "label": "Heavy ashfall",
+      "sla_days": 3
+     },
+     {
+      "to_km": 150,
+      "label": "Moderate ash",
+      "sla_days": 2
+     },
+     {
+      "to_km": 250,
+      "label": "Plume / airfreight",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": 2.0,
+    "counts": [
+     112,
+     136,
+     246
+    ],
+    "total": 494
+   }
+  },
+  {
+   "id": "magma:kerinci-jambi-sumatera-barat",
+   "hazard": "volcano",
+   "name": "Kerinci — Level II (Waspada)",
+   "lat": -1.697,
+   "lng": 101.264,
+   "severity": "Level II (Waspada)",
+   "severity_value": null,
+   "alert": "Level II (Waspada)",
+   "status": "active",
+   "started": null,
+   "updated": null,
+   "source": "PVMBG / MAGMA Indonesia",
+   "source_url": "https://magma.esdm.go.id/v1/gunung-api/tingkat-aktivitas",
+   "attribution": "Pusat Vulkanologi dan Mitigasi Bencana Geologi (PVMBG), Badan Geologi ESDM",
+   "notes": [
+    "Alert level scraped from HTML; verify against MAGMA before acting.",
+    "Province: Jambi / Sumatera Barat",
+    "Alert level only — no eruption event from GDACS. Impact zone is the configured default, not an observed plume."
+   ],
+   "polygons": [],
+   "observed": [],
+   "air": {
+    "airports": [
+     {
+      "iata": "PDG",
+      "name": "Minangkabau",
+      "km": 149.1,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "PKU",
+      "name": "Sultan Syarif Kasim II / Roesmin Nurjadin AFB",
+      "km": 240.5,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 417,
+    "via_hub_count": 250,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-09-24T08:49:22.627121+00:00",
+   "age_hours": 93.5,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 80,
+      "label": "Heavy ashfall",
+      "sla_days": 3
+     },
+     {
+      "to_km": 150,
+      "label": "Moderate ash",
+      "sla_days": 2
+     },
+     {
+      "to_km": 250,
+      "label": "Plume / airfreight",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": 2.0,
+    "counts": [
+     47,
+     174,
+     269
+    ],
+    "total": 490
+   }
+  },
+  {
+   "id": "magma:dempo-sumatera-selatan",
+   "hazard": "volcano",
+   "name": "Dempo — Level II (Waspada)",
+   "lat": -4.03,
+   "lng": 103.13,
+   "severity": "Level II (Waspada)",
+   "severity_value": null,
+   "alert": "Level II (Waspada)",
+   "status": "active",
+   "started": null,
+   "updated": null,
+   "source": "PVMBG / MAGMA Indonesia",
+   "source_url": "https://magma.esdm.go.id/v1/gunung-api/tingkat-aktivitas",
+   "attribution": "Pusat Vulkanologi dan Mitigasi Bencana Geologi (PVMBG), Badan Geologi ESDM",
+   "notes": [
+    "Alert level scraped from HTML; verify against MAGMA before acting.",
+    "Province: Sumatera Selatan",
+    "Alert level only — no eruption event from GDACS. Impact zone is the configured default, not an observed plume."
+   ],
+   "polygons": [],
+   "observed": [],
+   "air": {
+    "airports": [
+     {
+      "iata": "BKS",
+      "name": "Fatmawati Soekarno",
+      "km": 89.7,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "PDO",
+      "name": "Pendopo",
+      "km": 117.3,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "PLM",
+      "name": "Sultan Mahmud Badaruddin II",
+      "km": 214.8,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 551,
+    "via_hub_count": 0,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-09-24T08:49:22.627121+00:00",
+   "age_hours": 93.5,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 80,
+      "label": "Heavy ashfall",
+      "sla_days": 3
+     },
+     {
+      "to_km": 150,
+      "label": "Moderate ash",
+      "sla_days": 2
+     },
+     {
+      "to_km": 250,
+      "label": "Plume / airfreight",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": 2.0,
+    "counts": [
+     71,
+     154,
+     330
+    ],
+    "total": 555
+   }
+  },
+  {
+   "id": "magma:lokon-sulawesi-utara",
+   "hazard": "volcano",
+   "name": "Lokon-Empung — Level II (Waspada)",
+   "lat": 1.358,
+   "lng": 124.792,
+   "severity": "Level II (Waspada)",
+   "severity_value": null,
+   "alert": "Level II (Waspada)",
+   "status": "active",
+   "started": null,
+   "updated": null,
+   "source": "PVMBG / MAGMA Indonesia",
+   "source_url": "https://magma.esdm.go.id/v1/gunung-api/tingkat-aktivitas",
+   "attribution": "Pusat Vulkanologi dan Mitigasi Bencana Geologi (PVMBG), Badan Geologi ESDM",
+   "notes": [
+    "Alert level scraped from HTML; verify against MAGMA before acting.",
+    "Province: Sulawesi Utara",
+    "Alert level only — no eruption event from GDACS. Impact zone is the configured default, not an observed plume."
+   ],
+   "polygons": [],
+   "observed": [],
+   "air": {
+    "airports": [
+     {
+      "iata": "MDC",
+      "name": "Sam Ratulangi",
+      "km": 25.9,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 151,
+    "via_hub_count": 55,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-09-24T08:49:22.627121+00:00",
+   "age_hours": 93.5,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 80,
+      "label": "Heavy ashfall",
+      "sla_days": 3
+     },
+     {
+      "to_km": 150,
+      "label": "Moderate ash",
+      "sla_days": 2
+     },
+     {
+      "to_km": 250,
+      "label": "Plume / airfreight",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": 2.0,
+    "counts": [
+     68,
+     19,
+     44
+    ],
+    "total": 131
+   }
+  },
+  {
+   "id": "magma:karangetang-sulawesi-utara",
+   "hazard": "volcano",
+   "name": "Karangetang — Level II (Waspada)",
+   "lat": 2.781,
+   "lng": 125.407,
+   "severity": "Level II (Waspada)",
+   "severity_value": null,
+   "alert": "Level II (Waspada)",
+   "status": "active",
+   "started": null,
+   "updated": null,
+   "source": "PVMBG / MAGMA Indonesia",
+   "source_url": "https://magma.esdm.go.id/v1/gunung-api/tingkat-aktivitas",
+   "attribution": "Pusat Vulkanologi dan Mitigasi Bencana Geologi (PVMBG), Badan Geologi ESDM",
+   "notes": [
+    "Alert level scraped from HTML; verify against MAGMA before acting.",
+    "Province: Sulawesi Utara",
+    "Alert level only — no eruption event from GDACS. Impact zone is the configured default, not an observed plume."
+   ],
+   "polygons": [],
+   "observed": [],
+   "air": {
+    "airports": [
+     {
+      "iata": "NAH",
+      "name": "Naha",
+      "km": 101.4,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "MDC",
+      "name": "Sam Ratulangi",
+      "km": 147.1,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 164,
+    "via_hub_count": 42,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-09-24T08:49:22.627121+00:00",
+   "age_hours": 93.5,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 80,
+      "label": "Heavy ashfall",
+      "sla_days": 3
+     },
+     {
+      "to_km": 150,
+      "label": "Moderate ash",
+      "sla_days": 2
+     },
+     {
+      "to_km": 250,
+      "label": "Plume / airfreight",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": 2.0,
+    "counts": [
+     3,
+     6,
+     73
+    ],
+    "total": 82
+   }
+  },
+  {
+   "id": "magma:ili-lewotolok-nusa-tenggara-timur",
+   "hazard": "volcano",
+   "name": "Ile Lewotolok — Level II (Waspada)",
+   "lat": -8.272,
+   "lng": 123.505,
+   "severity": "Level II (Waspada)",
+   "severity_value": null,
+   "alert": "Level II (Waspada)",
+   "status": "active",
+   "started": null,
+   "updated": null,
+   "source": "PVMBG / MAGMA Indonesia",
+   "source_url": "https://magma.esdm.go.id/v1/gunung-api/tingkat-aktivitas",
+   "attribution": "Pusat Vulkanologi dan Mitigasi Bencana Geologi (PVMBG), Badan Geologi ESDM",
+   "notes": [
+    "Alert level scraped from HTML; verify against MAGMA before acting.",
+    "Province: Nusa Tenggara Timur",
+    "Alert level only — no eruption event from GDACS. Impact zone is the configured default, not an observed plume."
+   ],
+   "polygons": [],
+   "observed": [],
+   "air": {
+    "airports": [
+     {
+      "iata": "KOE",
+      "name": "El Tari",
+      "km": 212.0,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 102,
+    "via_hub_count": 0,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-09-24T08:49:22.627121+00:00",
+   "age_hours": 93.5,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 80,
+      "label": "Heavy ashfall",
+      "sla_days": 3
+     },
+     {
+      "to_km": 150,
+      "label": "Moderate ash",
+      "sla_days": 2
+     },
+     {
+      "to_km": 250,
+      "label": "Plume / airfreight",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": 2.0,
+    "counts": [
+     10,
+     13,
+     77
+    ],
+    "total": 100
+   }
+  },
+  {
+   "id": "magma:gamalama-maluku-utara",
+   "hazard": "volcano",
+   "name": "Gamalama — Level II (Waspada)",
+   "lat": 1.38,
+   "lng": 127.33,
+   "severity": "Level II (Waspada)",
+   "severity_value": null,
+   "alert": "Level II (Waspada)",
+   "status": "active",
+   "started": null,
+   "updated": null,
+   "source": "PVMBG / MAGMA Indonesia",
+   "source_url": "https://magma.esdm.go.id/v1/gunung-api/tingkat-aktivitas",
+   "attribution": "Pusat Vulkanologi dan Mitigasi Bencana Geologi (PVMBG), Badan Geologi ESDM",
+   "notes": [
+    "Alert level scraped from HTML; verify against MAGMA before acting.",
+    "Province: Maluku Utara",
+    "Alert level only — no eruption event from GDACS. Impact zone is the configured default, not an observed plume."
+   ],
+   "polygons": [],
+   "observed": [],
+   "air": {
+    "airports": [
+     {
+      "iata": "TTE",
+      "name": "Sultan Babullah",
+      "km": 61.3,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 42,
+    "via_hub_count": 0,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-09-24T08:49:22.627121+00:00",
+   "age_hours": 93.5,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 80,
+      "label": "Heavy ashfall",
+      "sla_days": 3
+     },
+     {
+      "to_km": 150,
+      "label": "Moderate ash",
+      "sla_days": 2
+     },
+     {
+      "to_km": 250,
+      "label": "Plume / airfreight",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": 2.0,
+    "counts": [
+     16,
+     23,
+     10
+    ],
+    "total": 49
+   }
+  },
+  {
+   "id": "magma:dukono-maluku-utara",
+   "hazard": "volcano",
+   "name": "Dukono — Level II (Waspada)",
+   "lat": 1.693,
+   "lng": 127.894,
+   "severity": "Level II (Waspada)",
+   "severity_value": null,
+   "alert": "Level II (Waspada)",
+   "status": "active",
+   "started": null,
+   "updated": null,
+   "source": "PVMBG / MAGMA Indonesia",
+   "source_url": "https://magma.esdm.go.id/v1/gunung-api/tingkat-aktivitas",
+   "attribution": "Pusat Vulkanologi dan Mitigasi Bencana Geologi (PVMBG), Badan Geologi ESDM",
+   "notes": [
+    "Alert level scraped from HTML; verify against MAGMA before acting.",
+    "Province: Maluku Utara",
+    "Alert level only — no eruption event from GDACS. Impact zone is the configured default, not an observed plume."
+   ],
+   "polygons": [],
+   "observed": [],
+   "air": {
+    "airports": [
+     {
+      "iata": "TTE",
+      "name": "Sultan Babullah",
+      "km": 111.5,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 42,
+    "via_hub_count": 0,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-09-24T08:49:22.627121+00:00",
+   "age_hours": 93.5,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 80,
+      "label": "Heavy ashfall",
+      "sla_days": 3
+     },
+     {
+      "to_km": 150,
+      "label": "Moderate ash",
+      "sla_days": 2
+     },
+     {
+      "to_km": 250,
+      "label": "Plume / airfreight",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": 2.0,
+    "counts": [
+     12,
+     23,
+     4
+    ],
+    "total": 39
+   }
+  },
+  {
+   "id": "magma:banda-api-maluku",
+   "hazard": "volcano",
+   "name": "Banda Api — Level II (Waspada)",
+   "lat": -4.525,
+   "lng": 129.871,
+   "severity": "Level II (Waspada)",
+   "severity_value": null,
+   "alert": "Level II (Waspada)",
+   "status": "active",
+   "started": null,
+   "updated": null,
+   "source": "PVMBG / MAGMA Indonesia",
+   "source_url": "https://magma.esdm.go.id/v1/gunung-api/tingkat-aktivitas",
+   "attribution": "Pusat Vulkanologi dan Mitigasi Bencana Geologi (PVMBG), Badan Geologi ESDM",
+   "notes": [
+    "Alert level scraped from HTML; verify against MAGMA before acting.",
+    "Province: Maluku",
+    "Alert level only — no eruption event from GDACS. Impact zone is the configured default, not an observed plume."
+   ],
+   "polygons": [],
+   "observed": [],
+   "air": {
+    "airports": [
+     {
+      "iata": "AMQ",
+      "name": "Pattimura",
+      "km": 217.4,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 17,
+    "via_hub_count": 27,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-09-24T08:49:22.627121+00:00",
+   "age_hours": 93.5,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 80,
+      "label": "Heavy ashfall",
+      "sla_days": 3
+     },
+     {
+      "to_km": 150,
+      "label": "Moderate ash",
+      "sla_days": 2
+     },
+     {
+      "to_km": 250,
+      "label": "Plume / airfreight",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": 2.0,
+    "counts": [
+     0,
+     0,
+     16
+    ],
+    "total": 16
+   }
+  },
   {
    "id": "bmkg:2026-09-25T19:39:29+00:00_-8.230_120.310",
    "hazard": "earthquake",
@@ -47,7 +857,7 @@
    "severity": "M 4.9, depth 9 km",
    "severity_value": 4.9,
    "alert": "green",
-   "status": "active",
+   "status": "stale",
    "started": "2026-09-25T19:39:29+00:00",
    "updated": "2026-09-25T19:39:29+00:00",
    "source": "BMKG",
@@ -65,7 +875,7 @@
     }
    ],
    "first_seen": "2026-09-26T05:53:26.459696+00:00",
-   "age_hours": 45.5,
+   "age_hours": 58.7,
    "impact": {
     "model": "radial",
     "bands": [
@@ -96,6 +906,65 @@
    }
   },
   {
+   "id": "bmkg:2026-09-28T04:30:48+00:00_-8.100_120.490",
+   "hazard": "earthquake",
+   "name": "M 4.5 earthquake — Pusat gempa berada di laut 57 km Utara Ruteng-Manggarai",
+   "lat": -8.1,
+   "lng": 120.49,
+   "severity": "M 4.5, depth 1 km",
+   "severity_value": 4.5,
+   "alert": "green",
+   "status": "active",
+   "started": "2026-09-28T04:30:48+00:00",
+   "updated": "2026-09-28T04:30:48+00:00",
+   "source": "BMKG",
+   "source_url": "https://data.bmkg.go.id/gempabumi",
+   "attribution": "Data gempabumi: BMKG",
+   "notes": [
+    "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+    "Shakemap: https://static.bmkg.go.id/20260928113048.mmi.jpg",
+    "BMKG felt intensity (MMI): III Kab. Manggarai"
+   ],
+   "polygons": [],
+   "observed": [
+    {
+     "place": "Kab. Manggarai",
+     "mmi_text": "III",
+     "mmi_max": 3
+    }
+   ],
+   "first_seen": "2026-09-28T06:21:50.310298+00:00",
+   "age_hours": 1.9,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 15,
+      "label": "Strong shaking",
+      "sla_days": 3
+     },
+     {
+      "to_km": 40,
+      "label": "Moderate shaking",
+      "sla_days": 2
+     },
+     {
+      "to_km": 80,
+      "label": "Felt",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": null,
+    "counts": [
+     0,
+     1,
+     13
+    ],
+    "total": 14
+   }
+  },
+  {
    "id": "bmkg:2026-09-26T19:37:02+00:00_-8.100_120.280",
    "hazard": "earthquake",
    "name": "M 4.9 earthquake — Pusat gempa berada di laut 61 km utara Ruteng, Manggarai",
@@ -122,7 +991,7 @@
     }
    ],
    "first_seen": "2026-09-27T06:16:35.757416+00:00",
-   "age_hours": 21.6,
+   "age_hours": 34.7,
    "impact": {
     "model": "radial",
     "bands": [
@@ -161,7 +1030,7 @@
    "severity": "M 4.7, depth 10 km",
    "severity_value": 4.7,
    "alert": "green",
-   "status": "active",
+   "status": "stale",
    "started": "2026-09-25T13:47:30+00:00",
    "updated": "2026-09-25T13:47:30+00:00",
    "source": "BMKG",
@@ -209,7 +1078,7 @@
     }
    ],
    "first_seen": "2026-09-25T15:54:25.195905+00:00",
-   "age_hours": 51.4,
+   "age_hours": 64.6,
    "impact": {
     "model": "radial",
     "bands": [
