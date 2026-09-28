@@ -1,32 +1,32 @@
 {
- "generated_at": "2026-09-28T06:21:50+00:00",
+ "generated_at": "2026-09-28T14:20:38+00:00",
  "facility_count": 8853,
- "event_count": 15,
- "verified_event_count": 15,
+ "event_count": 14,
+ "verified_event_count": 14,
  "source_health": [
   {
    "source": "bmkg_quake",
    "state": "ok",
    "events": 23,
-   "seconds": 1.11
+   "seconds": 0.97
   },
   {
    "source": "gdacs",
    "state": "ok",
    "events": 0,
-   "seconds": 0.95
+   "seconds": 0.99
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 41,
-   "seconds": 1.96
+   "seconds": 5.89
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 122.92
+   "seconds": 98.7
   },
   {
    "source": "overrides",
@@ -94,7 +94,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 93.5,
+   "age_hours": 101.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -179,7 +179,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 93.5,
+   "age_hours": 101.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -258,7 +258,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 93.5,
+   "age_hours": 101.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -331,7 +331,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 93.5,
+   "age_hours": 101.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -410,7 +410,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 93.5,
+   "age_hours": 101.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -477,7 +477,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 93.5,
+   "age_hours": 101.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -550,7 +550,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 93.5,
+   "age_hours": 101.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -617,7 +617,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 93.5,
+   "age_hours": 101.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -684,7 +684,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 93.5,
+   "age_hours": 101.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -751,7 +751,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 93.5,
+   "age_hours": 101.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -818,7 +818,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 93.5,
+   "age_hours": 101.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -875,7 +875,7 @@
     }
    ],
    "first_seen": "2026-09-26T05:53:26.459696+00:00",
-   "age_hours": 58.7,
+   "age_hours": 66.7,
    "impact": {
     "model": "radial",
     "bands": [
@@ -921,8 +921,6 @@
    "source_url": "https://data.bmkg.go.id/gempabumi",
    "attribution": "Data gempabumi: BMKG",
    "notes": [
-    "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-    "Shakemap: https://static.bmkg.go.id/20260928113048.mmi.jpg",
     "BMKG felt intensity (MMI): III Kab. Manggarai"
    ],
    "polygons": [],
@@ -934,7 +932,7 @@
     }
    ],
    "first_seen": "2026-09-28T06:21:50.310298+00:00",
-   "age_hours": 1.9,
+   "age_hours": 9.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -991,7 +989,7 @@
     }
    ],
    "first_seen": "2026-09-27T06:16:35.757416+00:00",
-   "age_hours": 34.7,
+   "age_hours": 42.7,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1019,93 +1017,6 @@
      13
     ],
     "total": 14
-   }
-  },
-  {
-   "id": "bmkg:2026-09-25T13:47:30+00:00_-7.040_105.220",
-   "hazard": "earthquake",
-   "name": "M 4.7 earthquake — Pusat gempa berada di laut 58 km barat daya Sumur",
-   "lat": -7.04,
-   "lng": 105.22,
-   "severity": "M 4.7, depth 10 km",
-   "severity_value": 4.7,
-   "alert": "green",
-   "status": "stale",
-   "started": "2026-09-25T13:47:30+00:00",
-   "updated": "2026-09-25T13:47:30+00:00",
-   "source": "BMKG",
-   "source_url": "https://data.bmkg.go.id/gempabumi",
-   "attribution": "Data gempabumi: BMKG",
-   "notes": [
-    "BMKG felt intensity (MMI): III Sumur, III Muara Binuangeun, III Bayah, III Panggarangan, III Malingping, II - III Anyer, II - III Rangkasbitung"
-   ],
-   "polygons": [],
-   "observed": [
-    {
-     "place": "Sumur",
-     "mmi_text": "III",
-     "mmi_max": 3
-    },
-    {
-     "place": "Muara Binuangeun",
-     "mmi_text": "III",
-     "mmi_max": 3
-    },
-    {
-     "place": "Bayah",
-     "mmi_text": "III",
-     "mmi_max": 3
-    },
-    {
-     "place": "Panggarangan",
-     "mmi_text": "III",
-     "mmi_max": 3
-    },
-    {
-     "place": "Malingping",
-     "mmi_text": "III",
-     "mmi_max": 3
-    },
-    {
-     "place": "Anyer",
-     "mmi_text": "II - III",
-     "mmi_max": 3
-    },
-    {
-     "place": "Rangkasbitung",
-     "mmi_text": "II - III",
-     "mmi_max": 3
-    }
-   ],
-   "first_seen": "2026-09-25T15:54:25.195905+00:00",
-   "age_hours": 64.6,
-   "impact": {
-    "model": "radial",
-    "bands": [
-     {
-      "to_km": 15,
-      "label": "Strong shaking",
-      "sla_days": 3
-     },
-     {
-      "to_km": 40,
-      "label": "Moderate shaking",
-      "sla_days": 2
-     },
-     {
-      "to_km": 80,
-      "label": "Felt",
-      "sla_days": 1
-     }
-    ],
-    "corridors": [],
-    "exclusion_km": null,
-    "counts": [
-     0,
-     0,
-     6
-    ],
-    "total": 6
    }
   }
  ]
