@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-29T06:37:14+00:00",
+ "generated_at": "2026-09-29T13:46:46+00:00",
  "facility_count": 8853,
  "event_count": 13,
  "verified_event_count": 13,
@@ -8,25 +8,25 @@
    "source": "bmkg_quake",
    "state": "ok",
    "events": 23,
-   "seconds": 0.64
+   "seconds": 1.18
   },
   {
    "source": "gdacs",
    "state": "ok",
    "events": 0,
-   "seconds": 0.85
+   "seconds": 0.62
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 41,
-   "seconds": 1.96
+   "seconds": 1.49
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 117.27
+   "seconds": 115.99
   },
   {
    "source": "overrides",
@@ -94,7 +94,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 117.8,
+   "age_hours": 125.0,
    "impact": {
     "model": "radial",
     "bands": [
@@ -179,7 +179,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 117.8,
+   "age_hours": 125.0,
    "impact": {
     "model": "radial",
     "bands": [
@@ -258,7 +258,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 117.8,
+   "age_hours": 125.0,
    "impact": {
     "model": "radial",
     "bands": [
@@ -331,7 +331,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 117.8,
+   "age_hours": 125.0,
    "impact": {
     "model": "radial",
     "bands": [
@@ -410,7 +410,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 117.8,
+   "age_hours": 125.0,
    "impact": {
     "model": "radial",
     "bands": [
@@ -477,7 +477,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 117.8,
+   "age_hours": 125.0,
    "impact": {
     "model": "radial",
     "bands": [
@@ -550,7 +550,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 117.8,
+   "age_hours": 125.0,
    "impact": {
     "model": "radial",
     "bands": [
@@ -617,7 +617,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 117.8,
+   "age_hours": 125.0,
    "impact": {
     "model": "radial",
     "bands": [
@@ -684,7 +684,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 117.8,
+   "age_hours": 125.0,
    "impact": {
     "model": "radial",
     "bands": [
@@ -751,7 +751,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 117.8,
+   "age_hours": 125.0,
    "impact": {
     "model": "radial",
     "bands": [
@@ -818,7 +818,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 117.8,
+   "age_hours": 125.0,
    "impact": {
     "model": "radial",
     "bands": [
@@ -875,7 +875,7 @@
     }
    ],
    "first_seen": "2026-09-28T06:21:50.310298+00:00",
-   "age_hours": 26.1,
+   "age_hours": 33.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -932,7 +932,7 @@
     }
    ],
    "first_seen": "2026-09-27T06:16:35.757416+00:00",
-   "age_hours": 59.0,
+   "age_hours": 66.2,
    "impact": {
     "model": "radial",
     "bands": [
