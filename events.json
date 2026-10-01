@@ -1,32 +1,32 @@
 {
- "generated_at": "2026-09-30T12:54:38+00:00",
+ "generated_at": "2026-10-01T06:52:31+00:00",
  "facility_count": 8853,
- "event_count": 14,
- "verified_event_count": 14,
+ "event_count": 13,
+ "verified_event_count": 13,
  "source_health": [
   {
    "source": "bmkg_quake",
    "state": "ok",
-   "events": 23,
-   "seconds": 0.46
+   "events": 22,
+   "seconds": 0.82
   },
   {
    "source": "gdacs",
    "state": "ok",
    "events": 0,
-   "seconds": 0.66
+   "seconds": 0.87
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 41,
-   "seconds": 1.5
+   "seconds": 2.53
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 91.29
+   "seconds": 102.51
   },
   {
    "source": "overrides",
@@ -94,7 +94,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 148.1,
+   "age_hours": 166.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -179,7 +179,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 148.1,
+   "age_hours": 166.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -258,7 +258,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 148.1,
+   "age_hours": 166.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -331,7 +331,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 148.1,
+   "age_hours": 166.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -410,7 +410,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 148.1,
+   "age_hours": 166.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -477,7 +477,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 148.1,
+   "age_hours": 166.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -550,7 +550,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 148.1,
+   "age_hours": 166.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -617,7 +617,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 148.1,
+   "age_hours": 166.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -663,8 +663,6 @@
    "source_url": "https://data.bmkg.go.id/gempabumi",
    "attribution": "Data gempabumi: BMKG",
    "notes": [
-    "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-    "Shakemap: https://static.bmkg.go.id/20260930175851.mmi.jpg",
     "BMKG felt intensity (MMI): IV Kab. Kupang, IV Kota Kupang"
    ],
    "polygons": [],
@@ -695,7 +693,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-30T12:54:38.650234+00:00",
-   "age_hours": 1.9,
+   "age_hours": 19.9,
    "impact": {
     "model": "radial",
     "bands": [
@@ -762,7 +760,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 148.1,
+   "age_hours": 166.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -829,7 +827,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 148.1,
+   "age_hours": 166.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -896,7 +894,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 148.1,
+   "age_hours": 166.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -983,7 +981,7 @@
     }
    ],
    "first_seen": "2026-09-30T06:19:54.438281+00:00",
-   "age_hours": 11.4,
+   "age_hours": 29.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1011,63 +1009,6 @@
      55
     ],
     "total": 57
-   }
-  },
-  {
-   "id": "bmkg:2026-09-28T04:30:48+00:00_-8.100_120.490",
-   "hazard": "earthquake",
-   "name": "M 4.5 earthquake — Pusat gempa berada di laut 57 km Utara Ruteng-Manggarai",
-   "lat": -8.1,
-   "lng": 120.49,
-   "severity": "M 4.5, depth 1 km",
-   "severity_value": 4.5,
-   "alert": "green",
-   "status": "stale",
-   "started": "2026-09-28T04:30:48+00:00",
-   "updated": "2026-09-28T04:30:48+00:00",
-   "source": "BMKG",
-   "source_url": "https://data.bmkg.go.id/gempabumi",
-   "attribution": "Data gempabumi: BMKG",
-   "notes": [
-    "BMKG felt intensity (MMI): III Kab. Manggarai"
-   ],
-   "polygons": [],
-   "observed": [
-    {
-     "place": "Kab. Manggarai",
-     "mmi_text": "III",
-     "mmi_max": 3
-    }
-   ],
-   "first_seen": "2026-09-28T06:21:50.310298+00:00",
-   "age_hours": 56.4,
-   "impact": {
-    "model": "radial",
-    "bands": [
-     {
-      "to_km": 15,
-      "label": "Strong shaking",
-      "sla_days": 3
-     },
-     {
-      "to_km": 40,
-      "label": "Moderate shaking",
-      "sla_days": 2
-     },
-     {
-      "to_km": 80,
-      "label": "Felt",
-      "sla_days": 1
-     }
-    ],
-    "corridors": [],
-    "exclusion_km": null,
-    "counts": [
-     0,
-     1,
-     13
-    ],
-    "total": 14
    }
   }
  ]
