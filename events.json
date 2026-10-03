@@ -1,32 +1,32 @@
 {
- "generated_at": "2026-10-03T06:04:21+00:00",
+ "generated_at": "2026-10-03T11:54:52+00:00",
  "facility_count": 8853,
- "event_count": 13,
- "verified_event_count": 13,
+ "event_count": 12,
+ "verified_event_count": 12,
  "source_health": [
   {
    "source": "bmkg_quake",
    "state": "ok",
    "events": 19,
-   "seconds": 0.35
+   "seconds": 0.81
   },
   {
    "source": "gdacs",
    "state": "ok",
    "events": 0,
-   "seconds": 0.98
+   "seconds": 0.65
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 41,
-   "seconds": 1.3
+   "seconds": 2.69
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 86.38
+   "seconds": 87.8
   },
   {
    "source": "overrides",
@@ -94,7 +94,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 213.2,
+   "age_hours": 219.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -179,7 +179,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 213.2,
+   "age_hours": 219.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -258,7 +258,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 213.2,
+   "age_hours": 219.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -331,7 +331,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 213.2,
+   "age_hours": 219.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -410,7 +410,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 213.2,
+   "age_hours": 219.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -477,7 +477,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 213.2,
+   "age_hours": 219.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -550,7 +550,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 213.2,
+   "age_hours": 219.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -617,7 +617,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 213.2,
+   "age_hours": 219.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -645,82 +645,6 @@
      77
     ],
     "total": 100
-   }
-  },
-  {
-   "id": "bmkg:2026-09-30T10:58:51+00:00_-10.020_123.650",
-   "hazard": "earthquake",
-   "name": "M 4.7 earthquake — Pusat gempa berada di laut 26 km Barat Kab. Kupang",
-   "lat": -10.02,
-   "lng": 123.65,
-   "severity": "M 4.7, depth 10 km",
-   "severity_value": 4.7,
-   "alert": "green",
-   "status": "stale",
-   "started": "2026-09-30T10:58:51+00:00",
-   "updated": "2026-09-30T10:58:51+00:00",
-   "source": "BMKG",
-   "source_url": "https://data.bmkg.go.id/gempabumi",
-   "attribution": "Data gempabumi: BMKG",
-   "notes": [
-    "BMKG felt intensity (MMI): IV Kab. Kupang, IV Kota Kupang"
-   ],
-   "polygons": [],
-   "observed": [
-    {
-     "place": "Kab. Kupang",
-     "mmi_text": "IV",
-     "mmi_max": 4
-    },
-    {
-     "place": "Kota Kupang",
-     "mmi_text": "IV",
-     "mmi_max": 4
-    }
-   ],
-   "air": {
-    "airports": [
-     {
-      "iata": "KOE",
-      "name": "El Tari",
-      "km": 17.0,
-      "how": "inside the impact zone"
-     }
-    ],
-    "direct_count": 102,
-    "via_hub_count": 0,
-    "sla_days": 1,
-    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
-   },
-   "first_seen": "2026-09-30T12:54:38.650234+00:00",
-   "age_hours": 67.1,
-   "impact": {
-    "model": "radial",
-    "bands": [
-     {
-      "to_km": 15,
-      "label": "Strong shaking",
-      "sla_days": 3
-     },
-     {
-      "to_km": 40,
-      "label": "Moderate shaking",
-      "sla_days": 2
-     },
-     {
-      "to_km": 80,
-      "label": "Felt",
-      "sla_days": 1
-     }
-    ],
-    "corridors": [],
-    "exclusion_km": null,
-    "counts": [
-     3,
-     22,
-     12
-    ],
-    "total": 37
    }
   },
   {
@@ -760,7 +684,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 213.2,
+   "age_hours": 219.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -827,7 +751,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 213.2,
+   "age_hours": 219.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -894,7 +818,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 213.2,
+   "age_hours": 219.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -956,7 +880,7 @@
     }
    ],
    "first_seen": "2026-10-02T06:43:46.050323+00:00",
-   "age_hours": 39.7,
+   "age_hours": 45.6,
    "impact": {
     "model": "radial",
     "bands": [
