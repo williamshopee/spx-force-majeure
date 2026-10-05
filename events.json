@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-04T13:04:14+00:00",
+ "generated_at": "2026-10-05T06:35:22+00:00",
  "facility_count": 8853,
  "event_count": 16,
  "verified_event_count": 16,
@@ -7,26 +7,26 @@
   {
    "source": "bmkg_quake",
    "state": "ok",
-   "events": 18,
-   "seconds": 0.79
+   "events": 20,
+   "seconds": 0.16
   },
   {
    "source": "gdacs",
    "state": "ok",
    "events": 0,
-   "seconds": 0.82
+   "seconds": 0.76
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 41,
-   "seconds": 1.31
+   "seconds": 3.57
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 93.02
+   "seconds": 97.62
   },
   {
    "source": "overrides",
@@ -48,7 +48,7 @@
    "severity": "Level II (Waspada)",
    "severity_value": null,
    "alert": "Level II (Waspada)",
-   "status": "active",
+   "status": "stale",
    "started": null,
    "updated": null,
    "source": "PVMBG / MAGMA Indonesia",
@@ -94,7 +94,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 244.2,
+   "age_hours": 261.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -133,7 +133,7 @@
    "severity": "Level II (Waspada)",
    "severity_value": null,
    "alert": "Level II (Waspada)",
-   "status": "active",
+   "status": "stale",
    "started": null,
    "updated": null,
    "source": "PVMBG / MAGMA Indonesia",
@@ -179,7 +179,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 244.2,
+   "age_hours": 261.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -218,7 +218,7 @@
    "severity": "Level II (Waspada)",
    "severity_value": null,
    "alert": "Level II (Waspada)",
-   "status": "active",
+   "status": "stale",
    "started": null,
    "updated": null,
    "source": "PVMBG / MAGMA Indonesia",
@@ -258,7 +258,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 244.2,
+   "age_hours": 261.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -297,7 +297,7 @@
    "severity": "Level II (Waspada)",
    "severity_value": null,
    "alert": "Level II (Waspada)",
-   "status": "active",
+   "status": "stale",
    "started": null,
    "updated": null,
    "source": "PVMBG / MAGMA Indonesia",
@@ -331,7 +331,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 244.2,
+   "age_hours": 261.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -370,7 +370,7 @@
    "severity": "Level II (Waspada)",
    "severity_value": null,
    "alert": "Level II (Waspada)",
-   "status": "active",
+   "status": "stale",
    "started": null,
    "updated": null,
    "source": "PVMBG / MAGMA Indonesia",
@@ -410,7 +410,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 244.2,
+   "age_hours": 261.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -449,7 +449,7 @@
    "severity": "Level II (Waspada)",
    "severity_value": null,
    "alert": "Level II (Waspada)",
-   "status": "active",
+   "status": "stale",
    "started": null,
    "updated": null,
    "source": "PVMBG / MAGMA Indonesia",
@@ -477,7 +477,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 244.2,
+   "age_hours": 261.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -516,7 +516,7 @@
    "severity": "Level II (Waspada)",
    "severity_value": null,
    "alert": "Level II (Waspada)",
-   "status": "active",
+   "status": "stale",
    "started": null,
    "updated": null,
    "source": "PVMBG / MAGMA Indonesia",
@@ -550,7 +550,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 244.2,
+   "age_hours": 261.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -636,7 +636,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-04T06:38:57.935181+00:00",
-   "age_hours": 14.1,
+   "age_hours": 31.7,
    "impact": {
     "model": "radial",
     "bands": [
@@ -675,7 +675,7 @@
    "severity": "Level II (Waspada)",
    "severity_value": null,
    "alert": "Level II (Waspada)",
-   "status": "active",
+   "status": "stale",
    "started": null,
    "updated": null,
    "source": "PVMBG / MAGMA Indonesia",
@@ -703,7 +703,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 244.2,
+   "age_hours": 261.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -820,7 +820,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-04T06:38:57.935181+00:00",
-   "age_hours": 13.4,
+   "age_hours": 31.0,
    "impact": {
     "model": "radial",
     "bands": [
@@ -859,7 +859,7 @@
    "severity": "Level II (Waspada)",
    "severity_value": null,
    "alert": "Level II (Waspada)",
-   "status": "active",
+   "status": "stale",
    "started": null,
    "updated": null,
    "source": "PVMBG / MAGMA Indonesia",
@@ -887,7 +887,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 244.2,
+   "age_hours": 261.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -926,7 +926,7 @@
    "severity": "Level II (Waspada)",
    "severity_value": null,
    "alert": "Level II (Waspada)",
-   "status": "active",
+   "status": "stale",
    "started": null,
    "updated": null,
    "source": "PVMBG / MAGMA Indonesia",
@@ -954,7 +954,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 244.2,
+   "age_hours": 261.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -993,7 +993,7 @@
    "severity": "Level II (Waspada)",
    "severity_value": null,
    "alert": "Level II (Waspada)",
-   "status": "active",
+   "status": "stale",
    "started": null,
    "updated": null,
    "source": "PVMBG / MAGMA Indonesia",
@@ -1021,7 +1021,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-09-24T08:49:22.627121+00:00",
-   "age_hours": 244.2,
+   "age_hours": 261.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1052,6 +1052,68 @@
    }
   },
   {
+   "id": "bmkg:2026-10-04T14:59:43+00:00_-9.710_118.980",
+   "hazard": "earthquake",
+   "name": "M 4.8 earthquake — Pusat gempa berada di laut 13 km Selatan Kodi-Sumba Barat Daya",
+   "lat": -9.71,
+   "lng": 118.98,
+   "severity": "M 4.8, depth 21 km",
+   "severity_value": 4.8,
+   "alert": "green",
+   "status": "active",
+   "started": "2026-10-04T14:59:43+00:00",
+   "updated": "2026-10-04T14:59:43+00:00",
+   "source": "BMKG",
+   "source_url": "https://data.bmkg.go.id/gempabumi",
+   "attribution": "Data gempabumi: BMKG",
+   "notes": [
+    "BMKG felt intensity (MMI): III Tambolaka, II-III Waingapu"
+   ],
+   "polygons": [],
+   "observed": [
+    {
+     "place": "Tambolaka",
+     "mmi_text": "III",
+     "mmi_max": 3
+    },
+    {
+     "place": "Waingapu",
+     "mmi_text": "II-III",
+     "mmi_max": 3
+    }
+   ],
+   "first_seen": "2026-10-05T06:35:22.463419+00:00",
+   "age_hours": 15.6,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 15,
+      "label": "Strong shaking",
+      "sla_days": 3
+     },
+     {
+      "to_km": 40,
+      "label": "Moderate shaking",
+      "sla_days": 2
+     },
+     {
+      "to_km": 80,
+      "label": "Felt",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": null,
+    "counts": [
+     0,
+     2,
+     19
+    ],
+    "total": 21
+   }
+  },
+  {
    "id": "bmkg:2026-10-04T10:52:27+00:00_-8.160_120.460",
    "hazard": "earthquake",
    "name": "M 4.6 earthquake — Pusat gempa berada di laut 51 Km utara Ruteng, Manggarai",
@@ -1078,7 +1140,7 @@
     }
    ],
    "first_seen": "2026-10-04T13:04:14.505486+00:00",
-   "age_hours": 2.2,
+   "age_hours": 19.7,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1135,7 +1197,7 @@
     }
    ],
    "first_seen": "2026-10-04T13:04:14.505486+00:00",
-   "age_hours": 2.9,
+   "age_hours": 20.4,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1163,68 +1225,6 @@
      13
     ],
     "total": 19
-   }
-  },
-  {
-   "id": "bmkg:2026-10-01T14:20:00+00:00_-7.070_120.800",
-   "hazard": "earthquake",
-   "name": "M 5.1 earthquake — Pusat gempa berada di laut 111 km tenggara Selayar",
-   "lat": -7.07,
-   "lng": 120.8,
-   "severity": "M 5.1, depth 10 km",
-   "severity_value": 5.1,
-   "alert": "green",
-   "status": "stale",
-   "started": "2026-10-01T14:20:00+00:00",
-   "updated": "2026-10-01T14:20:00+00:00",
-   "source": "BMKG",
-   "source_url": "https://data.bmkg.go.id/gempabumi",
-   "attribution": "Data gempabumi: BMKG",
-   "notes": [
-    "BMKG felt intensity (MMI): III Benteng Selayar, IV Jampea Kep. Selayar"
-   ],
-   "polygons": [],
-   "observed": [
-    {
-     "place": "Benteng Selayar",
-     "mmi_text": "III",
-     "mmi_max": 3
-    },
-    {
-     "place": "Jampea Kep. Selayar",
-     "mmi_text": "IV",
-     "mmi_max": 4
-    }
-   ],
-   "first_seen": "2026-10-02T06:43:46.050323+00:00",
-   "age_hours": 70.7,
-   "impact": {
-    "model": "radial",
-    "bands": [
-     {
-      "to_km": 25,
-      "label": "Strong shaking",
-      "sla_days": 3
-     },
-     {
-      "to_km": 60,
-      "label": "Moderate shaking",
-      "sla_days": 2
-     },
-     {
-      "to_km": 120,
-      "label": "Felt",
-      "sla_days": 1
-     }
-    ],
-    "corridors": [],
-    "exclusion_km": null,
-    "counts": [
-     0,
-     0,
-     3
-    ],
-    "total": 3
    }
   }
  ]
