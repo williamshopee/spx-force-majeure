@@ -817,12 +817,19 @@ def fetch_magma(http: Http, cfg: dict) -> list[dict]:
             continue
         if not level or level.startswith("Level I "):
             continue
-        # candidate volcano name: short, title-ish, no digits
-        if 3 <= len(line) <= 40 and not re.search(r"\d", line) and line[0].isupper():
+        # the page repeats link text next to every volcano; skip the furniture
+        if re.search(r"lihat laporan|selengkapnya|hasil pengamatan|tingkat aktivitas",
+                     line, re.I):
+            continue
+        # names arrive as "Awu - Sulawesi Utara"; keep only the volcano name
+        vname = re.split(r"\s+[-–]\s+", line)[0].strip()
+        if not (3 <= len(vname) <= 40) or re.search(r"\d", vname) or not vname[0].isupper():
+            continue
+        if True:
             out.append(new_event(
-                id=f"magma:{re.sub(r'[^a-z0-9]+', '-', line.lower())}",
+                id=f"magma:{re.sub(r'[^a-z0-9]+', '-', vname.lower())}",
                 hazard="volcano",
-                name=f"{line} — {level}",
+                name=f"{vname} — {level}",
                 lat=None, lng=None,       # resolved later from the gazetteer
                 severity=level, alert=level,
                 source="PVMBG / MAGMA Indonesia",
