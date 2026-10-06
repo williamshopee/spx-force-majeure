@@ -32,3 +32,6 @@ jobs:
           git add events.json impacted_facilities.csv state.json
           git diff --cached --quiet || git commit -m "auto refresh $(date -u +%Y-%m-%dT%H:%M)"
           git push
+
+      - name: Keep app awake
+        run: curl -s -o /dev/null https://spx-forcemajeure.streamlit.app || true
