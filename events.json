@@ -1,32 +1,32 @@
 {
- "generated_at": "2026-10-07T14:14:41+00:00",
+ "generated_at": "2026-10-08T07:02:28+00:00",
  "facility_count": 8853,
- "event_count": 26,
- "verified_event_count": 26,
+ "event_count": 29,
+ "verified_event_count": 29,
  "source_health": [
   {
    "source": "bmkg_quake",
    "state": "ok",
    "events": 17,
-   "seconds": 0.41
+   "seconds": 0.91
   },
   {
    "source": "gdacs",
    "state": "ok",
    "events": 0,
-   "seconds": 1.06
+   "seconds": 8.7
   },
   {
    "source": "magma_volcano",
    "state": "ok",
-   "events": 27,
-   "seconds": 3.39
+   "events": 28,
+   "seconds": 1.91
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 95.43
+   "seconds": 128.45
   },
   {
    "source": "overrides",
@@ -88,7 +88,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -191,7 +191,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -219,6 +219,103 @@
      857
     ],
     "total": 1800
+   }
+  },
+  {
+   "id": "magma:merapi",
+   "hazard": "volcano",
+   "name": "Merapi — Level III (Siaga)",
+   "lat": -7.54,
+   "lng": 110.446,
+   "severity": "Level III (Siaga)",
+   "severity_value": null,
+   "alert": "Level III (Siaga)",
+   "status": "active",
+   "started": null,
+   "updated": null,
+   "source": "PVMBG / MAGMA Indonesia",
+   "source_url": "https://magma.esdm.go.id/v1/gunung-api/tingkat-aktivitas",
+   "attribution": "Pusat Vulkanologi dan Mitigasi Bencana Geologi (PVMBG), Badan Geologi ESDM",
+   "notes": [
+    "Alert level scraped from HTML; verify against MAGMA before acting.",
+    "Province: DI Yogyakarta / Jawa Tengah",
+    "Alert level only — no eruption event from GDACS. Impact zone is the configured default, not an observed plume."
+   ],
+   "polygons": [],
+   "observed": [],
+   "air": {
+    "airports": [
+     {
+      "iata": "JOG",
+      "name": "Adisutjipto",
+      "km": 27.6,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "SOC",
+      "name": "Adisoemarmo",
+      "km": 34.4,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "YIA",
+      "name": "Yogyakarta",
+      "km": 59.0,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "SRG",
+      "name": "Jenderal Ahmad Yani",
+      "km": 63.8,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "CXP",
+      "name": "Tunggul Wulung",
+      "km": 156.1,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "DHX",
+      "name": "Dhoho",
+      "km": 167.0,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 1341,
+    "via_hub_count": 0,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-10-08T07:02:28.764315+00:00",
+   "age_hours": 0.0,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 80,
+      "label": "Heavy ashfall",
+      "sla_days": 3
+     },
+     {
+      "to_km": 150,
+      "label": "Moderate ash",
+      "sla_days": 2
+     },
+     {
+      "to_km": 250,
+      "label": "Plume / airfreight",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": 3.0,
+    "counts": [
+     516,
+     511,
+     655
+    ],
+    "total": 1682
    }
   },
   {
@@ -276,7 +373,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -304,6 +401,91 @@
      376
     ],
     "total": 1103
+   }
+  },
+  {
+   "id": "magma:semeru",
+   "hazard": "volcano",
+   "name": "Semeru — Level III (Siaga)",
+   "lat": -8.108,
+   "lng": 112.922,
+   "severity": "Level III (Siaga)",
+   "severity_value": null,
+   "alert": "Level III (Siaga)",
+   "status": "active",
+   "started": null,
+   "updated": null,
+   "source": "PVMBG / MAGMA Indonesia",
+   "source_url": "https://magma.esdm.go.id/v1/gunung-api/tingkat-aktivitas",
+   "attribution": "Pusat Vulkanologi dan Mitigasi Bencana Geologi (PVMBG), Badan Geologi ESDM",
+   "notes": [
+    "Alert level scraped from HTML; verify against MAGMA before acting.",
+    "Province: Jawa Timur",
+    "Alert level only — no eruption event from GDACS. Impact zone is the configured default, not an observed plume."
+   ],
+   "polygons": [],
+   "observed": [],
+   "air": {
+    "airports": [
+     {
+      "iata": "MLG",
+      "name": "Abdul Rachman Saleh",
+      "km": 30.3,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "SUB",
+      "name": "Juanda",
+      "km": 82.3,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "DHX",
+      "name": "Dhoho",
+      "km": 114.6,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "SOC",
+      "name": "Adisoemarmo",
+      "km": 247.4,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 1050,
+    "via_hub_count": 0,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-10-08T07:02:28.764315+00:00",
+   "age_hours": 0.0,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 80,
+      "label": "Heavy ashfall",
+      "sla_days": 3
+     },
+     {
+      "to_km": 150,
+      "label": "Moderate ash",
+      "sla_days": 2
+     },
+     {
+      "to_km": 250,
+      "label": "Plume / airfreight",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": 3.0,
+    "counts": [
+     193,
+     497,
+     398
+    ],
+    "total": 1088
    }
   },
   {
@@ -361,7 +543,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -452,7 +634,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -531,7 +713,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -604,7 +786,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -695,7 +877,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -774,7 +956,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -853,7 +1035,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -965,7 +1147,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-07T06:52:54.937437+00:00",
-   "age_hours": 18.0,
+   "age_hours": 34.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1050,7 +1232,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1123,7 +1305,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1190,7 +1372,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1257,7 +1439,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1330,7 +1512,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1397,7 +1579,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1464,7 +1646,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1537,7 +1719,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1565,6 +1747,73 @@
      10
     ],
     "total": 17
+   }
+  },
+  {
+   "id": "magma:lewotobi-laki-laki",
+   "hazard": "volcano",
+   "name": "Lewotobi Laki-laki — Level II (Waspada)",
+   "lat": -8.542,
+   "lng": 122.775,
+   "severity": "Level II (Waspada)",
+   "severity_value": null,
+   "alert": "Level II (Waspada)",
+   "status": "active",
+   "started": null,
+   "updated": null,
+   "source": "PVMBG / MAGMA Indonesia",
+   "source_url": "https://magma.esdm.go.id/v1/gunung-api/tingkat-aktivitas",
+   "attribution": "Pusat Vulkanologi dan Mitigasi Bencana Geologi (PVMBG), Badan Geologi ESDM",
+   "notes": [
+    "Alert level scraped from HTML; verify against MAGMA before acting.",
+    "Province: Nusa Tenggara Timur",
+    "Alert level only — no eruption event from GDACS. Impact zone is the configured default, not an observed plume."
+   ],
+   "polygons": [],
+   "observed": [],
+   "air": {
+    "airports": [
+     {
+      "iata": "KOE",
+      "name": "El Tari",
+      "km": 206.2,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 102,
+    "via_hub_count": 0,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-10-08T07:02:28.764315+00:00",
+   "age_hours": 0.0,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 80,
+      "label": "Heavy ashfall",
+      "sla_days": 3
+     },
+     {
+      "to_km": 150,
+      "label": "Moderate ash",
+      "sla_days": 2
+     },
+     {
+      "to_km": 250,
+      "label": "Plume / airfreight",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": 2.0,
+    "counts": [
+     15,
+     13,
+     87
+    ],
+    "total": 115
    }
   },
   {
@@ -1604,7 +1853,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1671,7 +1920,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1738,7 +1987,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1805,7 +2054,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1858,7 +2107,7 @@
    "polygons": [],
    "observed": [],
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1925,7 +2174,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 31.0,
+   "age_hours": 47.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1964,7 +2213,7 @@
    "severity": "M 4.6, depth 19 km",
    "severity_value": 4.6,
    "alert": "green",
-   "status": "active",
+   "status": "stale",
    "started": "2026-10-05T21:38:04+00:00",
    "updated": "2026-10-05T21:38:04+00:00",
    "source": "BMKG",
@@ -1982,7 +2231,7 @@
     }
    ],
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 40.6,
+   "age_hours": 57.4,
    "impact": {
     "model": "radial",
     "bands": [
