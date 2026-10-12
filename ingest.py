@@ -1392,6 +1392,7 @@ def main(argv=None) -> int:
     fetchers = [
         ("bmkg_quake", fetch_bmkg),
         ("gdacs", fetch_gdacs),
+        ("petabencana_flood", fetch_petabencana),
         ("magma_volcano", fetch_magma),
         ("gdelt_news", fetch_gdelt),
     ]
