@@ -909,6 +909,114 @@ def load_overrides(path: Path) -> list[dict]:
         LOG.info("overrides: %d manual events", len(out))
     return out
 
+FLOOD_STATE = {
+    1: ("Unknown depth", 1),
+    2: ("Minor flood, 10-70 cm", 2),
+    3: ("Moderate flood, 71-150 cm", 3),
+    4: ("Severe flood, over 150 cm", 4),
+}
+
+
+def fetch_petabencana(http: Http, cfg: dict) -> list[dict]:
+    """
+    Realtime flood extents from PetaBencana.id (BNPB / MIT Urban Risk Lab).
+
+    Returns RT/RW-level polygons, which is the whole point: an exact footprint
+    beats a guessed radius. One event per admin area, with every flooded
+    polygon merged into it, so the map shows a single selectable flood rather
+    than hundreds of RT-sized events.
+
+    Coverage is Jakarta only (`admin=ID-JK`). This is NOT national coverage.
+    """
+    sc = cfg["sources"]["petabencana_flood"]
+    out: list[dict] = []
+
+    for admin in sc.get("admin_areas") or ["ID-JK"]:
+        try:
+            data = http.get_json(sc["url"], {
+                "admin": admin,
+                "minimum_state": sc.get("minimum_state", 2),
+                "geoformat": "geojson",
+            })
+        except Exception as e:
+            LOG.warning("petabencana %s: %s", admin, e)
+            continue
+
+        res = (data or {}).get("result") or {}
+        feats = res.get("features")
+        if feats is None:
+            if res.get("type") == "Topology":
+                LOG.warning("petabencana %s returned topojson despite geoformat="
+                            "geojson; skipping (the arc encoding is not decoded "
+                            "here)", admin)
+            continue
+        if not feats:
+            LOG.info("petabencana %s: no active flooding", admin)
+            continue
+
+        rings: list[list[list[float]]] = []
+        worst, areas, newest = 0, [], None
+        for f in feats:
+            p = f.get("properties") or {}
+            g = f.get("geometry") or {}
+            t, c = g.get("type"), g.get("coordinates") or []
+            if t == "Polygon":
+                rings.extend([r for r in c if len(r) >= 4])
+            elif t == "MultiPolygon":
+                for poly in c:
+                    rings.extend([r for r in poly if len(r) >= 4])
+            else:
+                continue
+            try:
+                worst = max(worst, int(p.get("state") or 0))
+            except (TypeError, ValueError):
+                pass
+            nm = " ".join(str(p.get(k) or "").strip()
+                          for k in ("area_name", "parent_name") if p.get(k))
+            if nm:
+                areas.append(nm)
+            lu = p.get("last_updated")
+            if lu and (newest is None or str(lu) > str(newest)):
+                newest = lu
+
+        if not rings:
+            continue
+
+        label, _ = FLOOD_STATE.get(worst, ("Flooding reported", 1))
+        now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        ev = new_event(
+            id=f"petabencana:{admin}:{(newest or now)[:13]}",
+            hazard="flood",
+            name=f"Banjir {admin.replace('ID-', '')} \u2014 {len(areas)} area terdampak",
+            lat=None, lng=None,                 # filled from the polygon centroid
+            severity=label,
+            severity_value=worst,
+            alert="red" if worst >= 4 else "orange" if worst == 3 else "green",
+            started=str(newest) if newest else now,
+            updated=str(newest) if newest else now,
+            source="PetaBencana.id",
+            source_url="https://petabencana.id",
+            attribution="PetaBencana.id (BNPB / MIT Urban Risk Lab)",
+            polygons=rings[:400],
+            notes=[
+                f"{len(areas)} flooded areas at RT/RW level: "
+                + ", ".join(areas[:8]) + ("..." if len(areas) > 8 else ""),
+                "Exact reported footprint, not a modelled radius.",
+                "Coverage is Jakarta only; floods elsewhere will not appear here.",
+            ],
+        )
+
+        # centroid of all ring vertices, so the map has somewhere to put the pin
+        xs = [pt[0] for r in rings for pt in r]
+        ys = [pt[1] for r in rings for pt in r]
+        if xs and ys:
+            ev["lng"] = round(sum(xs) / len(xs), 5)
+            ev["lat"] = round(sum(ys) / len(ys), 5)
+
+        out.append(ev)
+
+    LOG.info("petabencana: %d flood events", len(out))
+    return out
 
 def fetch_gdelt(http: Http, cfg: dict) -> list[dict]:
     """
