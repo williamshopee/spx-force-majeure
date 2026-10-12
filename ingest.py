@@ -597,11 +597,23 @@ def fetch_gdacs(http: Http, cfg: dict) -> list[dict]:
         "todate": now.strftime("%Y-%m-%d"),
         "country": "IDN",
     }
+    fc = None
     try:
         fc = http.get_json(sc["search_url"], params)
+        if not (fc or {}).get("features"):
+            raise ValueError("SEARCH returned no features")
     except Exception as e:
-        LOG.error("gdacs search: %s", e)
-        return []
+        # SEARCH sometimes returns HTML instead of JSON. EVENTS4APP is capped at
+        # 100 global events over 4 days, so Indonesia can be crowded out by
+        # green wildfires elsewhere — but partial data beats none.
+        LOG.warning("gdacs SEARCH failed (%s); falling back to EVENTS4APP", e)
+        try:
+            fc = http.get_json(
+                "https://www.gdacs.org/gdacsapi/api/Events/geteventlist/EVENTS4APP")
+            LOG.info("gdacs: using EVENTS4APP fallback")
+        except Exception as e2:
+            LOG.error("gdacs fallback also failed: %s", e2)
+            return []
 
     feats = (fc or {}).get("features") or []
     west, south, east, north = cfg["indonesia_bbox"]
