@@ -645,7 +645,9 @@ def fetch_gdacs(http: Http, cfg: dict) -> list[dict]:
         ev = new_event(
             id=f"gdacs:{etype}:{eid}",
             hazard=hazard,
-            name=p.get("name") or p.get("description") or f"{hazard} in Indonesia",
+            name=re.sub(r"(\w),\s+(\w[\w\s]*)$",
+                        r"\1 & \2",
+                        p.get("name") or p.get("description") or f"{hazard} in Indonesia"),
             lat=lat, lng=lon,
             severity=sev.get("severitytext") or None,
             severity_value=sev.get("severity"),
