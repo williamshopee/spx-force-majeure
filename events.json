@@ -1,38 +1,38 @@
 {
- "generated_at": "2026-10-12T07:00:52+00:00",
+ "generated_at": "2026-10-12T07:34:07+00:00",
  "facility_count": 8853,
- "event_count": 48,
- "verified_event_count": 48,
+ "event_count": 38,
+ "verified_event_count": 38,
  "source_health": [
   {
    "source": "bmkg_quake",
    "state": "ok",
    "events": 19,
-   "seconds": 0.46
+   "seconds": 0.65
   },
   {
    "source": "gdacs",
    "state": "ok",
-   "events": 21,
-   "seconds": 4.14
+   "events": 13,
+   "seconds": 4.41
   },
   {
    "source": "petabencana_flood",
    "state": "ok",
    "events": 1,
-   "seconds": 0.69
+   "seconds": 0.6
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 27,
-   "seconds": 1.65
+   "seconds": 1.58
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 104.42
+   "seconds": 88.32
   },
   {
    "source": "overrides",
@@ -95,7 +95,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -198,7 +198,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -295,7 +295,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-08T07:02:28.764315+00:00",
-   "age_hours": 96.0,
+   "age_hours": 96.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -380,7 +380,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -465,7 +465,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-08T07:02:28.764315+00:00",
-   "age_hours": 96.0,
+   "age_hours": 96.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -550,7 +550,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -641,7 +641,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -720,7 +720,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -793,7 +793,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -884,7 +884,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -963,7 +963,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -15747,7 +15747,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-12T07:00:52.637726+00:00",
-   "age_hours": 1.4,
+   "age_hours": 1.9,
    "impact": {
     "model": "polygon",
     "bands": [
@@ -15810,7 +15810,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-12T07:00:52.637726+00:00",
-   "age_hours": 0.4,
+   "age_hours": 1.0,
    "impact": {
     "model": "radial",
     "bands": [
@@ -15889,7 +15889,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -15974,7 +15974,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -16047,7 +16047,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -16114,7 +16114,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -16181,7 +16181,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -16254,7 +16254,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -16321,7 +16321,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -16388,7 +16388,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -16461,7 +16461,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -16528,7 +16528,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-08T07:02:28.764315+00:00",
-   "age_hours": 96.0,
+   "age_hours": 96.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -16595,7 +16595,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -16623,163 +16623,6 @@
      77
     ],
     "total": 100
-   }
-  },
-  {
-   "id": "gdacs:WF:1032615",
-   "hazard": "wildfire",
-   "name": "Forest fires in Indonesia",
-   "lat": -3.0475,
-   "lng": 113.7149,
-   "severity": "Green impact for forestfire in 8770 ha",
-   "severity_value": 8770.0,
-   "alert": "green",
-   "status": "active",
-   "started": "2026-10-01T00:00:00",
-   "updated": "2026-10-12T03:10:12",
-   "source": "GDACS/GWIS",
-   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032615&episodeid=6&eventtype=WF",
-   "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
-   "notes": [],
-   "polygons": [],
-   "observed": [],
-   "air": {
-    "airports": [
-     {
-      "iata": "PKY",
-      "name": "Tjilik Riwut",
-      "km": 94.7,
-      "how": "inside the impact zone"
-     }
-    ],
-    "direct_count": 100,
-    "via_hub_count": 0,
-    "sla_days": 1,
-    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
-   },
-   "first_seen": "2026-10-12T07:00:52.637726+00:00",
-   "age_hours": 3.8,
-   "impact": {
-    "model": "radial",
-    "bands": [
-     {
-      "to_km": 30,
-      "label": "Active fire",
-      "sla_days": 2
-     },
-     {
-      "to_km": 120,
-      "label": "Haze / visibility",
-      "sla_days": 1
-     }
-    ],
-    "corridors": [],
-    "exclusion_km": null,
-    "counts": [
-     0,
-     88
-    ],
-    "total": 88
-   }
-  },
-  {
-   "id": "gdacs:WF:1032750",
-   "hazard": "wildfire",
-   "name": "Forest fires in Indonesia",
-   "lat": -2.3197,
-   "lng": 113.3308,
-   "severity": "Green impact for forestfire in 5236 ha",
-   "severity_value": 5236.0,
-   "alert": "green",
-   "status": "active",
-   "started": "2026-09-28T00:00:00",
-   "updated": "2026-10-12T03:12:21",
-   "source": "GDACS/GWIS",
-   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032750&episodeid=2&eventtype=WF",
-   "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
-   "notes": [],
-   "polygons": [],
-   "observed": [],
-   "air": {
-    "airports": [
-     {
-      "iata": "PKY",
-      "name": "Tjilik Riwut",
-      "km": 68.8,
-      "how": "inside the impact zone"
-     }
-    ],
-    "direct_count": 100,
-    "via_hub_count": 0,
-    "sla_days": 1,
-    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
-   },
-   "first_seen": "2026-10-12T07:00:52.637726+00:00",
-   "age_hours": 3.8,
-   "impact": {
-    "model": "radial",
-    "bands": [
-     {
-      "to_km": 30,
-      "label": "Active fire",
-      "sla_days": 2
-     },
-     {
-      "to_km": 120,
-      "label": "Haze / visibility",
-      "sla_days": 1
-     }
-    ],
-    "corridors": [],
-    "exclusion_km": null,
-    "counts": [
-     0,
-     73
-    ],
-    "total": 73
-   }
-  },
-  {
-   "id": "gdacs:WF:1032648",
-   "hazard": "wildfire",
-   "name": "Forest fires in Indonesia",
-   "lat": -1.3523,
-   "lng": 104.0992,
-   "severity": "Green impact for forestfire in 6685 ha",
-   "severity_value": 6685.0,
-   "alert": "green",
-   "status": "active",
-   "started": "2026-09-28T00:00:00",
-   "updated": "2026-10-12T03:13:59",
-   "source": "GDACS/GWIS",
-   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032648&episodeid=8&eventtype=WF",
-   "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
-   "notes": [],
-   "polygons": [],
-   "observed": [],
-   "first_seen": "2026-10-12T07:00:52.637726+00:00",
-   "age_hours": 3.8,
-   "impact": {
-    "model": "radial",
-    "bands": [
-     {
-      "to_km": 30,
-      "label": "Active fire",
-      "sla_days": 2
-     },
-     {
-      "to_km": 120,
-      "label": "Haze / visibility",
-      "sla_days": 1
-     }
-    ],
-    "corridors": [],
-    "exclusion_km": null,
-    "counts": [
-     2,
-     109
-    ],
-    "total": 111
    }
   },
   {
@@ -16846,7 +16689,7 @@
     }
    ],
    "first_seen": "2026-10-12T04:18:51.205243+00:00",
-   "age_hours": 9.4,
+   "age_hours": 10.0,
    "impact": {
     "model": "radial",
     "bands": [
@@ -16882,20 +16725,20 @@
    "name": "Forest fires in Indonesia",
    "lat": -1.6763,
    "lng": 104.3531,
-   "severity": "Green impact for forestfire in 7345 ha",
-   "severity_value": 7345.0,
+   "severity": "Green impact for forestfire in 7353 ha",
+   "severity_value": 7353.0,
    "alert": "green",
    "status": "active",
    "started": "2026-10-04T00:00:00",
-   "updated": "2026-10-12T03:06:38",
+   "updated": "2026-10-12T07:08:38",
    "source": "GDACS/GWIS",
-   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032747&episodeid=1&eventtype=WF",
+   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032747&episodeid=2&eventtype=WF",
    "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
    "notes": [],
    "polygons": [],
    "observed": [],
    "first_seen": "2026-10-12T07:00:52.637726+00:00",
-   "age_hours": 3.9,
+   "age_hours": 0.4,
    "impact": {
     "model": "radial",
     "bands": [
@@ -16956,7 +16799,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -17023,7 +16866,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -17090,7 +16933,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -17143,7 +16986,7 @@
    "polygons": [],
    "observed": [],
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -17174,19 +17017,19 @@
    }
   },
   {
-   "id": "gdacs:WF:1032659",
+   "id": "gdacs:WF:1032693",
    "hazard": "wildfire",
    "name": "Forest fires in Indonesia",
-   "lat": 0.6339,
-   "lng": 128.2358,
-   "severity": "Green impact for forestfire in 6170 ha",
-   "severity_value": 6170.0,
+   "lat": 0.5763,
+   "lng": 127.969,
+   "severity": "Green impact for forestfire in 5047 ha",
+   "severity_value": 5047.0,
    "alert": "green",
    "status": "active",
    "started": "2026-09-29T00:00:00",
-   "updated": "2026-10-12T03:11:55",
+   "updated": "2026-10-12T07:12:16",
    "source": "GDACS/GWIS",
-   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032659&episodeid=8&eventtype=WF",
+   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032693&episodeid=3&eventtype=WF",
    "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
    "notes": [],
    "polygons": [],
@@ -17196,7 +17039,7 @@
      {
       "iata": "TTE",
       "name": "Sultan Babullah",
-      "km": 97.5,
+      "km": 71.2,
       "how": "inside the impact zone"
      }
     ],
@@ -17205,8 +17048,8 @@
     "sla_days": 1,
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
-   "first_seen": "2026-10-12T07:00:52.637726+00:00",
-   "age_hours": 3.8,
+   "first_seen": "2026-10-12T04:18:51.205243+00:00",
+   "age_hours": 0.4,
    "impact": {
     "model": "radial",
     "bands": [
@@ -17224,10 +17067,10 @@
     "corridors": [],
     "exclusion_km": null,
     "counts": [
-     4,
-     28
+     8,
+     23
     ],
-    "total": 32
+    "total": 31
    }
   },
   {
@@ -17241,15 +17084,15 @@
    "alert": "green",
    "status": "active",
    "started": "2026-09-29T00:00:00",
-   "updated": "2026-10-12T03:12:09",
+   "updated": "2026-10-12T07:12:22",
    "source": "GDACS/GWIS",
-   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032578&episodeid=21&eventtype=WF",
+   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032578&episodeid=22&eventtype=WF",
    "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
    "notes": [],
    "polygons": [],
    "observed": [],
    "first_seen": "2026-10-12T04:18:51.205243+00:00",
-   "age_hours": 3.8,
+   "age_hours": 0.4,
    "impact": {
     "model": "radial",
     "bands": [
@@ -17271,49 +17114,6 @@
      71
     ],
     "total": 71
-   }
-  },
-  {
-   "id": "gdacs:WF:1032660",
-   "hazard": "wildfire",
-   "name": "Forest fires in Indonesia",
-   "lat": -2.6461,
-   "lng": 111.5598,
-   "severity": "Green impact for forestfire in 6842 ha",
-   "severity_value": 6842.0,
-   "alert": "green",
-   "status": "active",
-   "started": "2026-09-28T00:00:00",
-   "updated": "2026-10-12T03:14:07",
-   "source": "GDACS/GWIS",
-   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032660&episodeid=11&eventtype=WF",
-   "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
-   "notes": [],
-   "polygons": [],
-   "observed": [],
-   "first_seen": "2026-10-12T07:00:52.637726+00:00",
-   "age_hours": 3.8,
-   "impact": {
-    "model": "radial",
-    "bands": [
-     {
-      "to_km": 30,
-      "label": "Active fire",
-      "sla_days": 2
-     },
-     {
-      "to_km": 120,
-      "label": "Haze / visibility",
-      "sla_days": 1
-     }
-    ],
-    "corridors": [],
-    "exclusion_km": null,
-    "counts": [
-     10,
-     53
-    ],
-    "total": 63
    }
   },
   {
@@ -17353,7 +17153,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-06T07:13:34.543771+00:00",
-   "age_hours": 143.8,
+   "age_hours": 144.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -17381,49 +17181,6 @@
      16
     ],
     "total": 16
-   }
-  },
-  {
-   "id": "gdacs:WF:1032749",
-   "hazard": "wildfire",
-   "name": "Forest fires in Indonesia",
-   "lat": -3.1372,
-   "lng": 111.8543,
-   "severity": "Green impact for forestfire in 5038 ha",
-   "severity_value": 5038.0,
-   "alert": "green",
-   "status": "active",
-   "started": "2026-09-28T00:00:00",
-   "updated": "2026-10-12T03:13:40",
-   "source": "GDACS/GWIS",
-   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032749&episodeid=1&eventtype=WF",
-   "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
-   "notes": [],
-   "polygons": [],
-   "observed": [],
-   "first_seen": "2026-10-12T07:00:52.637726+00:00",
-   "age_hours": 3.8,
-   "impact": {
-    "model": "radial",
-    "bands": [
-     {
-      "to_km": 30,
-      "label": "Active fire",
-      "sla_days": 2
-     },
-     {
-      "to_km": 120,
-      "label": "Haze / visibility",
-      "sla_days": 1
-     }
-    ],
-    "corridors": [],
-    "exclusion_km": null,
-    "counts": [
-     0,
-     49
-    ],
-    "total": 49
    }
   },
   {
@@ -17468,7 +17225,7 @@
     }
    ],
    "first_seen": "2026-10-12T07:00:52.637726+00:00",
-   "age_hours": 1.7,
+   "age_hours": 2.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -17526,7 +17283,7 @@
     }
    ],
    "first_seen": "2026-10-11T06:50:04.543411+00:00",
-   "age_hours": 27.5,
+   "age_hours": 28.1,
    "impact": {
     "model": "radial",
     "bands": [
@@ -17583,7 +17340,7 @@
     }
    ],
    "first_seen": "2026-10-09T14:31:51.141720+00:00",
-   "age_hours": 69.2,
+   "age_hours": 69.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -17661,7 +17418,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-12T04:18:51.205243+00:00",
-   "age_hours": 8.9,
+   "age_hours": 9.4,
    "impact": {
     "model": "radial",
     "bands": [
@@ -17692,76 +17449,19 @@
    }
   },
   {
-   "id": "gdacs:WF:1032748",
+   "id": "gdacs:WF:1032701",
    "hazard": "wildfire",
-   "name": "Forest fires in Indonesia",
-   "lat": -8.2116,
-   "lng": 140.9,
-   "severity": "Green impact for forestfire in 5273 ha",
-   "severity_value": 5273.0,
-   "alert": "green",
-   "status": "active",
-   "started": "2026-09-29T00:00:00",
-   "updated": "2026-10-12T03:11:37",
-   "source": "GDACS/GWIS",
-   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032748&episodeid=1&eventtype=WF",
-   "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
-   "notes": [],
-   "polygons": [],
-   "observed": [],
-   "air": {
-    "airports": [
-     {
-      "iata": "MKQ",
-      "name": "Mopah",
-      "km": 63.2,
-      "how": "inside the impact zone"
-     }
-    ],
-    "direct_count": 4,
-    "via_hub_count": 0,
-    "sla_days": 1,
-    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
-   },
-   "first_seen": "2026-10-12T07:00:52.637726+00:00",
-   "age_hours": 3.8,
-   "impact": {
-    "model": "radial",
-    "bands": [
-     {
-      "to_km": 30,
-      "label": "Active fire",
-      "sla_days": 2
-     },
-     {
-      "to_km": 120,
-      "label": "Haze / visibility",
-      "sla_days": 1
-     }
-    ],
-    "corridors": [],
-    "exclusion_km": null,
-    "counts": [
-     0,
-     4
-    ],
-    "total": 4
-   }
-  },
-  {
-   "id": "gdacs:WF:1032558",
-   "hazard": "wildfire",
-   "name": "Forest fires in Indonesia",
-   "lat": -7.5149,
-   "lng": 140.5034,
-   "severity": "Green impact for forestfire in 7330 ha",
-   "severity_value": 7330.0,
+   "name": "Forest fires in Papua New Guinea & Indonesia",
+   "lat": -7.7248,
+   "lng": 141.0432,
+   "severity": "Green impact for forestfire in 6770 ha",
+   "severity_value": 6770.0,
    "alert": "green",
    "status": "active",
    "started": "2026-09-26T00:00:00",
-   "updated": "2026-10-11T15:16:27",
+   "updated": "2026-10-11T15:15:46",
    "source": "GDACS/GWIS",
-   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032558&episodeid=16&eventtype=WF",
+   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032701&episodeid=5&eventtype=WF",
    "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
    "notes": [],
    "polygons": [],
@@ -17771,7 +17471,7 @@
      {
       "iata": "MKQ",
       "name": "Mopah",
-      "km": 112.6,
+      "km": 112.3,
       "how": "inside the impact zone"
      }
     ],
@@ -17781,235 +17481,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-12T04:18:51.205243+00:00",
-   "age_hours": 15.7,
-   "impact": {
-    "model": "radial",
-    "bands": [
-     {
-      "to_km": 30,
-      "label": "Active fire",
-      "sla_days": 2
-     },
-     {
-      "to_km": 120,
-      "label": "Haze / visibility",
-      "sla_days": 1
-     }
-    ],
-    "corridors": [],
-    "exclusion_km": null,
-    "counts": [
-     0,
-     4
-    ],
-    "total": 4
-   }
-  },
-  {
-   "id": "gdacs:WF:1032609",
-   "hazard": "wildfire",
-   "name": "Forest fires in Papua New Guinea",
-   "lat": -9.1185,
-   "lng": 141.2108,
-   "severity": "Green impact for forestfire in 7300 ha",
-   "severity_value": 7300.0,
-   "alert": "green",
-   "status": "active",
-   "started": "2026-09-27T00:00:00",
-   "updated": "2026-10-12T03:15:44",
-   "source": "GDACS/GWIS",
-   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032609&episodeid=9&eventtype=WF",
-   "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
-   "notes": [],
-   "polygons": [],
-   "observed": [],
-   "air": {
-    "airports": [
-     {
-      "iata": "MKQ",
-      "name": "Mopah",
-      "km": 109.2,
-      "how": "inside the impact zone"
-     }
-    ],
-    "direct_count": 4,
-    "via_hub_count": 0,
-    "sla_days": 1,
-    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
-   },
-   "first_seen": "2026-10-12T04:18:51.205243+00:00",
-   "age_hours": 3.8,
-   "impact": {
-    "model": "radial",
-    "bands": [
-     {
-      "to_km": 30,
-      "label": "Active fire",
-      "sla_days": 2
-     },
-     {
-      "to_km": 120,
-      "label": "Haze / visibility",
-      "sla_days": 1
-     }
-    ],
-    "corridors": [],
-    "exclusion_km": null,
-    "counts": [
-     0,
-     4
-    ],
-    "total": 4
-   }
-  },
-  {
-   "id": "gdacs:WF:1032650",
-   "hazard": "wildfire",
-   "name": "Forest fires in Papua New Guinea",
-   "lat": -8.4549,
-   "lng": 141.2861,
-   "severity": "Green impact for forestfire in 7600 ha",
-   "severity_value": 7600.0,
-   "alert": "green",
-   "status": "active",
-   "started": "2026-09-27T00:00:00",
-   "updated": "2026-10-12T03:15:58",
-   "source": "GDACS/GWIS",
-   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032650&episodeid=9&eventtype=WF",
-   "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
-   "notes": [],
-   "polygons": [],
-   "observed": [],
-   "air": {
-    "airports": [
-     {
-      "iata": "MKQ",
-      "name": "Mopah",
-      "km": 95.6,
-      "how": "inside the impact zone"
-     }
-    ],
-    "direct_count": 4,
-    "via_hub_count": 0,
-    "sla_days": 1,
-    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
-   },
-   "first_seen": "2026-10-12T07:00:52.637726+00:00",
-   "age_hours": 3.7,
-   "impact": {
-    "model": "radial",
-    "bands": [
-     {
-      "to_km": 30,
-      "label": "Active fire",
-      "sla_days": 2
-     },
-     {
-      "to_km": 120,
-      "label": "Haze / visibility",
-      "sla_days": 1
-     }
-    ],
-    "corridors": [],
-    "exclusion_km": null,
-    "counts": [
-     0,
-     4
-    ],
-    "total": 4
-   }
-  },
-  {
-   "id": "gdacs:WF:1032647",
-   "hazard": "wildfire",
-   "name": "Forest fires in Indonesia",
-   "lat": -6.3848,
-   "lng": 140.8953,
-   "severity": "Green impact for forestfire in 8819 ha",
-   "severity_value": 8819.0,
-   "alert": "green",
-   "status": "active",
-   "started": "2026-09-28T00:00:00",
-   "updated": "2026-10-12T03:13:01",
-   "source": "GDACS/GWIS",
-   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032647&episodeid=10&eventtype=WF",
-   "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
-   "notes": [],
-   "polygons": [],
-   "observed": [],
-   "air": {
-    "airports": [
-     {
-      "iata": "TMH",
-      "name": "Tanah Merah",
-      "km": 72.8,
-      "how": "inside the impact zone"
-     }
-    ],
-    "direct_count": 2,
-    "via_hub_count": 0,
-    "sla_days": 1,
-    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
-   },
-   "first_seen": "2026-10-12T07:00:52.637726+00:00",
-   "age_hours": 3.8,
-   "impact": {
-    "model": "radial",
-    "bands": [
-     {
-      "to_km": 30,
-      "label": "Active fire",
-      "sla_days": 2
-     },
-     {
-      "to_km": 120,
-      "label": "Haze / visibility",
-      "sla_days": 1
-     }
-    ],
-    "corridors": [],
-    "exclusion_km": null,
-    "counts": [
-     0,
-     2
-    ],
-    "total": 2
-   }
-  },
-  {
-   "id": "gdacs:WF:1032658",
-   "hazard": "wildfire",
-   "name": "Forest fires in Indonesia",
-   "lat": -2.8398,
-   "lng": 133.4321,
-   "severity": "Green impact for forestfire in 5838 ha",
-   "severity_value": 5838.0,
-   "alert": "green",
-   "status": "active",
-   "started": "2026-09-29T00:00:00",
-   "updated": "2026-10-12T03:11:44",
-   "source": "GDACS/GWIS",
-   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032658&episodeid=5&eventtype=WF",
-   "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
-   "notes": [],
-   "polygons": [],
-   "observed": [],
-   "air": {
-    "airports": [
-     {
-      "iata": "KNG",
-      "name": "Utarom",
-      "km": 94.1,
-      "how": "inside the impact zone"
-     }
-    ],
-    "direct_count": 0,
-    "via_hub_count": 0,
-    "sla_days": 1,
-    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
-   },
-   "first_seen": "2026-10-12T07:00:52.637726+00:00",
-   "age_hours": 3.8,
+   "age_hours": 16.3,
    "impact": {
     "model": "radial",
     "bands": [
