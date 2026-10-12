@@ -31,6 +31,7 @@ jobs:
           git config user.email "actions@github.com"
           git add events.json impacted_facilities.csv state.json
           git diff --cached --quiet || git commit -m "auto refresh $(date -u +%Y-%m-%dT%H:%M)"
+          git pull --rebase --autostash
           git push
 
       - name: Keep app awake
