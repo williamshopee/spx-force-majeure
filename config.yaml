@@ -185,12 +185,14 @@ impact_models:
     deep_radius_multiplier: 0.55
 
   flood:
-    # PetaBencana gives an exact RT-level polygon, so bands only apply as a
-    # distance refinement inside it. Depth drives the SLA, not distance.
     bands:
       - {to_km: 5,  label: "Inundation area", sla_days: 3}
       - {to_km: 25, label: "Access disrupted", sla_days: 2}
     corridors: []
+    # RT-level polygons are only a few hundred metres across, so a facility is
+    # rarely inside one even when its access road is cut. Count anything within
+    # this distance of the flooded area as affected.
+    buffer_km: 2.0
 
   cyclone:
     bands:
