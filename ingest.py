@@ -1175,9 +1175,25 @@ def apply_impact_model(ev: dict, cfg: dict, facilities: list[tuple[str, float, f
 
     if ev["polygons"]:
         model = "polygon"
+        buf = float(model_cfg.get("buffer_km") or 0)
+        verts = []
+        if buf > 0:
+            # bbox prefilter keeps the vertex scan cheap
+            vx = [pt[0] for r in ev["polygons"] for pt in r]
+            vy = [pt[1] for r in ev["polygons"] for pt in r]
+            bminx, bmaxx = min(vx) - buf / 100, max(vx) + buf / 100
+            bminy, bmaxy = min(vy) - buf / 100, max(vy) + buf / 100
+            verts = [(pt[1], pt[0]) for r in ev["polygons"] for pt in r]
+
         for name, flat, flon in facilities:
             if not in_polygons(flat, flon, ev["polygons"]):
-                continue
+                if not buf:
+                    continue
+                if not (bminx <= flon <= bmaxx and bminy <= flat <= bmaxy):
+                    continue
+                if min(haversine(flat, flon, vla, vlo)
+                       for vla, vlo in verts) > buf:
+                    continue
             # Inside the footprint is a yes/no fact. Severity within it still
             # varies with distance from the source, so keep banding when we
             # have both. Anything beyond the last band is clamped into it
