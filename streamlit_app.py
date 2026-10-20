@@ -1,5 +1,13 @@
 """
-SPX Force Majeure Watch — Streamlit app.
+SPX Force Majeure Watch (BCP) — Streamlit app.
+
+Team login routes each team to the map built for them:
+  General Map — L&D, HSE, OTM, 3PLM, Control Tower, SLA
+  SOC Map     — SOC only (manpower and capacity layers, in development)
+
+NOTE ON SECURITY. This login stops the wrong team opening the wrong map.
+It is NOT a confidentiality control: the app runs on public infrastructure
+and anything committed to the repo is readable without passing this screen.
 """
 
 import json
@@ -12,11 +20,86 @@ from pathlib import Path
 import streamlit as st
 
 st.set_page_config(
-    page_title="SPX Force Majeure Watch",
+    page_title="SPX BCP — Geospatial Analysis",
     page_icon="https://vectorseek.com/wp-content/uploads/2023/11/SPX-Express-Indonesia-white-Logo-Vector.svg-.png",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
+
+HERE = Path(__file__).resolve().parent
+
+# ---------------------------------------------------------------------------
+# teams and login
+# ---------------------------------------------------------------------------
+# Each team has its own password so access can be revoked per team.
+# Passwords live in Streamlit Cloud -> Settings -> Secrets, never in this file.
+
+TEAMS = {
+    "L&D":           {"map": "general", "label": "Loss & Damage"},
+    "HSE":           {"map": "general", "label": "Health, Safety & Environment"},
+    "OTM":           {"map": "general", "label": "OTM"},
+    "3PLM":          {"map": "general", "label": "3PL Management"},
+    "Control Tower": {"map": "general", "label": "Control Tower"},
+    "SLA":           {"map": "general", "label": "SLA"},
+    "SOC":           {"map": "soc",     "label": "Sort & Collect"},
+}
+
+
+def check_password(team: str, entered: str) -> bool:
+    try:
+        expected = st.secrets["passwords"][team]
+    except (KeyError, FileNotFoundError):
+        return False
+    return bool(expected) and entered == expected
+
+
+def login_screen():
+    st.markdown("""
+    <style>
+        .block-container { padding-top: 4rem !important; max-width: 460px !important; }
+        footer, header { visibility: hidden; }
+        .stAppDeployButton { display: none; }
+        .login-title { font-size: 26px; font-weight: 700; margin-bottom: 2px; }
+        .login-sub { color: #8aa; font-size: 14px; margin-bottom: 26px; }
+        .login-note { color: #667; font-size: 12px; margin-top: 22px; line-height: 1.5; }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="login-title">SPX BCP — Geospatial Analysis</div>',
+                unsafe_allow_html=True)
+    st.markdown('<div class="login-sub">Sign in with your team credentials.</div>',
+                unsafe_allow_html=True)
+
+    team = st.selectbox("Team", list(TEAMS.keys()),
+                        format_func=lambda t: f"{t} — {TEAMS[t]['label']}")
+    pwd = st.text_input("Password", type="password")
+
+    if st.button("Sign in", use_container_width=True, type="primary"):
+        if check_password(team, pwd):
+            st.session_state.team = team
+            st.session_state.map_view = TEAMS[team]["map"]
+            st.rerun()
+        else:
+            st.error("Wrong password for that team.")
+
+    st.markdown(
+        '<div class="login-note">Each team sees the map built for its own use. '
+        'This sign-in prevents the wrong team using the wrong map; it is not a '
+        'confidentiality control. Contact L&D if you need access.</div>',
+        unsafe_allow_html=True)
+
+
+if "team" not in st.session_state:
+    login_screen()
+    st.stop()
+
+TEAM = st.session_state.team
+VIEW = st.session_state.map_view
+VIEW_NAME = "General Map" if VIEW == "general" else "SOC Map"
+
+# ---------------------------------------------------------------------------
+# styling
+# ---------------------------------------------------------------------------
 
 st.markdown("""
 <style>
@@ -25,7 +108,6 @@ st.markdown("""
     footer, header { visibility: hidden; height: 0; }
     #MainMenu { visibility: hidden; }
     .stAppDeployButton { display: none; }
-    /* kill the gap between sidebar and content */
     section[data-testid="stSidebar"] + div { padding: 0 !important; }
     .stMainBlockContainer { padding: 0 !important; }
     iframe { width: 100%; min-height: 100vh; border: none; display: block; margin: -1rem 0; }
@@ -37,7 +119,6 @@ st.markdown("""
     [data-testid="stSidebar"] { background: #0b1520; border-right: 1px solid #1a2a3a; }
     [data-testid="stSidebar"] [data-testid="stSidebarContent"] { padding-top: 1rem; }
 
-    /* ALL sidebar text white/light */
     [data-testid="stSidebar"] h3 { color: #f0f4f8 !important; font-size: 17px !important; }
     [data-testid="stSidebar"] p,
     [data-testid="stSidebar"] span,
@@ -46,24 +127,19 @@ st.markdown("""
     [data-testid="stSidebar"] .stCaption p,
     [data-testid="stSidebar"] [data-testid="stCaptionContainer"] p { color: #c0d0e0 !important; }
 
-    /* caption / status line */
-    [data-testid="stSidebar"] [data-testid="stCaptionContainer"] p { 
-        color: #90a8c0 !important; font-size: 13px !important; 
+    [data-testid="stSidebar"] [data-testid="stCaptionContainer"] p {
+        color: #90a8c0 !important; font-size: 13px !important;
     }
 
-    /* checkbox labels */
     [data-testid="stSidebar"] .stCheckbox label p { color: #d8e4f0 !important; font-size: 13.5px !important; }
     [data-testid="stSidebar"] .stCheckbox { margin-bottom: -8px; }
 
-    /* expander text */
     [data-testid="stSidebar"] .stExpander summary span { color: #90a8c0 !important; }
     [data-testid="stSidebar"] .stExpander div p { color: #90a8c0 !important; }
 
-    /* filter header */
     .filter-head { color: #7090a8 !important; font-size: 11px; text-transform: uppercase;
                    letter-spacing: 0.06em; margin: 6px 0 6px; }
 
-    /* event list items */
     .ev-item { padding: 7px 0; border-bottom: 1px solid #182838; }
     .ev-name { font-weight: 600; font-size: 13.5px; color: #e0eaf4; }
     .ev-meta { color: #7892a8; font-size: 12px; }
@@ -71,12 +147,12 @@ st.markdown("""
     .ev-unverified .ev-name { color: #707070; }
     .ev-empty { color: #506878; font-size: 13px; padding: 10px 0; }
 
-    /* feed status dots */
     .feed-ok { color: #4caf80; }
     .feed-fail { color: #e05555; }
     .feed-off { color: #505050; }
 
-    /* download button */
+    .team-tag { color: #6f8ba3; font-size: 11.5px; letter-spacing: 0.03em; }
+
     [data-testid="stSidebar"] .stDownloadButton button {
         background: #152535 !important; border: 1px solid #2a4055 !important;
         color: #c0d8e8 !important;
@@ -86,8 +162,6 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
-
-HERE = Path(__file__).resolve().parent
 
 HAZARD_COLORS = {
     "earthquake": "#e05555", "volcano": "#ff5b2b", "flood": "#3d9bff",
@@ -211,14 +285,20 @@ CAT_TO_KEY = {
 # ---------------------------------------------------------------------------
 
 with st.sidebar:
-    st.markdown("### SPX L&D — Force Majeure Watch")
+    st.markdown(f"### SPX BCP — {VIEW_NAME}")
+    st.markdown(f'<p class="team-tag">Signed in as {TEAM}</p>', unsafe_allow_html=True)
 
-    if st.button("Refresh data", use_container_width=True):
+    c1, c2 = st.columns(2)
+    if c1.button("Refresh", use_container_width=True):
         st.cache_data.clear()
+        st.rerun()
+    if c2.button("Sign out", use_container_width=True):
+        for k in ("team", "map_view"):
+            st.session_state.pop(k, None)
         st.rerun()
 
     ts = time_bucket()
-    with st.spinner("Fetching from BMKG, GDACS, MAGMA..."):
+    with st.spinner("Fetching from BMKG, GDACS, PetaBencana, MAGMA..."):
         report = cached_ingest(ts)
 
     if not report["ok"]:
@@ -264,7 +344,6 @@ with st.sidebar:
 
         st.markdown("---")
 
-        # classify events
         all_events = events.get("events", [])
         for ev in all_events:
             ev["_category"] = classify_event(ev)
@@ -336,17 +415,26 @@ with st.sidebar:
             for a in events.get("attribution", []):
                 st.caption(a)
     else:
-        st.info("No event data yet. Click Refresh data or wait for the first fetch.")
+        st.info("No event data yet. Click Refresh or wait for the first fetch.")
 
     st.markdown("---")
     st.caption("Select an event on the map to view the impact zone and export affected facilities.")
 
 # ---------------------------------------------------------------------------
-# map (full width, no gap)
+# map
 # ---------------------------------------------------------------------------
+
+if VIEW == "soc":
+    # SOC Map — manpower and capacity layers are not built yet, so say so
+    # plainly rather than presenting the general map as if it were the SOC view.
+    st.info(
+        "SOC Map is in development. Manpower fulfillment and capacity layers are "
+        "not available yet — the force majeure base map is shown below. "
+        "Contact L&D to supply the manpower dataset."
+    )
 
 html = cached_map(ts)
 if html:
-    st.components.v1.html(html, height=920, scrolling=False)
+    st.components.v1.html(html, height=880 if VIEW == "soc" else 920, scrolling=False)
 else:
     st.error("Map could not be built.")
