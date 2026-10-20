@@ -35,7 +35,7 @@ HERE = Path(__file__).resolve().parent
 # Passwords live in Streamlit Cloud -> Settings -> Secrets, never in this file.
 
 TEAMS = {
-    "L&D":           {"map": "general", "label": "Loss & Damage"},
+    "L&D":           {"map": "general", "label": ""},
     "HSE":           {"map": "general", "label": "Health, Safety & Environment"},
     "OTM":           {"map": "general", "label": "OTM"},
     "3PLM":          {"map": "general", "label": "3PL Management"},
@@ -65,13 +65,13 @@ def login_screen():
     </style>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="login-title">SPX BCP — Geospatial Analysis</div>',
+    st.markdown('<div class="login-title">SPX - Geospatial Analysis</div>',
                 unsafe_allow_html=True)
     st.markdown('<div class="login-sub">Sign in with your team credentials.</div>',
                 unsafe_allow_html=True)
 
     team = st.selectbox("Team", list(TEAMS.keys()),
-                        format_func=lambda t: f"{t} — {TEAMS[t]['label']}")
+                        format_func=lambda t: f"{t} - {TEAMS[t]['label']}")
     pwd = st.text_input("Password", type="password")
 
     if st.button("Sign in", use_container_width=True, type="primary"):
@@ -83,9 +83,7 @@ def login_screen():
             st.error("Wrong password for that team.")
 
     st.markdown(
-        '<div class="login-note">Each team sees the map built for its own use. '
-        'This sign-in prevents the wrong team using the wrong map; it is not a '
-        'confidentiality control. Contact L&D if you need access.</div>',
+        '<div class="login-note">Contact L&D if you need access.</div>',
         unsafe_allow_html=True)
 
 
@@ -285,7 +283,7 @@ CAT_TO_KEY = {
 # ---------------------------------------------------------------------------
 
 with st.sidebar:
-    st.markdown(f"### SPX BCP — {VIEW_NAME}")
+    st.markdown(f"### SPX BCP - {VIEW_NAME}")
     st.markdown(f'<p class="team-tag">Signed in as {TEAM}</p>', unsafe_allow_html=True)
 
     c1, c2 = st.columns(2)
