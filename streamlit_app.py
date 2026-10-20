@@ -66,7 +66,7 @@ def login_screen():
                 unsafe_allow_html=True)
 
     team = st.selectbox("Team", list(TEAMS.keys()),
-                        format_func=lambda t: f"{t} - {TEAMS[t]['label']}")
+                        format_func=lambda t: f"{t} Map")
     pwd = st.text_input("Password", type="password")
 
     if st.button("Sign in", use_container_width=True, type="primary"):
