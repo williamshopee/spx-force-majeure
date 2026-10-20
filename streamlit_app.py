@@ -41,7 +41,7 @@ TEAMS = {
     "3PLM":          {"map": "general", "label": "3PL Management"},
     "Control Tower": {"map": "general", "label": "Control Tower"},
     "SLA":           {"map": "general", "label": "SLA"},
-    "SOC":           {"map": "soc",     "label": "Sort & Collect"},
+    "SOC":           {"map": "soc",     "label": "Sorting Center"},
 }
 
 
