@@ -35,13 +35,8 @@ HERE = Path(__file__).resolve().parent
 # Passwords live in Streamlit Cloud -> Settings -> Secrets, never in this file.
 
 TEAMS = {
-    "L&D":           {"map": "general", "label": ""},
-    "HSE":           {"map": "general", "label": "Health, Safety & Environment"},
-    "OTM":           {"map": "general", "label": "OTM"},
-    "3PLM":          {"map": "general", "label": "3PL Management"},
-    "Control Tower": {"map": "general", "label": "Control Tower"},
-    "SLA":           {"map": "general", "label": "SLA"},
-    "SOC":           {"map": "soc",     "label": "Sorting Center"},
+    "General": {"map": "general"},
+    "SOC":     {"map": "soc", "label": "Sorting Center"},
 }
 
 
