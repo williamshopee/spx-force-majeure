@@ -1,38 +1,38 @@
 {
- "generated_at": "2026-10-22T11:14:14+00:00",
+ "generated_at": "2026-10-22T15:59:36+00:00",
  "facility_count": 8853,
- "event_count": 3,
- "verified_event_count": 3,
+ "event_count": 2,
+ "verified_event_count": 2,
  "source_health": [
   {
    "source": "bmkg_quake",
    "state": "ok",
    "events": 19,
-   "seconds": 1.32
+   "seconds": 0.58
   },
   {
    "source": "gdacs",
    "state": "ok",
    "events": 0,
-   "seconds": 36.34
+   "seconds": 65.42
   },
   {
    "source": "petabencana_flood",
    "state": "ok",
    "events": 1,
-   "seconds": 0.79
+   "seconds": 0.28
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 27,
-   "seconds": 2.19
+   "seconds": 1.79
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 100.01
+   "seconds": 71.93
   },
   {
    "source": "overrides",
@@ -47,7 +47,7 @@
   {
    "id": "bmkg:2026-10-22T10:57:49+00:00_-3.110_102.140",
    "hazard": "earthquake",
-   "name": "M 5.2 earthquake — 6 km BaratLaut LEBONG-BENGKULU",
+   "name": "M 5.2 earthquake — Pusat gempa berada di darat 6 km BaratLaut Lebong",
    "lat": -3.11,
    "lng": 102.14,
    "severity": "M 5.2, depth 120 km",
@@ -60,11 +60,28 @@
    "source_url": "https://data.bmkg.go.id/gempabumi",
    "attribution": "Data gempabumi: BMKG",
    "notes": [
-    "Tidak berpotensi tsunami",
-    "Shakemap: https://static.bmkg.go.id/20261022180028.mmi.jpg"
+    "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+    "Shakemap: https://static.bmkg.go.id/20261022175749.mmi.jpg",
+    "BMKG felt intensity (MMI): III Kota Bengkulu, II - III Curup, III Arga Makmur"
    ],
    "polygons": [],
-   "observed": [],
+   "observed": [
+    {
+     "place": "Kota Bengkulu",
+     "mmi_text": "III",
+     "mmi_max": 3
+    },
+    {
+     "place": "Curup",
+     "mmi_text": "II - III",
+     "mmi_max": 3
+    },
+    {
+     "place": "Arga Makmur",
+     "mmi_text": "III",
+     "mmi_max": 3
+    }
+   ],
    "air": {
     "airports": [
      {
@@ -80,7 +97,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-22T11:14:14.518852+00:00",
-   "age_hours": 0.3,
+   "age_hours": 5.0,
    "impact": {
     "model": "radial",
     "bands": [
@@ -186,7 +203,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-21T05:45:43.080341+00:00",
-   "age_hours": 42.7,
+   "age_hours": 47.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -214,63 +231,6 @@
      23
     ],
     "total": 23
-   }
-  },
-  {
-   "id": "bmkg:2026-10-19T12:06:02+00:00_-7.990_120.090",
-   "hazard": "earthquake",
-   "name": "M 4.5 earthquake — Pusat gempa berada di laut 60 km Utara Labuanbajo",
-   "lat": -7.99,
-   "lng": 120.09,
-   "severity": "M 4.5, depth 6 km",
-   "severity_value": 4.5,
-   "alert": "green",
-   "status": "stale",
-   "started": "2026-10-19T12:06:02+00:00",
-   "updated": "2026-10-19T12:06:02+00:00",
-   "source": "BMKG",
-   "source_url": "https://data.bmkg.go.id/gempabumi",
-   "attribution": "Data gempabumi: BMKG",
-   "notes": [
-    "BMKG felt intensity (MMI): II Kab. Manggarai"
-   ],
-   "polygons": [],
-   "observed": [
-    {
-     "place": "Kab. Manggarai",
-     "mmi_text": "II",
-     "mmi_max": 2
-    }
-   ],
-   "first_seen": "2026-10-19T18:49:10.117619+00:00",
-   "age_hours": 71.1,
-   "impact": {
-    "model": "radial",
-    "bands": [
-     {
-      "to_km": 15,
-      "label": "Strong shaking",
-      "sla_days": 3
-     },
-     {
-      "to_km": 40,
-      "label": "Moderate shaking",
-      "sla_days": 2
-     },
-     {
-      "to_km": 80,
-      "label": "Felt",
-      "sla_days": 1
-     }
-    ],
-    "corridors": [],
-    "exclusion_km": null,
-    "counts": [
-     0,
-     0,
-     10
-    ],
-    "total": 10
    }
   }
  ]
