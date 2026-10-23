@@ -187,19 +187,31 @@ def run_ingest() -> dict:
                 "stderr": "Ingestion timed out (180s). MAGMA is likely unreachable.", "code": -1}
 
 
-def build_map_html() -> str:
+def build_map_html(view: str) -> str:
+    """
+    General Map and SOC Map are built from the same template but different
+    data. The network chain is only passed for SOC, so the General Map's HTML
+    contains no network data at all rather than hiding it client-side.
+    """
     script = HERE / "build_map.py"
     if not script.exists():
         return ""
-    subprocess.run(
-        [sys.executable, str(script),
-         "--template", str(HERE / "map_template.html"),
-         "--stations", str(HERE / "latlong.csv"),
-         "--airports", str(HERE / "airports.csv"),
-         "--events", str(HERE / "events.json"),
-         "--embed", "--out", str(HERE / "map.html")],
-        capture_output=True, text=True, timeout=60)
-    p = HERE / "map.html"
+
+    out_name = "map_soc.html" if view == "soc" else "map.html"
+    cmd = [sys.executable, str(script),
+           "--template", str(HERE / "map_template.html"),
+           "--stations", str(HERE / "latlong.csv"),
+           "--airports", str(HERE / "airports.csv"),
+           "--events", str(HERE / "events.json"),
+           "--embed", "--out", str(HERE / out_name)]
+
+    if view == "soc":
+        net = HERE / "network.csv"
+        if net.exists():
+            cmd += ["--network", str(net)]
+
+    subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+    p = HERE / out_name
     return p.read_text(encoding="utf-8") if p.exists() else ""
 
 
@@ -224,8 +236,8 @@ def cached_ingest(_ts: int) -> dict:
 
 
 @st.cache_data(ttl=600, show_spinner=False)
-def cached_map(_ts: int) -> str:
-    return build_map_html()
+def cached_map(_ts: int, view: str) -> str:
+    return build_map_html(view)
 
 
 def time_bucket():
@@ -418,15 +430,19 @@ with st.sidebar:
 # ---------------------------------------------------------------------------
 
 if VIEW == "soc":
-    # SOC Map — manpower and capacity layers are not built yet, so say so
-    # plainly rather than presenting the general map as if it were the SOC view.
-    st.info(
-        "SOC Map is in development. Manpower fulfillment and capacity layers are "
-        "not available yet — the force majeure base map is shown below. "
-        "Contact L&D to supply the manpower dataset."
-    )
+    if (HERE / "network.csv").exists():
+        st.caption(
+            "SOC Map - click any facility to trace its network chain. "
+            "Teal lines are outbound, orange dashed lines are inbound. "
+            "Manpower and capacity layers are still in development."
+        )
+    else:
+        st.info(
+            "SOC Map: network.csv not found in the repo, so the network chain "
+            "is unavailable. The force majeure base map is shown below."
+        )
 
-html = cached_map(ts)
+html = cached_map(ts, VIEW)
 if html:
     st.components.v1.html(html, height=880 if VIEW == "soc" else 920, scrolling=False)
 else:
