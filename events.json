@@ -1,38 +1,38 @@
 {
- "generated_at": "2026-10-22T15:59:36+00:00",
+ "generated_at": "2026-10-23T05:47:19+00:00",
  "facility_count": 8853,
- "event_count": 2,
- "verified_event_count": 2,
+ "event_count": 4,
+ "verified_event_count": 4,
  "source_health": [
   {
    "source": "bmkg_quake",
    "state": "ok",
    "events": 19,
-   "seconds": 0.58
+   "seconds": 0.26
   },
   {
    "source": "gdacs",
    "state": "ok",
-   "events": 0,
-   "seconds": 65.42
+   "events": 3,
+   "seconds": 47.41
   },
   {
    "source": "petabencana_flood",
    "state": "ok",
    "events": 1,
-   "seconds": 0.28
+   "seconds": 0.79
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 27,
-   "seconds": 1.79
+   "seconds": 1.48
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 71.93
+   "seconds": 100.88
   },
   {
    "source": "overrides",
@@ -41,7 +41,8 @@
   }
  ],
  "attribution": [
-  "Data gempabumi: BMKG"
+  "Data gempabumi: BMKG",
+  "Global Disaster Alert and Coordination System (GDACS), EC-JRC"
  ],
  "events": [
   {
@@ -62,7 +63,8 @@
    "notes": [
     "Gempa ini dirasakan untuk diteruskan pada masyarakat",
     "Shakemap: https://static.bmkg.go.id/20261022175749.mmi.jpg",
-    "BMKG felt intensity (MMI): III Kota Bengkulu, II - III Curup, III Arga Makmur"
+    "BMKG felt intensity (MMI): III Kota Bengkulu, II - III Curup, III Arga Makmur",
+    "Also reported by GDACS/NEIC."
    ],
    "polygons": [],
    "observed": [
@@ -82,6 +84,12 @@
      "mmi_max": 3
     }
    ],
+   "other_sources": [
+    {
+     "source": "GDACS/NEIC",
+     "url": "https://www.gdacs.org/report.aspx?eventid=1573113&episodeid=1741803&eventtype=EQ"
+    }
+   ],
    "air": {
     "airports": [
      {
@@ -97,7 +105,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-22T11:14:14.518852+00:00",
-   "age_hours": 5.0,
+   "age_hours": 18.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -136,7 +144,7 @@
    "severity": "M 5.4, depth 74 km",
    "severity_value": 5.4,
    "alert": "green",
-   "status": "active",
+   "status": "stale",
    "started": "2026-10-20T16:29:35+00:00",
    "updated": "2026-10-20T16:29:35+00:00",
    "source": "BMKG",
@@ -203,7 +211,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-21T05:45:43.080341+00:00",
-   "age_hours": 47.5,
+   "age_hours": 61.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -231,6 +239,106 @@
      23
     ],
     "total": 23
+   }
+  },
+  {
+   "id": "gdacs:WF:1033073",
+   "hazard": "wildfire",
+   "name": "Forest fires in Indonesia",
+   "lat": -1.6785,
+   "lng": 120.9661,
+   "severity": "Green impact for forestfire in 5014 ha",
+   "severity_value": 5014.0,
+   "alert": "green",
+   "status": "active",
+   "started": "2026-10-18T00:00:00",
+   "updated": "2026-10-23T03:09:18",
+   "source": "GDACS/GWIS",
+   "source_url": "https://www.gdacs.org/report.aspx?eventid=1033073&episodeid=1&eventtype=WF",
+   "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
+   "notes": [],
+   "polygons": [],
+   "observed": [],
+   "first_seen": "2026-10-23T05:47:19.743851+00:00",
+   "age_hours": 2.6,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 30,
+      "label": "Active fire",
+      "sla_days": 2
+     },
+     {
+      "to_km": 120,
+      "label": "Haze / visibility",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": null,
+    "counts": [
+     1,
+     49
+    ],
+    "total": 50
+   }
+  },
+  {
+   "id": "gdacs:WF:1032893",
+   "hazard": "wildfire",
+   "name": "Forest fires in Indonesia",
+   "lat": -4.0866,
+   "lng": 138.3993,
+   "severity": "Green impact for forestfire in 9782 ha",
+   "severity_value": 9782.0,
+   "alert": "green",
+   "status": "active",
+   "started": "2026-10-12T00:00:00",
+   "updated": "2026-10-23T03:20:25",
+   "source": "GDACS/GWIS",
+   "source_url": "https://www.gdacs.org/report.aspx?eventid=1032893&episodeid=12&eventtype=WF",
+   "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
+   "notes": [],
+   "polygons": [],
+   "observed": [],
+   "air": {
+    "airports": [
+     {
+      "iata": "WMX",
+      "name": "Wamena",
+      "km": 61.4,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 6,
+    "via_hub_count": 0,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-10-18T13:47:54.718993+00:00",
+   "age_hours": 2.4,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 30,
+      "label": "Active fire",
+      "sla_days": 2
+     },
+     {
+      "to_km": 120,
+      "label": "Haze / visibility",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": null,
+    "counts": [
+     2,
+     3
+    ],
+    "total": 5
    }
   }
  ]
