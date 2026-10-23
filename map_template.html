@@ -262,6 +262,26 @@
   }
   .air .apl span.dec{background:#4a2030;border-color:var(--sev1);color:#ffd9d2}
 
+    /* network chain popup */
+  .net-sec{margin-top:10px;padding-top:9px;border-top:1px solid var(--line)}
+  .net-sec h4{
+    margin:0 0 5px;font-size:11px;font-weight:600;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.04em
+  }
+  .net-list{list-style:none;margin:0;padding:0;max-height:140px;overflow-y:auto}
+  .net-list li{
+    font-size:12.5px;padding:3px 0;color:var(--text);
+    display:flex;justify-content:space-between;gap:10px
+  }
+  .net-list li em{font-style:normal;color:var(--dim);font-size:11px;flex:0 0 auto}
+  .net-none{color:var(--dim);font-size:12px;padding:3px 0}
+  .net-hint{
+    position:absolute;z-index:600;right:14px;top:14px;
+    background:rgba(10,26,41,.9);border:1px solid var(--line);border-radius:3px;
+    padding:7px 11px;color:var(--muted);font-size:11.5px;pointer-events:none
+  }
+  .net-hint[hidden]{display:none}
+  
   .sevkey{list-style:none;margin:11px 0 0;padding:0;font-size:12px;color:var(--muted)}
   .sevkey li{display:flex;align-items:center;gap:8px;padding:2px 0}
   .sevkey i{width:9px;height:9px;border-radius:50%;flex:0 0 9px}
@@ -461,6 +481,7 @@
     <div id="map"></div>
     <div class="inview" id="inview" hidden><b>0</b><span>in view</span></div>
     <div class="ramp" id="ramp"><i></i><div class="lab"><span>sparse</span><span>dense</span></div></div>
+    <div class="net-hint" id="netHint" hidden>Click a facility to trace its network</div>    
     <div id="boot"><h3>Loading the map</h3><p>Fetching Leaflet and the basemap tiles.</p></div>
   </div>
 </div>
@@ -470,6 +491,9 @@
 <!-- build_map.py replaces the contents of this tag with events.json so the
      page works when opened as a local file (fetch is blocked by CORS there). -->
 <script id="airports" type="application/json">__AIRPORTS__</script>
+<!-- Network chain, embedded only when build_map.py is run with --network.
+     The General Map build leaves this as null. -->
+<script id="network" type="application/json">__NETWORK__</script>
 <script id="events-embedded" type="application/json">__EVENTS__</script>
 <script>
 (function(){
@@ -557,7 +581,116 @@
       GW[i] = best; HUB[i] = hubOfAp[best];
     }
   })();
+  /* ---------------- network chain (SOC Map only) ---------------- */
+  // Only present when build_map.py was run with --network. The General Map
+  // build writes null here, so none of this does anything there.
+  var NET = null, NET_OUT = null, NET_IN = null;
+  try {
+    var _ne = document.getElementById('network');
+    if (_ne && _ne.textContent.trim().charAt(0) === '[') NET = JSON.parse(_ne.textContent);
+  } catch (e) { NET = null; }
 
+  if (NET && NET.length) {
+    // adjacency built once; 7k links is nothing, but rebuilding per click is wasteful
+    NET_OUT = {}; NET_IN = {};
+    for (var nl = 0; nl < NET.length; nl++) {
+      var o = NET[nl][0], d = NET[nl][1];
+      (NET_OUT[o] || (NET_OUT[o] = [])).push(d);
+      (NET_IN[d]  || (NET_IN[d]  = [])).push(o);
+    }
+    document.getElementById('netHint').hidden = false;
+  }
+
+  var netLayer = L.layerGroup();
+
+  function clearNetwork(){
+    netLayer.clearLayers();
+    if (map.hasLayer(netLayer)) map.removeLayer(netLayer);
+  }
+
+  // Curved line, so two facilities with links in both directions do not
+  // overlap into a single straight stroke.
+  function arcTo(a, b, bend){
+    var pts = [], n = 18;
+    var mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+    var dx = b[0] - a[0], dy = b[1] - a[1];
+    var cx = mx - dy * bend, cy = my + dx * bend;   // control point
+    for (var t = 0; t <= n; t++) {
+      var s = t / n, u = 1 - s;
+      pts.push([u * u * a[0] + 2 * u * s * cx + s * s * b[0],
+                u * u * a[1] + 2 * u * s * cy + s * s * b[1]]);
+    }
+    return pts;
+  }
+
+  function drawNetwork(i){
+    clearNetwork();
+    if (!NET_OUT) return {out: [], inb: []};
+    var outs = NET_OUT[i] || [], inbs = NET_IN[i] || [];
+    var here = [lat[i], lng[i]];
+
+    outs.forEach(function(j){
+      L.polyline(arcTo(here, [lat[j], lng[j]], 0.14), {
+        pane:'hazard', color:'#4ccfc4', weight:1.4, opacity:.75, interactive:false
+      }).addTo(netLayer);
+      L.circleMarker([lat[j], lng[j]], {
+        pane:'crater', radius:4, color:'#4ccfc4', weight:1.5,
+        fillColor:'#4ccfc4', fillOpacity:.6, interactive:false
+      }).addTo(netLayer);
+    });
+
+    inbs.forEach(function(j){
+      L.polyline(arcTo([lat[j], lng[j]], here, 0.14), {
+        pane:'hazard', color:'#ff9a1f', weight:1.4, opacity:.6,
+        dashArray:'4 3', interactive:false
+      }).addTo(netLayer);
+      L.circleMarker([lat[j], lng[j]], {
+        pane:'crater', radius:4, color:'#ff9a1f', weight:1.5,
+        fillColor:'#ff9a1f', fillOpacity:.5, interactive:false
+      }).addTo(netLayer);
+    });
+
+    if (outs.length || inbs.length) netLayer.addTo(map);
+    return {out: outs, inb: inbs};
+  }
+
+  function netSection(title, ids, color){
+    var sec = document.createElement('div');
+    sec.className = 'net-sec';
+    var h = document.createElement('h4');
+    h.textContent = title + ' (' + ids.length + ')';
+    h.style.color = color;
+    sec.appendChild(h);
+    if (!ids.length) {
+      var p = document.createElement('div');
+      p.className = 'net-none';
+      p.textContent = 'None recorded.';
+      sec.appendChild(p);
+      return sec;
+    }
+    var ul = document.createElement('ul');
+    ul.className = 'net-list';
+    ids.slice(0, 60).forEach(function(j){
+      var li = document.createElement('li');
+      var nm = document.createElement('span');
+      nm.textContent = nameOf[j];
+      var tp = document.createElement('em');
+      tp.textContent = TYPE[typ[j]].name;
+      li.appendChild(nm); li.appendChild(tp);
+      ul.appendChild(li);
+    });
+    sec.appendChild(ul);
+    if (ids.length > 60) {
+      var more = document.createElement('div');
+      more.className = 'net-none';
+      more.textContent = (ids.length - 60) + ' more not listed.';
+      sec.appendChild(more);
+    }
+    return sec;
+  }
+
+  var AIRC = ['#5b8fd6', '#3f6699'];   // direct catchment, via-hub
+  
   var AIRC = ['#5b8fd6', '#3f6699'];   // direct catchment, via-hub
   var airHit = null;                   // Set of affected IATA codes
 
@@ -825,11 +958,12 @@
   var layer = new StationLayer().addTo(map);
 
   /* ---------------- popup ---------------- */
-  var pop = L.popup({closeButton:true, autoPan:true, maxWidth:280});
+  var pop = L.popup({closeButton:true, autoPan:true, maxWidth:300});
+  map.on('popupclose', clearNetwork);
   map.on('click', function(e){
     if (mode !== 'points') return;
     var i = layer.nearest(e.layerPoint);
-    if (i < 0) { map.closePopup(); return; }
+    if (i < 0) { map.closePopup(); clearNetwork(); return; }
     openStation(i);
   });
 
@@ -852,6 +986,11 @@
         (b > -1 ? (bands()[b] ? bands()[b].label.toLowerCase() : 'affected')
                 : 'outside the zone');
       el.querySelector('.pop-t').insertAdjacentElement('afterend', d);
+    }
+    if (NET_OUT) {
+      var conn = drawNetwork(i);
+      el.appendChild(netSection('Outbound to', conn.out, '#4ccfc4'));
+      el.appendChild(netSection('Inbound from', conn.inb, '#ff9a1f'));
     }
     el.querySelector('code').textContent = co;
     var btn = el.querySelector('button');
