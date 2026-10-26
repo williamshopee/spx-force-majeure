@@ -1,38 +1,38 @@
 {
- "generated_at": "2026-10-26T12:20:38+00:00",
+ "generated_at": "2026-10-26T18:49:50+00:00",
  "facility_count": 8853,
- "event_count": 2,
- "verified_event_count": 2,
+ "event_count": 3,
+ "verified_event_count": 3,
  "source_health": [
   {
    "source": "bmkg_quake",
    "state": "ok",
    "events": 20,
-   "seconds": 0.78
+   "seconds": 0.56
   },
   {
    "source": "gdacs",
    "state": "ok",
-   "events": 0,
-   "seconds": 43.13
+   "events": 2,
+   "seconds": 29.29
   },
   {
    "source": "petabencana_flood",
    "state": "ok",
    "events": 1,
-   "seconds": 0.73
+   "seconds": 0.69
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 27,
-   "seconds": 1.21
+   "seconds": 1.37
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 113.96
+   "seconds": 87.89
   },
   {
    "source": "overrides",
@@ -41,9 +41,73 @@
   }
  ],
  "attribution": [
-  "Data gempabumi: BMKG"
+  "Data gempabumi: BMKG",
+  "Global Disaster Alert and Coordination System (GDACS), EC-JRC"
  ],
  "events": [
+  {
+   "id": "gdacs:EQ:1573900",
+   "hazard": "earthquake",
+   "name": "Earthquake in Indonesia",
+   "lat": -10.0437,
+   "lng": 123.2505,
+   "severity": "Magnitude 4.8M, Depth:35km",
+   "severity_value": 4.8,
+   "alert": "green",
+   "status": "active",
+   "started": "2026-10-26T03:59:22",
+   "updated": "2026-10-26T04:39:46",
+   "source": "GDACS/NEIC",
+   "source_url": "https://www.gdacs.org/report.aspx?eventid=1573900&episodeid=1742728&eventtype=EQ",
+   "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
+   "notes": [],
+   "polygons": [],
+   "observed": [],
+   "air": {
+    "airports": [
+     {
+      "iata": "KOE",
+      "name": "El Tari",
+      "km": 48.2,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 102,
+    "via_hub_count": 0,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-10-26T05:48:38.606385+00:00",
+   "age_hours": 14.2,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 15,
+      "label": "Strong shaking",
+      "sla_days": 3
+     },
+     {
+      "to_km": 40,
+      "label": "Moderate shaking",
+      "sla_days": 2
+     },
+     {
+      "to_km": 80,
+      "label": "Felt",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": null,
+    "counts": [
+     0,
+     6,
+     20
+    ],
+    "total": 26
+   }
+  },
   {
    "id": "bmkg:2026-10-25T07:40:01+00:00_4.240_97.650",
    "hazard": "earthquake",
@@ -71,7 +135,7 @@
     }
    ],
    "first_seen": "2026-10-25T10:48:29.712235+00:00",
-   "age_hours": 28.7,
+   "age_hours": 35.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -119,7 +183,8 @@
    "notes": [
     "Gempa ini dirasakan untuk diteruskan pada masyarakat",
     "Shakemap: https://static.bmkg.go.id/20261026115342.mmi.jpg",
-    "BMKG felt intensity (MMI): III Bajawa, III Maumere, II - III Ruteng"
+    "BMKG felt intensity (MMI): III Bajawa, III Maumere, II - III Ruteng",
+    "Also reported by GDACS/NEIC."
    ],
    "polygons": [],
    "observed": [
@@ -139,8 +204,14 @@
      "mmi_max": 3
     }
    ],
+   "other_sources": [
+    {
+     "source": "GDACS/NEIC",
+     "url": "https://www.gdacs.org/report.aspx?eventid=1573911&episodeid=1742739&eventtype=EQ"
+    }
+   ],
    "first_seen": "2026-10-26T05:48:38.606385+00:00",
-   "age_hours": 7.4,
+   "age_hours": 13.9,
    "impact": {
     "model": "radial",
     "bands": [
