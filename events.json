@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-26T18:49:50+00:00",
+ "generated_at": "2026-10-27T06:00:49+00:00",
  "facility_count": 8853,
  "event_count": 3,
  "verified_event_count": 3,
@@ -8,31 +8,31 @@
    "source": "bmkg_quake",
    "state": "ok",
    "events": 20,
-   "seconds": 0.56
+   "seconds": 0.79
   },
   {
    "source": "gdacs",
    "state": "ok",
-   "events": 2,
-   "seconds": 29.29
+   "events": 4,
+   "seconds": 13.34
   },
   {
    "source": "petabencana_flood",
    "state": "ok",
    "events": 1,
-   "seconds": 0.69
+   "seconds": 0.6
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 27,
-   "seconds": 1.37
+   "seconds": 1.17
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 87.89
+   "seconds": 89.71
   },
   {
    "source": "overrides",
@@ -78,7 +78,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-26T05:48:38.606385+00:00",
-   "age_hours": 14.2,
+   "age_hours": 25.4,
    "impact": {
     "model": "radial",
     "bands": [
@@ -135,7 +135,7 @@
     }
    ],
    "first_seen": "2026-10-25T10:48:29.712235+00:00",
-   "age_hours": 35.2,
+   "age_hours": 46.3,
    "impact": {
     "model": "radial",
     "bands": [
@@ -211,7 +211,7 @@
     }
    ],
    "first_seen": "2026-10-26T05:48:38.606385+00:00",
-   "age_hours": 13.9,
+   "age_hours": 25.1,
    "impact": {
     "model": "radial",
     "bands": [
