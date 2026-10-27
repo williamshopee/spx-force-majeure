@@ -1,38 +1,38 @@
 {
- "generated_at": "2026-10-27T06:00:49+00:00",
+ "generated_at": "2026-10-27T12:01:11+00:00",
  "facility_count": 8853,
- "event_count": 3,
- "verified_event_count": 3,
+ "event_count": 4,
+ "verified_event_count": 4,
  "source_health": [
   {
    "source": "bmkg_quake",
    "state": "ok",
    "events": 20,
-   "seconds": 0.79
+   "seconds": 0.37
   },
   {
    "source": "gdacs",
    "state": "ok",
-   "events": 4,
-   "seconds": 13.34
+   "events": 5,
+   "seconds": 3.35
   },
   {
    "source": "petabencana_flood",
    "state": "ok",
    "events": 1,
-   "seconds": 0.6
+   "seconds": 0.42
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 27,
-   "seconds": 1.17
+   "seconds": 2.57
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 89.71
+   "seconds": 87.14
   },
   {
    "source": "overrides",
@@ -78,7 +78,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-26T05:48:38.606385+00:00",
-   "age_hours": 25.4,
+   "age_hours": 31.4,
    "impact": {
     "model": "radial",
     "bands": [
@@ -109,6 +109,49 @@
    }
   },
   {
+   "id": "gdacs:WF:1033210",
+   "hazard": "wildfire",
+   "name": "Forest fires in Indonesia",
+   "lat": -2.7529,
+   "lng": 110.5216,
+   "severity": "Green impact for forestfire in 7946 ha",
+   "severity_value": 7946.0,
+   "alert": "green",
+   "status": "active",
+   "started": "2026-10-14T00:00:00",
+   "updated": "2026-10-27T01:43:09",
+   "source": "GDACS/GWIS",
+   "source_url": "https://www.gdacs.org/report.aspx?eventid=1033210&episodeid=2&eventtype=WF",
+   "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
+   "notes": [],
+   "polygons": [],
+   "observed": [],
+   "first_seen": "2026-10-26T05:48:38.606385+00:00",
+   "age_hours": 10.3,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 30,
+      "label": "Active fire",
+      "sla_days": 2
+     },
+     {
+      "to_km": 120,
+      "label": "Haze / visibility",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": null,
+    "counts": [
+     0,
+     53
+    ],
+    "total": 53
+   }
+  },
+  {
    "id": "bmkg:2026-10-25T07:40:01+00:00_4.240_97.650",
    "hazard": "earthquake",
    "name": "M 4.7 earthquake — Pusat gempa berada di darat 44 km barat Kab. Aceh Tamiang",
@@ -135,7 +178,7 @@
     }
    ],
    "first_seen": "2026-10-25T10:48:29.712235+00:00",
-   "age_hours": 46.3,
+   "age_hours": 52.4,
    "impact": {
     "model": "radial",
     "bands": [
@@ -211,7 +254,7 @@
     }
    ],
    "first_seen": "2026-10-26T05:48:38.606385+00:00",
-   "age_hours": 25.1,
+   "age_hours": 31.1,
    "impact": {
     "model": "radial",
     "bands": [
