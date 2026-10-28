@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-28T06:39:53+00:00",
+ "generated_at": "2026-10-28T13:52:34+00:00",
  "facility_count": 8853,
  "event_count": 2,
  "verified_event_count": 2,
@@ -8,31 +8,31 @@
    "source": "bmkg_quake",
    "state": "ok",
    "events": 20,
-   "seconds": 0.41
+   "seconds": 0.45
   },
   {
    "source": "gdacs",
    "state": "ok",
-   "events": 3,
-   "seconds": 17.93
+   "events": 0,
+   "seconds": 65.2
   },
   {
    "source": "petabencana_flood",
    "state": "ok",
    "events": 1,
-   "seconds": 0.65
+   "seconds": 0.42
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 27,
-   "seconds": 1.57
+   "seconds": 1.54
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 80.11
+   "seconds": 94.9
   },
   {
    "source": "overrides",
@@ -45,33 +45,77 @@
  ],
  "events": [
   {
-   "id": "bmkg:2026-10-25T07:40:01+00:00_4.240_97.650",
+   "id": "bmkg:2026-10-28T08:23:46+00:00_-5.450_104.620",
    "hazard": "earthquake",
-   "name": "M 4.7 earthquake — Pusat gempa berada di darat 44 km barat Kab. Aceh Tamiang",
-   "lat": 4.24,
-   "lng": 97.65,
+   "name": "M 4.7 earthquake — Pusat gempa berada di darat 8 km Barat Laut Tanggamus",
+   "lat": -5.45,
+   "lng": 104.62,
    "severity": "M 4.7, depth 10 km",
    "severity_value": 4.7,
    "alert": "green",
-   "status": "stale",
-   "started": "2026-10-25T07:40:01+00:00",
-   "updated": "2026-10-25T07:40:01+00:00",
+   "status": "active",
+   "started": "2026-10-28T08:23:46+00:00",
+   "updated": "2026-10-28T08:23:46+00:00",
    "source": "BMKG",
    "source_url": "https://data.bmkg.go.id/gempabumi",
    "attribution": "Data gempabumi: BMKG",
    "notes": [
-    "BMKG felt intensity (MMI): IV Gayo Lues"
+    "BMKG felt intensity (MMI): III Kotaagung, II Kotabumi, II Pringsewu, II Ulu Belu, II Gisting, II Sumberejo, II Kotaagung Timur"
    ],
    "polygons": [],
    "observed": [
     {
-     "place": "Gayo Lues",
-     "mmi_text": "IV",
-     "mmi_max": 4
+     "place": "Kotaagung",
+     "mmi_text": "III",
+     "mmi_max": 3
+    },
+    {
+     "place": "Kotabumi",
+     "mmi_text": "II",
+     "mmi_max": 2
+    },
+    {
+     "place": "Pringsewu",
+     "mmi_text": "II",
+     "mmi_max": 2
+    },
+    {
+     "place": "Ulu Belu",
+     "mmi_text": "II",
+     "mmi_max": 2
+    },
+    {
+     "place": "Gisting",
+     "mmi_text": "II",
+     "mmi_max": 2
+    },
+    {
+     "place": "Sumberejo",
+     "mmi_text": "II",
+     "mmi_max": 2
+    },
+    {
+     "place": "Kotaagung Timur",
+     "mmi_text": "II",
+     "mmi_max": 2
     }
    ],
-   "first_seen": "2026-10-25T10:48:29.712235+00:00",
-   "age_hours": 71.0,
+   "air": {
+    "airports": [
+     {
+      "iata": "TKG",
+      "name": "Radin Inten II",
+      "km": 66.3,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 258,
+    "via_hub_count": 0,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-10-28T13:52:34.929434+00:00",
+   "age_hours": 5.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -94,11 +138,11 @@
     "corridors": [],
     "exclusion_km": null,
     "counts": [
-     0,
-     1,
-     33
+     5,
+     15,
+     102
     ],
-    "total": 34
+    "total": 122
    }
   },
   {
@@ -110,7 +154,7 @@
    "severity": "M 4.9, depth 13 km",
    "severity_value": 4.9,
    "alert": "green",
-   "status": "active",
+   "status": "stale",
    "started": "2026-10-26T04:53:42+00:00",
    "updated": "2026-10-26T04:53:42+00:00",
    "source": "BMKG",
@@ -138,7 +182,7 @@
     }
    ],
    "first_seen": "2026-10-26T05:48:38.606385+00:00",
-   "age_hours": 49.8,
+   "age_hours": 57.0,
    "impact": {
     "model": "radial",
     "bands": [
