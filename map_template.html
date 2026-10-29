@@ -367,12 +367,39 @@
   .leaflet-popup-close-button{color:var(--muted)!important}
 
   #boot{
-    position:absolute;inset:0;display:grid;place-content:center;text-align:center;
-    padding:32px;color:var(--muted);z-index:700;background:var(--sea);
+    position:absolute;inset:0;display:grid;place-content:center;justify-items:center;
+    text-align:center;padding:32px;color:var(--muted);z-index:700;
+    background:var(--sea);
+    transition:opacity .45s ease, visibility 0s linear .45s;
   }
-  #boot h3{font-family:var(--cond);color:var(--text);font-size:19px;margin:0 0 8px;font-weight:600}
-  #boot p{margin:0;max-width:46ch;font-size:13px}
-  #boot.gone{display:none}
+  #boot h3{
+    font-family:var(--cond);color:var(--text);font-size:21px;margin:0 0 6px;
+    font-weight:600;letter-spacing:.01em
+  }
+  #boot p{margin:0;max-width:46ch;font-size:13px;min-height:1.4em}
+  #boot.gone{opacity:0;visibility:hidden;pointer-events:none}
+
+  /* progress ring */
+  .boot-ring{
+    width:34px;height:34px;margin:0 0 18px;border-radius:50%;
+    border:2px solid var(--line);border-top-color:var(--hub);
+    animation:spin .85s linear infinite
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* stage ticks */
+  .boot-steps{
+    display:flex;gap:6px;margin-top:20px;list-style:none;padding:0
+  }
+  .boot-steps li{
+    width:34px;height:3px;border-radius:2px;background:var(--line);
+    transition:background .3s ease
+  }
+  .boot-steps li.on{background:var(--hub)}
+
+  @media (prefers-reduced-motion:reduce){
+    .boot-ring{animation:none;border-top-color:var(--line)}
+  }
 
   .station-canvas{position:absolute;left:0;top:0;pointer-events:none;will-change:transform}
   .reveal{animation:fade .9s ease both}
@@ -482,7 +509,14 @@
     <div class="inview" id="inview" hidden><b>0</b><span>in view</span></div>
     <div class="ramp" id="ramp"><i></i><div class="lab"><span>sparse</span><span>dense</span></div></div>
     <div class="net-hint" id="netHint" hidden>Click a facility to trace its network</div>    
-    <div id="boot"><h3>Loading the map</h3><p>Fetching Leaflet and the basemap tiles.</p></div>
+    <div id="boot">
+      <div class="boot-ring"></div>
+      <h3>SPX Facility Distribution Map</h3>
+      <p id="bootMsg">Starting&hellip;</p>
+      <ul class="boot-steps" id="bootSteps">
+        <li></li><li></li><li></li><li></li>
+      </ul>
+    </div>
   </div>
 </div>
 
@@ -500,6 +534,28 @@
   "use strict";
 
   var boot = document.getElementById('boot');
+
+  // Loading stages. The overlay stays up until the stations are drawn AND the
+  // event feed has either loaded or failed — hiding it earlier shows an empty
+  // map for a second and makes it look broken.
+  var bootDone = {map:false, events:false}, bootStage = 0;
+  function bootStep(n, msg){
+    bootStage = Math.max(bootStage, n);
+    var m = document.getElementById('bootMsg');
+    if (m && msg) m.textContent = msg;
+    var ticks = document.querySelectorAll('#bootSteps li');
+    for (var t = 0; t < ticks.length; t++) {
+      ticks[t].className = t < bootStage ? 'on' : '';
+    }
+  }
+  function bootReady(what){
+    bootDone[what] = true;
+    if (bootDone.map && bootDone.events) {
+      bootStep(4, 'Ready');
+      setTimeout(function(){ boot.classList.add('gone'); }, 260);
+    }
+  }
+
   if (!window.L) {
     boot.innerHTML = '<h3>The map library did not load</h3><p>This page pulls Leaflet from cdnjs.cloudflare.com. Reconnect to the internet, or allow that domain, then reload.</p>';
     return;
@@ -523,6 +579,7 @@
     typ[i] = RAW[i][3];    reg[i] = RAW[i][4];
   }
   var lower = nameOf.map(function(s){ return s.toLowerCase(); });
+  bootStep(1, 'Plotting ' + N.toLocaleString('en-US') + ' facilities\u2026');
   var on = [true, true, true];               // type filter state
   var mode = 'points';
   var fmt = function(n){ return n.toLocaleString('en-US'); };
@@ -796,9 +853,13 @@
     {maxZoom:19, attribution:'&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'}
   ).addTo(map);
   var labels = null;
-  tiles.once('load', function(){ boot.classList.add('gone'); });
-  setTimeout(function(){ boot.classList.add('gone'); }, 2600);  // points stand alone if tiles stall
-
+  bootStep(2, 'Loading basemap tiles\u2026');
+  tiles.once('load', function(){ bootStep(3, 'Reading hazard feeds\u2026'); });
+  // Tiles can stall on a slow network; the facility dots stand on their own,
+  // so do not hold the whole map hostage to them.
+  setTimeout(function(){ bootReady('map'); }, 2200);
+  // Nothing should keep the overlay up for more than this, whatever fails.
+  setTimeout(function(){ boot.classList.add('gone'); }, 9000);
   /* ---------------- station layer ---------------- */
   var StationLayer = L.Layer.extend({
     onAdd: function(m){
@@ -1602,6 +1663,7 @@
     renderSources(payload);
     buildFilters();
     renderList();
+    bootReady('events');
     if (EV) {                       // keep the selection across a refresh
       var same = EVENTS.filter(function(e){ return e.id === EV.id; })[0];
       EV = null;
@@ -1621,6 +1683,7 @@
         .then(function(p){ fetchFails = 0; ingest(p); })
         .catch(function(e){
           fetchFails++;
+          bootReady('events');
           if (lastGood) {
             // keep showing the last good data, but stop implying it is current
             statusEl.className = 'alert-st stale' + (fetchFails > 3 ? ' dead' : '');
@@ -1652,6 +1715,7 @@
         return;
       } catch (e) { /* fall through */ }
     }
+    bootReady('events');
     EVENTS = [];
     renderList();
     statusEl.textContent = (prefix ? prefix + ' ' : '') +
