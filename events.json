@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-28T13:52:34+00:00",
+ "generated_at": "2026-10-29T06:48:22+00:00",
  "facility_count": 8853,
  "event_count": 2,
  "verified_event_count": 2,
@@ -7,32 +7,32 @@
   {
    "source": "bmkg_quake",
    "state": "ok",
-   "events": 20,
-   "seconds": 0.45
+   "events": 18,
+   "seconds": 0.32
   },
   {
    "source": "gdacs",
    "state": "ok",
-   "events": 0,
-   "seconds": 65.2
+   "events": 5,
+   "seconds": 53.29
   },
   {
    "source": "petabencana_flood",
    "state": "ok",
    "events": 1,
-   "seconds": 0.42
+   "seconds": 0.3
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 27,
-   "seconds": 1.54
+   "seconds": 1.49
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 94.9
+   "seconds": 116.98
   },
   {
    "source": "overrides",
@@ -115,7 +115,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-28T13:52:34.929434+00:00",
-   "age_hours": 5.5,
+   "age_hours": 22.4,
    "impact": {
     "model": "radial",
     "bands": [
@@ -146,58 +146,80 @@
    }
   },
   {
-   "id": "bmkg:2026-10-26T04:53:42+00:00_-8.450_121.450",
+   "id": "bmkg:2026-10-29T03:26:49+00:00_-5.450_141.900",
    "hazard": "earthquake",
-   "name": "M 4.9 earthquake — Pusat gempa berada di laut 30 km timur laut Mbay, Nagekeo",
-   "lat": -8.45,
-   "lng": 121.45,
-   "severity": "M 4.9, depth 13 km",
-   "severity_value": 4.9,
-   "alert": "green",
-   "status": "stale",
-   "started": "2026-10-26T04:53:42+00:00",
-   "updated": "2026-10-26T04:53:42+00:00",
+   "name": "M 6.0 earthquake — Pusat gempa berada di darat 153 km tenggara Oksibil",
+   "lat": -5.45,
+   "lng": 141.9,
+   "severity": "M 6.0, depth 120 km",
+   "severity_value": 6.0,
+   "alert": "orange",
+   "status": "active",
+   "started": "2026-10-29T03:26:49+00:00",
+   "updated": "2026-10-29T03:26:49+00:00",
    "source": "BMKG",
    "source_url": "https://data.bmkg.go.id/gempabumi",
    "attribution": "Data gempabumi: BMKG",
    "notes": [
-    "BMKG felt intensity (MMI): III Bajawa, III Maumere, II - III Ruteng"
+    "Gempa ini dirasakan untuk diteruskan pada masyarakat",
+    "Shakemap: https://static.bmkg.go.id/20261029102649.mmi.jpg",
+    "BMKG felt intensity (MMI): III Boven Digoel, II Jayapura, II Merauke"
    ],
    "polygons": [],
    "observed": [
     {
-     "place": "Bajawa",
+     "place": "Boven Digoel",
      "mmi_text": "III",
      "mmi_max": 3
     },
     {
-     "place": "Maumere",
-     "mmi_text": "III",
-     "mmi_max": 3
+     "place": "Jayapura",
+     "mmi_text": "II",
+     "mmi_max": 2
     },
     {
-     "place": "Ruteng",
-     "mmi_text": "II - III",
-     "mmi_max": 3
+     "place": "Merauke",
+     "mmi_text": "II",
+     "mmi_max": 2
     }
    ],
-   "first_seen": "2026-10-26T05:48:38.606385+00:00",
-   "age_hours": 57.0,
+   "air": {
+    "airports": [
+     {
+      "iata": "OKL",
+      "name": "Oksibil",
+      "km": 153.3,
+      "how": "inside the impact zone"
+     },
+     {
+      "iata": "TMH",
+      "name": "Tanah Merah",
+      "km": 190.7,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 2,
+    "via_hub_count": 0,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-10-29T06:48:22.363167+00:00",
+   "age_hours": 3.4,
    "impact": {
     "model": "radial",
     "bands": [
      {
-      "to_km": 15,
+      "to_km": 60,
       "label": "Strong shaking",
       "sla_days": 3
      },
      {
-      "to_km": 40,
+      "to_km": 130,
       "label": "Moderate shaking",
       "sla_days": 2
      },
      {
-      "to_km": 80,
+      "to_km": 240,
       "label": "Felt",
       "sla_days": 1
      }
@@ -206,10 +228,10 @@
     "exclusion_km": null,
     "counts": [
      0,
-     8,
-     21
+     0,
+     2
     ],
-    "total": 29
+    "total": 2
    }
   }
  ]
