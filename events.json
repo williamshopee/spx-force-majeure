@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-29T13:57:50+00:00",
+ "generated_at": "2026-10-30T06:50:49+00:00",
  "facility_count": 8853,
  "event_count": 3,
  "verified_event_count": 3,
@@ -8,31 +8,31 @@
    "source": "bmkg_quake",
    "state": "ok",
    "events": 18,
-   "seconds": 0.7
+   "seconds": 4.98
   },
   {
    "source": "gdacs",
    "state": "ok",
-   "events": 7,
-   "seconds": 8.27
+   "events": 3,
+   "seconds": 5.03
   },
   {
    "source": "petabencana_flood",
    "state": "ok",
    "events": 1,
-   "seconds": 0.84
+   "seconds": 0.77
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 27,
-   "seconds": 1.45
+   "seconds": 1.55
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 76.68
+   "seconds": 101.07
   },
   {
    "source": "overrides",
@@ -12311,7 +12311,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-29T13:57:50.814034+00:00",
-   "age_hours": 4.1,
+   "age_hours": 21.0,
    "impact": {
     "model": "polygon",
     "bands": [
@@ -12406,7 +12406,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-28T13:52:34.929434+00:00",
-   "age_hours": 29.6,
+   "age_hours": 46.5,
    "impact": {
     "model": "radial",
     "bands": [
@@ -12452,8 +12452,6 @@
    "source_url": "https://data.bmkg.go.id/gempabumi",
    "attribution": "Data gempabumi: BMKG",
    "notes": [
-    "Gempa ini dirasakan untuk diteruskan pada masyarakat",
-    "Shakemap: https://static.bmkg.go.id/20261029102649.mmi.jpg",
     "BMKG felt intensity (MMI): III Boven Digoel, II Jayapura, II Merauke"
    ],
    "polygons": [],
@@ -12495,7 +12493,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-10-29T06:48:22.363167+00:00",
-   "age_hours": 10.5,
+   "age_hours": 27.4,
    "impact": {
     "model": "radial",
     "bands": [
