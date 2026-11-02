@@ -184,6 +184,8 @@ def main(argv=None) -> int:
     ap.add_argument("--events", type=Path, default=HERE / "events.json")
     ap.add_argument("--network", type=Path, default=None,
                     help="Origin/Destination CSV. Omit to build without it.")
+    ap.add_argument("--profile", type=Path, default=None,
+                    help="SOC profile CSV. Omit to build without it.")
     ap.add_argument("--out", type=Path, default=HERE / "index.html")
     ap.add_argument("--embed", action="store_true",
                     help="embed events.json for file:// use (snapshot)")
@@ -237,6 +239,20 @@ def main(argv=None) -> int:
     html = html.replace("__NETWORK__",
                         json.dumps(network, separators=(",", ":")) if network else "null")
 
+    # SOC profile is opt-in, same as the network: the General Map build
+    # carries none of it.
+    profile = {}
+    if a.profile:
+        if a.profile.exists():
+            profile = load_profile(a.profile, stations)
+        else:
+            print(f"warning: {a.profile} missing; building without profile",
+                  file=sys.stderr)
+    html = html.replace("__PROFILE__",
+                        json.dumps({"cols": [[c[1], c[2]] for c in PROFILE_COLS],
+                                    "rows": profile}, separators=(",", ":"),
+                                   ensure_ascii=False) if profile else "null")
+  
     events_txt = "null"
     if a.embed:
         if a.events.exists():
@@ -258,6 +274,7 @@ def main(argv=None) -> int:
     print(f"wrote {a.out}  ({kb:.0f} KB, {len(stations)} stations, "
           f"{len(airports)} airports, "
           f"{len(network)} network links, "
+          f"{len(profile)} SOC profiles, "
           f"events {'embedded' if a.embed else 'fetched at runtime'})")
     return 0
 
