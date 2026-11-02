@@ -281,6 +281,22 @@
     padding:7px 11px;color:var(--muted);font-size:11.5px;pointer-events:none
   }
   .net-hint[hidden]{display:none}
+
+  /* SOC profile in popup */
+  .prof-sec{margin-top:10px;padding-top:9px;border-top:1px solid var(--line)}
+  .prof-sec h4{
+    margin:0 0 6px;font-size:11px;font-weight:600;color:#ffd166;
+    text-transform:uppercase;letter-spacing:.04em
+  }
+  .prof-grid{
+    display:grid;grid-template-columns:1fr auto;gap:2px 12px;font-size:12.5px
+  }
+  .prof-grid dt{color:var(--muted);white-space:nowrap}
+  .prof-grid dd{
+    margin:0;color:var(--text);font-family:var(--cond);text-align:right;
+    white-space:nowrap
+  }
+  .prof-grid dd.big{font-size:14px;font-weight:600}
   
   .sevkey{list-style:none;margin:11px 0 0;padding:0;font-size:12px;color:var(--muted)}
   .sevkey li{display:flex;align-items:center;gap:8px;padding:2px 0}
@@ -528,6 +544,8 @@
 <!-- Network chain, embedded only when build_map.py is run with --network.
      The General Map build leaves this as null. -->
 <script id="network" type="application/json">__NETWORK__</script>
+<!-- SOC capacity profile, embedded only with build_map.py --profile. -->
+<script id="profile" type="application/json">__PROFILE__</script>
 <script id="events-embedded" type="application/json">__EVENTS__</script>
 <script>
 (function(){
@@ -658,6 +676,53 @@
     document.getElementById('netHint').hidden = false;
   }
 
+  // SOC capacity profile, present only on the SOC Map build.
+  var PROF = null;
+  try {
+    var _pe = document.getElementById('profile');
+    if (_pe && _pe.textContent.trim().charAt(0) === '{') PROF = JSON.parse(_pe.textContent);
+  } catch (e) { PROF = null; }
+
+  function profSection(i){
+    if (!PROF || !PROF.rows) return null;
+    var vals = PROF.rows[i];
+    if (!vals) return null;
+
+    var sec = document.createElement('div');
+    sec.className = 'prof-sec';
+    var h = document.createElement('h4');
+    h.textContent = 'SOC profile';
+    sec.appendChild(h);
+
+    var dl = document.createElement('dl');
+    dl.className = 'prof-grid';
+    var shown = 0;
+    PROF.cols.forEach(function(c, k){
+      var raw = vals[k];
+      if (raw === '' || raw == null) return;      // blank in the sheet, skip
+      var label = c[0], fmtKind = c[1], text = raw;
+      if (fmtKind === 'n') {
+        var num = parseFloat(String(raw).replace(/,/g, ''));
+        if (!isNaN(num)) text = num.toLocaleString('en-US');
+      } else if (fmtKind === '1') {
+        var n1 = parseFloat(raw);
+        if (!isNaN(n1)) text = n1.toFixed(1);
+      }
+      var dt = document.createElement('dt');
+      dt.textContent = label;
+      var dd = document.createElement('dd');
+      dd.textContent = text;
+      if (shown < 2) dd.className = 'big';         // Space and Ops model lead
+      dl.appendChild(dt); dl.appendChild(dd);
+      shown++;
+    });
+    if (!shown) return null;
+    sec.appendChild(dl);
+    return sec;
+  }
+
+  var netLayer = L.layerGroup();
+  
   var netLayer = L.layerGroup();
 
   function clearNetwork(){
@@ -1048,6 +1113,10 @@
                 : 'outside the zone');
       el.querySelector('.pop-t').insertAdjacentElement('afterend', d);
     }
+
+    var prof = profSection(i);
+    if (prof) el.appendChild(prof);
+    
     if (NET_OUT) {
       var conn = drawNetwork(i);
       el.appendChild(netSection('Outbound to', conn.out, '#4ccfc4'));
