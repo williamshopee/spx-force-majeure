@@ -268,13 +268,18 @@
     margin:0 0 5px;font-size:11px;font-weight:600;color:var(--muted);
     text-transform:uppercase;letter-spacing:.04em
   }
-  .net-list{list-style:none;margin:0;padding:0;max-height:92px;overflow-y:auto}
+  .net-list{list-style:none;margin:0;padding:0}
   .net-list li{padding:2px 0}
   .net-list li{
-    font-size:12.5px;padding:3px 0;color:var(--text);
-    display:flex;justify-content:space-between;gap:10px
+    font-size:12.5px;padding:2px 0;color:var(--text);
+    display:flex;justify-content:space-between;gap:8px;align-items:baseline
   }
-  .net-list li em{font-style:normal;color:var(--dim);font-size:11px;flex:0 0 auto}
+  .net-list li span{
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0
+  }
+  .net-list li em{
+    font-style:normal;color:var(--dim);font-size:10.5px;flex:0 0 auto
+  }
   .net-none{color:var(--dim);font-size:12px;padding:3px 0}
   .net-hint{
     position:absolute;z-index:600;right:14px;top:14px;
@@ -371,9 +376,15 @@
   }
   .leaflet-popup-tip{background:#12283b;border:1px solid var(--line)}
   .leaflet-popup-content{
-    margin:12px 14px;font-size:13px;line-height:1.5;min-width:172px;
-    max-height:60vh;overflow-y:auto
+    margin:12px 10px 12px 14px;font-size:13px;line-height:1.5;
+    width:264px;max-height:62vh;overflow-y:auto;overflow-x:hidden;
+    scrollbar-width:thin
   }
+  .leaflet-popup-content::-webkit-scrollbar{width:7px}
+  .leaflet-popup-content::-webkit-scrollbar-thumb{
+    background:var(--line);border-radius:4px
+  }
+  .leaflet-popup-content::-webkit-scrollbar-track{background:transparent}
   .pop-n{font-family:var(--cond);font-size:17px;font-weight:600;line-height:1.2}
   .pop-t{margin-top:5px;color:var(--muted);font-size:12.5px;display:flex;align-items:center;gap:7px}
   .pop-t i{width:9px;height:9px;border-radius:50%;background:var(--c);flex:0 0 9px}
