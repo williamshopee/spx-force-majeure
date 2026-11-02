@@ -797,7 +797,7 @@
     }
     var ul = document.createElement('ul');
     ul.className = 'net-list';
-    ids.slice(0, 60).forEach(function(j){
+    ids.forEach(function(j){
       var li = document.createElement('li');
       var nm = document.createElement('span');
       nm.textContent = nameOf[j];
@@ -807,12 +807,7 @@
       ul.appendChild(li);
     });
     sec.appendChild(ul);
-    if (ids.length > 60) {
-      var more = document.createElement('div');
-      more.className = 'net-none';
-      more.textContent = (ids.length - 60) + ' more not listed.';
-      sec.appendChild(more);
-    }
+
     return sec;
   }
 
