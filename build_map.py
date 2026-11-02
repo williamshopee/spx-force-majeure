@@ -113,6 +113,68 @@ def load_network(path: Path, stations: list) -> list:
               f"(e.g. {', '.join(sorted(unmatched)[:3])})", file=sys.stderr)
     return links
 
+# Columns to show in the popup, in order: (csv header, label, format)
+# fmt: 'n' = number with thousands separator, 'p' = percent as-is,
+#      'x' = plain text, '1' = one decimal
+PROFILE_COLS = [
+    ("Space",                     "Space (m2)",        "n"),
+    ("Ops Model",                 "Ops model",         "x"),
+    ("Dock Ratio",                "Dock ratio",        "1"),
+    ("RTS %",                     "RTS",               "p"),
+    ("STD %",                     "STD",               "p"),
+    ("ECO %",                     "ECO",               "p"),
+    ("Shipment Cycle STD",        "Cycle STD",         "x"),
+    ("Shipment Cycle ECO",        "Cycle ECO",         "x"),
+    ("% Dist Process Reguler",    "Dist reguler",      "p"),
+    ("% Dist Process Crossdock",  "Dist crossdock",    "p"),
+    ("Campaign Spike",            "Campaign spike",    "p"),
+    ("% Dist Standard",           "Dist standard",     "p"),
+    ("% Dist Bulky",              "Dist bulky",        "p"),
+]
+
+
+def load_profile(path: Path, stations: list) -> dict:
+    """
+    SOC capacity and operating profile, keyed by station index.
+
+    The sheet has title rows above the real header, so the header row is
+    found by looking for the one containing 'SOC Name' rather than assuming
+    row 1. Facilities not in latlong.csv are ignored, same as the network.
+    """
+    idx = {s[0]: i for i, s in enumerate(stations)}
+    raw = path.read_text(encoding="utf-8-sig").splitlines()
+
+    head = None
+    for n, line in enumerate(raw):
+        if "SOC Name" in line:
+            head = n
+            break
+    if head is None:
+        print("  profile: no header row containing 'SOC Name'; skipped",
+              file=sys.stderr)
+        return {}
+
+    out: dict[int, list] = {}
+    unmatched = 0
+    for r in csv.DictReader(raw[head:]):
+        r = {(k or "").strip(): (v or "").strip() for k, v in r.items()}
+        name = r.get("SOC Name") or ""
+        if not name:
+            continue
+        i = idx.get(name)
+        if i is None:
+            unmatched += 1
+            continue
+        vals = []
+        for col, _lab, _f in PROFILE_COLS:
+            vals.append(r.get(col, ""))
+        if any(vals):
+            out[i] = vals
+
+    print(f"  profile: {len(out)} facilities"
+          + (f", {unmatched} names not in latlong.csv ignored" if unmatched else ""),
+          file=sys.stderr)
+    return out
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Build the SPX station map")
