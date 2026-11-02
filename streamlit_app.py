@@ -209,6 +209,9 @@ def build_map_html(view: str) -> str:
         net = HERE / "network.csv"
         if net.exists():
             cmd += ["--network", str(net)]
+        prof = HERE / "soc_profile.csv"
+        if prof.exists():
+            cmd += ["--profile", str(prof)]
 
     subprocess.run(cmd, capture_output=True, text=True, timeout=120)
     p = HERE / out_name
