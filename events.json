@@ -1,38 +1,38 @@
 {
- "generated_at": "2026-11-02T07:17:12+00:00",
+ "generated_at": "2026-11-02T17:21:19+00:00",
  "facility_count": 8853,
- "event_count": 1,
- "verified_event_count": 1,
+ "event_count": 2,
+ "verified_event_count": 2,
  "source_health": [
   {
    "source": "bmkg_quake",
    "state": "ok",
-   "events": 18,
-   "seconds": 0.52
+   "events": 17,
+   "seconds": 0.62
   },
   {
    "source": "gdacs",
    "state": "ok",
    "events": 2,
-   "seconds": 7.05
+   "seconds": 4.42
   },
   {
    "source": "petabencana_flood",
    "state": "ok",
    "events": 1,
-   "seconds": 0.67
+   "seconds": 0.8
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 26,
-   "seconds": 1.67
+   "seconds": 1.65
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 109.56
+   "seconds": 119.37
   },
   {
    "source": "overrides",
@@ -45,6 +45,89 @@
  ],
  "events": [
   {
+   "id": "bmkg:2026-11-02T08:13:10+00:00_1.310_124.830",
+   "hazard": "earthquake",
+   "name": "M 5.3 earthquake — Pusat gempa berada di darat 1 km Barat Daya Tomohon",
+   "lat": 1.31,
+   "lng": 124.83,
+   "severity": "M 5.3, depth 148 km",
+   "severity_value": 5.3,
+   "alert": "green",
+   "status": "active",
+   "started": "2026-11-02T08:13:10+00:00",
+   "updated": "2026-11-02T08:13:10+00:00",
+   "source": "BMKG",
+   "source_url": "https://data.bmkg.go.id/gempabumi",
+   "attribution": "Data gempabumi: BMKG",
+   "notes": [
+    "BMKG felt intensity (MMI): II - III Ternate, II Minahasa",
+    "Also reported by GDACS/NEIC."
+   ],
+   "polygons": [],
+   "observed": [
+    {
+     "place": "Ternate",
+     "mmi_text": "II - III",
+     "mmi_max": 3
+    },
+    {
+     "place": "Minahasa",
+     "mmi_text": "II",
+     "mmi_max": 2
+    }
+   ],
+   "other_sources": [
+    {
+     "source": "GDACS/NEIC",
+     "url": "https://www.gdacs.org/report.aspx?eventid=1575222&episodeid=1744242&eventtype=EQ"
+    }
+   ],
+   "air": {
+    "airports": [
+     {
+      "iata": "MDC",
+      "name": "Sam Ratulangi",
+      "km": 28.6,
+      "how": "inside the impact zone"
+     }
+    ],
+    "direct_count": 151,
+    "via_hub_count": 55,
+    "sla_days": 1,
+    "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
+   },
+   "first_seen": "2026-11-02T17:21:19.702056+00:00",
+   "age_hours": 9.1,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 25,
+      "label": "Strong shaking",
+      "sla_days": 3
+     },
+     {
+      "to_km": 60,
+      "label": "Moderate shaking",
+      "sla_days": 2
+     },
+     {
+      "to_km": 120,
+      "label": "Felt",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": null,
+    "counts": [
+     36,
+     27,
+     12
+    ],
+    "total": 75
+   }
+  },
+  {
    "id": "bmkg:2026-10-31T05:39:20+00:00_-9.450_118.110",
    "hazard": "earthquake",
    "name": "M 4.8 earthquake — Pusat gempa berada di laut 97 km barat Kodi, Sumba Barat Daya",
@@ -53,7 +136,7 @@
    "severity": "M 4.8, depth 28 km",
    "severity_value": 4.8,
    "alert": "green",
-   "status": "active",
+   "status": "stale",
    "started": "2026-10-31T05:39:20+00:00",
    "updated": "2026-10-31T05:39:20+00:00",
    "source": "BMKG",
@@ -71,7 +154,7 @@
     }
    ],
    "first_seen": "2026-10-31T06:40:30.097276+00:00",
-   "age_hours": 49.6,
+   "age_hours": 59.7,
    "impact": {
     "model": "radial",
     "bands": [
