@@ -1,38 +1,38 @@
 {
- "generated_at": "2026-11-03T07:36:15+00:00",
+ "generated_at": "2026-11-03T15:52:06+00:00",
  "facility_count": 8853,
- "event_count": 1,
- "verified_event_count": 1,
+ "event_count": 2,
+ "verified_event_count": 2,
  "source_health": [
   {
    "source": "bmkg_quake",
    "state": "ok",
    "events": 17,
-   "seconds": 1.02
+   "seconds": 0.38
   },
   {
    "source": "gdacs",
    "state": "ok",
-   "events": 3,
-   "seconds": 4.39
+   "events": 4,
+   "seconds": 12.42
   },
   {
    "source": "petabencana_flood",
    "state": "ok",
    "events": 1,
-   "seconds": 0.82
+   "seconds": 0.83
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 26,
-   "seconds": 1.91
+   "seconds": 1.78
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 85.87
+   "seconds": 96.44
   },
   {
    "source": "overrides",
@@ -41,7 +41,8 @@
   }
  ],
  "attribution": [
-  "Data gempabumi: BMKG"
+  "Data gempabumi: BMKG",
+  "Global Disaster Alert and Coordination System (GDACS), EC-JRC"
  ],
  "events": [
   {
@@ -97,7 +98,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-02T17:21:19.702056+00:00",
-   "age_hours": 23.4,
+   "age_hours": 31.6,
    "impact": {
     "model": "radial",
     "bands": [
@@ -125,6 +126,49 @@
      12
     ],
     "total": 75
+   }
+  },
+  {
+   "id": "gdacs:WF:1033458",
+   "hazard": "wildfire",
+   "name": "Forest fires in Indonesia",
+   "lat": -3.3269,
+   "lng": 111.9857,
+   "severity": "Green impact for forestfire in 6092 ha",
+   "severity_value": 6092.0,
+   "alert": "green",
+   "status": "active",
+   "started": "2026-10-29T00:00:00",
+   "updated": "2026-11-03T12:07:00",
+   "source": "GDACS/GWIS",
+   "source_url": "https://www.gdacs.org/report.aspx?eventid=1033458&episodeid=1&eventtype=WF",
+   "attribution": "Global Disaster Alert and Coordination System (GDACS), EC-JRC",
+   "notes": [],
+   "polygons": [],
+   "observed": [],
+   "first_seen": "2026-11-03T15:52:06.196881+00:00",
+   "age_hours": 3.8,
+   "impact": {
+    "model": "radial",
+    "bands": [
+     {
+      "to_km": 30,
+      "label": "Active fire",
+      "sla_days": 2
+     },
+     {
+      "to_km": 120,
+      "label": "Haze / visibility",
+      "sla_days": 1
+     }
+    ],
+    "corridors": [],
+    "exclusion_km": null,
+    "counts": [
+     0,
+     34
+    ],
+    "total": 34
    }
   }
  ]
