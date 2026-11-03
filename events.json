@@ -1,38 +1,38 @@
 {
- "generated_at": "2026-11-02T17:21:19+00:00",
+ "generated_at": "2026-11-03T07:36:15+00:00",
  "facility_count": 8853,
- "event_count": 2,
- "verified_event_count": 2,
+ "event_count": 1,
+ "verified_event_count": 1,
  "source_health": [
   {
    "source": "bmkg_quake",
    "state": "ok",
    "events": 17,
-   "seconds": 0.62
+   "seconds": 1.02
   },
   {
    "source": "gdacs",
    "state": "ok",
-   "events": 2,
-   "seconds": 4.42
+   "events": 3,
+   "seconds": 4.39
   },
   {
    "source": "petabencana_flood",
    "state": "ok",
    "events": 1,
-   "seconds": 0.8
+   "seconds": 0.82
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 26,
-   "seconds": 1.65
+   "seconds": 1.91
   },
   {
    "source": "gdelt_news",
    "state": "ok",
    "events": 0,
-   "seconds": 119.37
+   "seconds": 85.87
   },
   {
    "source": "overrides",
@@ -97,7 +97,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-02T17:21:19.702056+00:00",
-   "age_hours": 9.1,
+   "age_hours": 23.4,
    "impact": {
     "model": "radial",
     "bands": [
@@ -125,63 +125,6 @@
      12
     ],
     "total": 75
-   }
-  },
-  {
-   "id": "bmkg:2026-10-31T05:39:20+00:00_-9.450_118.110",
-   "hazard": "earthquake",
-   "name": "M 4.8 earthquake — Pusat gempa berada di laut 97 km barat Kodi, Sumba Barat Daya",
-   "lat": -9.45,
-   "lng": 118.11,
-   "severity": "M 4.8, depth 28 km",
-   "severity_value": 4.8,
-   "alert": "green",
-   "status": "stale",
-   "started": "2026-10-31T05:39:20+00:00",
-   "updated": "2026-10-31T05:39:20+00:00",
-   "source": "BMKG",
-   "source_url": "https://data.bmkg.go.id/gempabumi",
-   "attribution": "Data gempabumi: BMKG",
-   "notes": [
-    "BMKG felt intensity (MMI): III Sumbawa"
-   ],
-   "polygons": [],
-   "observed": [
-    {
-     "place": "Sumbawa",
-     "mmi_text": "III",
-     "mmi_max": 3
-    }
-   ],
-   "first_seen": "2026-10-31T06:40:30.097276+00:00",
-   "age_hours": 59.7,
-   "impact": {
-    "model": "radial",
-    "bands": [
-     {
-      "to_km": 15,
-      "label": "Strong shaking",
-      "sla_days": 3
-     },
-     {
-      "to_km": 40,
-      "label": "Moderate shaking",
-      "sla_days": 2
-     },
-     {
-      "to_km": 80,
-      "label": "Felt",
-      "sla_days": 1
-     }
-    ],
-    "corridors": [],
-    "exclusion_km": null,
-    "counts": [
-     0,
-     0,
-     2
-    ],
-    "total": 2
    }
   }
  ]
