@@ -1,7 +1,7 @@
 {
- "generated_at": "2026-11-06T07:15:56+00:00",
+ "generated_at": "2026-11-06T07:26:40+00:00",
  "facility_count": 8853,
- "event_count": 25,
+ "event_count": 28,
  "verified_event_count": 25,
  "source_health": [
   {
@@ -9,39 +9,41 @@
    "state": "ok",
    "events": 18,
    "warnings": [],
-   "seconds": 0.92
+   "seconds": 1.57
   },
   {
    "source": "gdacs",
    "state": "ok",
    "events": 0,
    "warnings": [],
-   "seconds": 3.69
+   "seconds": 2.42
   },
   {
    "source": "petabencana_flood",
    "state": "ok",
    "events": 1,
    "warnings": [],
-   "seconds": 0.63
+   "seconds": 0.8
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 26,
    "warnings": [],
-   "seconds": 1.71
+   "seconds": 1.79
   },
   {
    "source": "bnpb_news",
    "state": "failed",
    "events": 0,
+   "retained_news": 3,
    "error": "GET https://www.bnpb.go.id/berita failed after 1 tries: HTTP Error 404: Not Found"
   },
   {
    "source": "gdelt_news",
    "state": "failed",
    "events": 0,
+   "retained_news": 0,
    "error": "4 GDELT queries failed: GET https://api.gdeltproject.org/api/v2/doc/doc?query=%28banjir+OR+%22jalan+tertutup%22+OR+%22akses+terputus%22%29+sourcecountry%3Aindonesia&mode=artlist&format=json&timespan=48h&maxrecords=60&sort=datedesc failed after 1 tries: <urlopen error _ssl.c"
   },
   {
@@ -51,6 +53,7 @@
   }
  ],
  "attribution": [
+  "BNPB",
   "Data gempabumi: BMKG",
   "Pusat Vulkanologi dan Mitigasi Bencana Geologi (PVMBG), Badan Geologi ESDM"
  ],
@@ -104,7 +107,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -207,7 +210,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -292,7 +295,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -377,7 +380,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -468,7 +471,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -547,7 +550,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -620,7 +623,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -711,7 +714,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -790,7 +793,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -869,7 +872,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -942,7 +945,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1009,7 +1012,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1076,7 +1079,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1149,7 +1152,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1216,7 +1219,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1283,7 +1286,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1356,7 +1359,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1423,7 +1426,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1490,7 +1493,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1557,7 +1560,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1624,7 +1627,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1677,7 +1680,7 @@
    "polygons": [],
    "observed": [],
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1744,7 +1747,7 @@
     "note": "Routing uses nearest-airport as a proxy unless lanes.csv is supplied. Counts are separate from the distance bands above."
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 0.0,
+   "age_hours": 0.2,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1826,7 +1829,7 @@
     }
    ],
    "first_seen": "2026-11-04T07:16:36.962081+00:00",
-   "age_hours": 63.6,
+   "age_hours": 63.8,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1883,7 +1886,7 @@
     }
    ],
    "first_seen": "2026-11-04T07:16:36.962081+00:00",
-   "age_hours": 54.5,
+   "age_hours": 54.7,
    "impact": {
     "model": "radial",
     "bands": [
@@ -1911,6 +1914,114 @@
      0
     ],
     "total": 2
+   }
+  },
+  {
+   "id": "bnpb-news:c65c3f6b2ab9ea8fe0dc",
+   "hazard": "other",
+   "name": "Perkembangan Situasi dan Penanganan Bencana di Tanah Air 5 November 2026",
+   "lat": null,
+   "lng": null,
+   "severity": null,
+   "severity_value": null,
+   "alert": "unknown",
+   "status": "unverified",
+   "started": null,
+   "updated": "2026-11-05T11:11:00+07:00",
+   "source": "BNPB bulletin",
+   "source_url": "https://www.bnpb.go.id/berita/perkembangan-situasi-dan-penanganan-bencana-di-tanah-air-5-november-2026",
+   "attribution": "BNPB",
+   "notes": [
+    "Official BNPB bulletin. Publication time is not the incident start time.",
+    "Location and operational impact require review. No impact zone or SLA change is inferred from this report.",
+    "Cached report: the news source is temporarily unavailable. Publication time has not been refreshed."
+   ],
+   "polygons": [],
+   "observed": [],
+   "published_at": "2026-11-05T11:11:00+07:00",
+   "air": null,
+   "cached": true,
+   "first_seen": "2026-11-06T07:14:18.406188+00:00",
+   "age_hours": 27.3,
+   "impact": {
+    "model": "none",
+    "bands": [],
+    "corridors": [],
+    "counts": [],
+    "total": 0,
+    "reason": "no coordinates available"
+   }
+  },
+  {
+   "id": "bnpb-news:a2def7342645a64cdd3a",
+   "hazard": "wildfire",
+   "name": "BNPB Optimalkan Penanganan Karhutla, Kemitraan Internasional Perkokoh Operasi Udara",
+   "lat": null,
+   "lng": null,
+   "severity": null,
+   "severity_value": null,
+   "alert": "unknown",
+   "status": "unverified",
+   "started": null,
+   "updated": "2026-11-05T09:34:00+07:00",
+   "source": "BNPB bulletin",
+   "source_url": "https://www.bnpb.go.id/berita/bnpb-optimalkan-penanganan-karhutla-kemitraan-internasional-perkokoh-operasi-udara",
+   "attribution": "BNPB",
+   "notes": [
+    "Official BNPB bulletin. Publication time is not the incident start time.",
+    "Location and operational impact require review. No impact zone or SLA change is inferred from this report.",
+    "Cached report: the news source is temporarily unavailable. Publication time has not been refreshed."
+   ],
+   "polygons": [],
+   "observed": [],
+   "published_at": "2026-11-05T09:34:00+07:00",
+   "air": null,
+   "cached": true,
+   "first_seen": "2026-11-06T07:14:18.406188+00:00",
+   "age_hours": 28.9,
+   "impact": {
+    "model": "none",
+    "bands": [],
+    "corridors": [],
+    "counts": [],
+    "total": 0,
+    "reason": "no coordinates available"
+   }
+  },
+  {
+   "id": "bnpb-news:ef07a628485288ef2de1",
+   "hazard": "other",
+   "name": "Perkembangan Situasi dan Penanganan Bencana di Tanah Air 4 November 2026",
+   "lat": null,
+   "lng": null,
+   "severity": null,
+   "severity_value": null,
+   "alert": "unknown",
+   "status": "unverified",
+   "started": null,
+   "updated": "2026-11-04T12:13:00+07:00",
+   "source": "BNPB bulletin",
+   "source_url": "https://www.bnpb.go.id/berita/perkembangan-situasi-dan-penanganan-bencana-di-tanah-air-4-november-2026",
+   "attribution": "BNPB",
+   "notes": [
+    "Official BNPB bulletin. Publication time is not the incident start time.",
+    "Location and operational impact require review. No impact zone or SLA change is inferred from this report.",
+    "Cached report: the news source is temporarily unavailable. Publication time has not been refreshed."
+   ],
+   "polygons": [],
+   "observed": [],
+   "published_at": "2026-11-04T12:13:00+07:00",
+   "air": null,
+   "cached": true,
+   "first_seen": "2026-11-06T07:14:18.406188+00:00",
+   "age_hours": 50.2,
+   "impact": {
+    "model": "none",
+    "bands": [],
+    "corridors": [],
+    "counts": [],
+    "total": 0,
+    "reason": "no coordinates available"
    }
   }
  ]
