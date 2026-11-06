@@ -41,6 +41,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          # A queued run's trigger SHA can predate the preceding refresh commit.
+          # Start from current main so generated JSON is never rebased over an
+          # already-published snapshot from another run in this concurrency group.
+          ref: main
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
