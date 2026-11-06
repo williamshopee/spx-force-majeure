@@ -134,5 +134,105 @@
   "magma:soputan": "2026-11-06T07:14:18.406188+00:00",
   "magma:sorikmarapi": "2026-11-06T07:14:18.406188+00:00",
   "magma:tambora": "2026-11-06T07:14:18.406188+00:00"
+ },
+ "news_cache": {
+  "bnpb_news": [
+   {
+    "id": "bnpb-news:c65c3f6b2ab9ea8fe0dc",
+    "hazard": "other",
+    "name": "Perkembangan Situasi dan Penanganan Bencana di Tanah Air 5 November 2026",
+    "lat": null,
+    "lng": null,
+    "severity": null,
+    "severity_value": null,
+    "alert": "unknown",
+    "status": "unverified",
+    "started": null,
+    "updated": "2026-11-05T11:11:00+07:00",
+    "source": "BNPB bulletin",
+    "source_url": "https://www.bnpb.go.id/berita/perkembangan-situasi-dan-penanganan-bencana-di-tanah-air-5-november-2026",
+    "attribution": "BNPB",
+    "notes": [
+     "Official BNPB bulletin. Publication time is not the incident start time.",
+     "Location and operational impact require review. No impact zone or SLA change is inferred from this report."
+    ],
+    "polygons": [],
+    "impact": {
+     "model": "none",
+     "bands": [],
+     "corridors": [],
+     "counts": [],
+     "total": 0,
+     "facilities": [],
+     "reason": "no coordinates available"
+    },
+    "observed": [],
+    "published_at": "2026-11-05T11:11:00+07:00"
+   },
+   {
+    "id": "bnpb-news:a2def7342645a64cdd3a",
+    "hazard": "wildfire",
+    "name": "BNPB Optimalkan Penanganan Karhutla, Kemitraan Internasional Perkokoh Operasi Udara",
+    "lat": null,
+    "lng": null,
+    "severity": null,
+    "severity_value": null,
+    "alert": "unknown",
+    "status": "unverified",
+    "started": null,
+    "updated": "2026-11-05T09:34:00+07:00",
+    "source": "BNPB bulletin",
+    "source_url": "https://www.bnpb.go.id/berita/bnpb-optimalkan-penanganan-karhutla-kemitraan-internasional-perkokoh-operasi-udara",
+    "attribution": "BNPB",
+    "notes": [
+     "Official BNPB bulletin. Publication time is not the incident start time.",
+     "Location and operational impact require review. No impact zone or SLA change is inferred from this report."
+    ],
+    "polygons": [],
+    "impact": {
+     "model": "none",
+     "bands": [],
+     "corridors": [],
+     "counts": [],
+     "total": 0,
+     "facilities": [],
+     "reason": "no coordinates available"
+    },
+    "observed": [],
+    "published_at": "2026-11-05T09:34:00+07:00"
+   },
+   {
+    "id": "bnpb-news:ef07a628485288ef2de1",
+    "hazard": "other",
+    "name": "Perkembangan Situasi dan Penanganan Bencana di Tanah Air 4 November 2026",
+    "lat": null,
+    "lng": null,
+    "severity": null,
+    "severity_value": null,
+    "alert": "unknown",
+    "status": "unverified",
+    "started": null,
+    "updated": "2026-11-04T12:13:00+07:00",
+    "source": "BNPB bulletin",
+    "source_url": "https://www.bnpb.go.id/berita/perkembangan-situasi-dan-penanganan-bencana-di-tanah-air-4-november-2026",
+    "attribution": "BNPB",
+    "notes": [
+     "Official BNPB bulletin. Publication time is not the incident start time.",
+     "Location and operational impact require review. No impact zone or SLA change is inferred from this report."
+    ],
+    "polygons": [],
+    "impact": {
+     "model": "none",
+     "bands": [],
+     "corridors": [],
+     "counts": [],
+     "total": 0,
+     "facilities": [],
+     "reason": "no coordinates available"
+    },
+    "observed": [],
+    "published_at": "2026-11-04T12:13:00+07:00"
+   }
+  ]
  }
 }

@@ -148,6 +148,10 @@ News uses one attempt per request with a five-second socket timeout and a
 30-second BNPB fetch budget. GDELT has a 20-second budget and defers remaining
 queries when rate limited. `python preview_news.py` creates `latest_news.json`
 and `preview_news.html` with BNPB bulletins only; it leaves `events.json` intact.
+Recent news is also cached in `state.json`. If a news source fails, reports
+within its lookback window remain visible as **cached reports**, with their
+original timestamps and a failed-feed warning. Expired and undated reports
+are not retained. A healthy empty feed clears the cache for that source.
 
 No new dependency is required. Validate with `python -m unittest test_news -v`
 and, when Node is available, `node test_news_ui.cjs`. The existing refresh

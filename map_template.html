@@ -1595,6 +1595,7 @@
       }) + ' WIB' : when;
       em.textContent = [ev.severity, ev.source,
                         (ev.published_at ? 'Published ' : ev.discovered_at ? 'Discovered ' : '') + dateLabel,
+                        ev.cached ? 'cached report' : '',
                         ev.status === 'unverified' ? 'location / impact unverified' : ''
                        ].filter(Boolean).join(' \u00b7 ');
       b.querySelector('.t').appendChild(em);
@@ -1761,6 +1762,7 @@
       p.textContent = h.source + ': ' + h.state +
         (h.state === 'ok' ? ' (' + h.events + ')' : '') +
         (h.error ? ' \u2014 ' + h.error : '') +
+        (h.retained_news ? ' (' + h.retained_news + ' cached reports retained)' : '') +
         (h.warnings && h.warnings.length ? ' \u2014 ' + h.warnings.join('; ') : '');
       el.appendChild(p);
     });

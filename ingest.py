@@ -1107,6 +1107,26 @@ def _parse_dt(s) -> datetime | None:
     return None
 
 
+def recent_cached_news(records: list[dict], settings: dict, now=None) -> list[dict]:
+    """Keep dated, unlocated leads during an outage; never refresh their age."""
+    now = now or datetime.now(timezone.utc)
+    cutoff = now - timedelta(hours=float(settings.get("lookback_hours", 72)))
+    out = []
+    for record in records:
+        stamp = _parse_dt(record.get("published_at") or record.get("discovered_at")
+                          or record.get("updated"))
+        if record.get("status") != "unverified" or not stamp or not cutoff <= stamp <= now:
+            continue
+        cached = new_event(**record)
+        cached.update(lat=None, lng=None, polygons=[], impact=None, air=None, cached=True)
+        cached["notes"] = list(record.get("notes") or [])
+        note = "Cached report: the news source is temporarily unavailable. Publication time has not been refreshed."
+        if note not in cached["notes"]:
+            cached["notes"].append(note)
+        out.append(cached)
+    return out
+
+
 def dedupe(events: list[dict]) -> list[dict]:
     """
     BMKG and GDACS both report the same Indonesian earthquake. Collapse pairs
@@ -1446,6 +1466,7 @@ def main(argv=None) -> int:
 
     events: list[dict] = []
     health: list[dict] = []
+    news_cache = state.setdefault("news_cache", {})
     for key, fn in fetchers:
         sc = (cfg.get("sources") or {}).get(key) or {}
         if not sc.get("enabled"):
@@ -1454,6 +1475,15 @@ def main(argv=None) -> int:
         t0 = time.time()
         try:
             got = fn(http, cfg)
+            if key in ("bnpb_news", "gdelt_news"):
+                # Retain dated reports in state.json independently of the
+                # current snapshot, so a transient outage does not erase them.
+                if not getattr(got, "warnings", []):
+                    news_cache[key] = list(got)
+                else:
+                    recovered = recent_cached_news(news_cache.get(key, []), sc)
+                    ids = {e["id"] for e in got}
+                    got.extend(e for e in recovered if e["id"] not in ids)
             events.extend(got)
             warnings = getattr(got, "warnings", [])
             health.append({"source": key, "state": "degraded" if warnings else "ok",
@@ -1461,7 +1491,11 @@ def main(argv=None) -> int:
                            "seconds": round(time.time() - t0, 2)})
         except Exception as e:                      # noqa: BLE001 — isolation is the point
             LOG.exception("source %s failed", key)
+            recovered = recent_cached_news(news_cache.get(key, []), sc) \
+                if key in ("bnpb_news", "gdelt_news") else []
+            events.extend(recovered)
             health.append({"source": key, "state": "failed", "events": 0,
+                           "retained_news": len(recovered),
                            "error": str(e)[:300]})
             if not sc.get("optional"):
                 LOG.error("  ^ non-optional source failed; continuing with degraded data")

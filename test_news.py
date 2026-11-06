@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from ingest import apply_impact_model, fetch_bnpb, fetch_gdelt, load_config
+from ingest import apply_impact_model, fetch_bnpb, fetch_gdelt, load_config, recent_cached_news
 from news import bulletin_url, fetch_bnpb_bulletins, publication_time
 
 BASE = "https://www.bnpb.go.id/berita"
@@ -87,6 +87,19 @@ class NewsTests(unittest.TestCase):
         self.assertEqual(len(result), 1)
         self.assertIn("budget", result.warnings[0])
 
+    def test_cache_preserves_dates_and_excludes_old_or_undated_reports(self):
+        records = fetch_bnpb_bulletins(FakeHTTP(pages()), self.settings, NOW)
+        recent = records[0]
+        old = dict(recent, published_at="2026-10-01T00:00:00+07:00")
+        undated = dict(recent, published_at=None, updated=None)
+        confirmed = dict(recent, status="active")
+        recovered = recent_cached_news([recent, old, undated, confirmed], self.settings, NOW)
+        self.assertEqual(len(recovered), 1)
+        self.assertTrue(recovered[0]["cached"])
+        self.assertEqual(recovered[0]["published_at"], recent["published_at"])
+        self.assertIsNone(recovered[0]["lat"])
+        self.assertNotIn("cached", recent)
+
     def test_only_bnpb_article_links_are_followed(self):
         for url in ("javascript:alert(1)", "https://evil.example/berita/banjir", "/berita", "//www.bnpb.go.id.evil.example/berita/banjir"):
             self.assertIsNone(bulletin_url(url, BASE))
@@ -150,6 +163,33 @@ class NewsTests(unittest.TestCase):
                 result = main(["--config", str(base / "config.yaml")])
             self.assertEqual(result, 2)
             self.assertEqual(output.read_text(encoding="utf-8"), '{"previous_snapshot":true}')
+
+    def test_failed_news_source_retains_cached_report_in_output(self):
+        import json
+        from ingest import main
+        with TemporaryDirectory() as folder:
+            base = Path(folder)
+            (base / "facilities.csv").write_text(
+                "station_name,latitude,longitude\nTest facility,5,97\n", encoding="utf-8")
+            record = dict(fetch_bnpb_bulletins(FakeHTTP(pages()), self.settings, NOW)[0])
+            record["published_at"] = record["updated"] = datetime.now(timezone.utc).isoformat()
+            (base / "state.json").write_text(json.dumps({
+                "news_cache": {"bnpb_news": [record]}}), encoding="utf-8")
+            cfg = {"facilities": "facilities.csv", "output": "events.json",
+                   "sources": {"bmkg_quake": {"enabled": True},
+                               "bnpb_news": {"enabled": True}}}
+            with patch("ingest.load_config", return_value=cfg), patch(
+                    "ingest.fetch_bmkg", return_value=[]), patch(
+                    "ingest.fetch_bnpb", side_effect=RuntimeError("HTTP Error 503")):
+                result = main(["--config", str(base / "config.yaml")])
+            payload = json.loads((base / "events.json").read_text(encoding="utf-8"))
+            self.assertEqual(result, 0)
+            self.assertEqual(payload["events"][0]["published_at"], record["published_at"])
+            self.assertTrue(payload["events"][0]["cached"])
+            self.assertEqual(payload["events"][0]["impact"]["total"], 0)
+            health = next(h for h in payload["source_health"] if h["source"] == "bnpb_news")
+            self.assertEqual(health["state"], "failed")
+            self.assertEqual(health["retained_news"], 1)
 
 
 if __name__ == "__main__":

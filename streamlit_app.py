@@ -235,12 +235,12 @@ def load_csv() -> bytes | None:
 
 
 @st.cache_data(ttl=600, show_spinner=False)
-def cached_ingest(_ts: int) -> dict:
+def cached_ingest(ts: int) -> dict:
     return run_ingest()
 
 
 @st.cache_data(ttl=600, show_spinner=False)
-def cached_map(_ts: int, view: str) -> str:
+def cached_map(ts: int, view: str, revision: tuple) -> str:
     return build_map_html(view)
 
 
@@ -351,6 +351,8 @@ with st.sidebar:
                     detail += f" — {h['error'][:60]}"
                 if h.get("warnings"):
                     detail += " — " + "; ".join(h["warnings"])[:160]
+                if h.get("retained_news"):
+                    detail += f" — {h['retained_news']} cached reports retained"
                 st.markdown(f"<span class='{cls}'>{icon}</span> {h['source']}{detail}",
                             unsafe_allow_html=True)
 
@@ -404,6 +406,8 @@ with st.sidebar:
                 meta_parts = [ev.get("severity", ""), ev.get("source", "")]
                 if unv:
                     meta_parts.append("unverified")
+                if ev.get("cached"):
+                    meta_parts.append("cached report")
                 meta = escape(" · ".join(p for p in meta_parts if p))
 
                 st.markdown(
@@ -449,7 +453,10 @@ if VIEW == "soc":
             "is unavailable. The force majeure base map is shown below."
         )
 
-html = cached_map(ts, VIEW)
+map_revision = tuple((name, (HERE / name).stat().st_mtime_ns)
+                     for name in ("events.json", "map_template.html", "build_map.py")
+                     if (HERE / name).exists())
+html = cached_map(ts, VIEW, map_revision)
 if html:
     st.components.v1.html(html, height=880 if VIEW == "soc" else 920, scrolling=False)
 else:
