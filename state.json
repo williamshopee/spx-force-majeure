@@ -234,7 +234,9 @@
      "default_radius_km": 10,
      "limitations": "Centers and user-adjustable proximity zones, not predicted hazard boundaries. Location-match confidence is not an impact probability. No SLA change is inferred.",
      "attribution": "GeoNames CC BY 4.0 — https://www.geonames.org/"
-    }
+    },
+    "first_seen": "2026-11-06T07:14:18.406188+00:00",
+    "age_hours": 28.8
    },
    {
     "id": "bnpb-news:a2def7342645a64cdd3a",
@@ -269,12 +271,43 @@
     "published_at": "2026-11-05T09:34:00+07:00",
     "news_estimate": {
      "method": "news place-name screening v1",
-     "points": [],
+     "points": [
+      {
+       "id": "1641897",
+       "name": "Provinsi Kalimantan Timur",
+       "level": "ADM1",
+       "lat": 0.5,
+       "lng": 116.5,
+       "province_code": "14",
+       "regency_context": null,
+       "screenable": false,
+       "confidence": "broad province context",
+       "evidence": "Kepala BNPB, Letjen TNI Kristomei Sianturi, menegaskan bahwa penanganan karhutla tetap menjadi prioritas utama pemerintah. Upaya masif telah dilakukan melalui kombinasi pemadaman darat, rekayasa cuaca, hingga operasi pem",
+       "evidence_kind": "article body",
+       "geocoder": "GeoNames administrative center (CC BY 4.0)"
+      },
+      {
+       "id": "1641898",
+       "name": "Provinsi Kalimantan Tengah",
+       "level": "ADM1",
+       "lat": -2.0,
+       "lng": 113.5,
+       "province_code": "13",
+       "regency_context": null,
+       "screenable": false,
+       "confidence": "broad province context",
+       "evidence": "Di tengah dimulainya operasi bantuan internasional ini, belasungkawa dan duka cita mendalam turut dipanjatkan atas gugurnya tiga prajurit TNI Angkatan Darat saat bertugas dalam operasi penanggulangan karhutla di Kalimant",
+       "evidence_kind": "article body",
+       "geocoder": "GeoNames administrative center (CC BY 4.0)"
+      }
+     ],
      "unresolved_names": [],
      "default_radius_km": 10,
      "limitations": "Centers and user-adjustable proximity zones, not predicted hazard boundaries. Location-match confidence is not an impact probability. No SLA change is inferred.",
      "attribution": "GeoNames CC BY 4.0 — https://www.geonames.org/"
-    }
+    },
+    "first_seen": "2026-11-06T07:14:18.406188+00:00",
+    "age_hours": 30.4
    },
    {
     "id": "bnpb-news:ef07a628485288ef2de1",
@@ -309,12 +342,115 @@
     "published_at": "2026-11-04T12:13:00+07:00",
     "news_estimate": {
      "method": "news place-name screening v1",
-     "points": [],
-     "unresolved_names": [],
+     "points": [
+      {
+       "id": "12297320",
+       "name": "Kecamatan Ponrang",
+       "level": "ADM3",
+       "lat": -3.20694,
+       "lng": 120.29833,
+       "province_code": "38",
+       "regency_context": "6965895",
+       "screenable": true,
+       "confidence": "explicit administrative name",
+       "evidence": "Di Kabupaten Luwu, Provinsi Sulawesi Selatan, karhutla terjadi pada Senin (2/11) sekitar pukul 18.30 WITA. Kebakaran melanda lahan sagu milik warga di Desa Tirowali, Kecamatan Ponrang, dengan luas lahan terbakar diperkir",
+       "evidence_kind": "article body",
+       "geocoder": "GeoNames administrative center (CC BY 4.0)"
+      },
+      {
+       "id": "6996573",
+       "name": "Kecamatan Wawonii",
+       "level": "ADM3",
+       "lat": -4.1027,
+       "lng": 123.0277,
+       "province_code": "22",
+       "regency_context": "9827965",
+       "screenable": true,
+       "confidence": "explicit administrative name",
+       "evidence": "Di Kabupaten Konawe Kepulauan, Provinsi Sulawesi Tenggara, karhutla melanda Desa Pasir Putih, Kecamatan Wawonii Barat, pada Senin (2/11) sekitar pukul 09.40 WITA. Api membakar lahan yang ditanami jambu mete dan area laha",
+       "evidence_kind": "article body",
+       "geocoder": "GeoNames administrative center (CC BY 4.0)"
+      },
+      {
+       "id": "9828029",
+       "name": "Kabupaten Pulau Taliabu",
+       "level": "ADM2",
+       "lat": -1.84578,
+       "lng": 124.78992,
+       "province_code": "29",
+       "regency_context": "9828029",
+       "screenable": true,
+       "confidence": "explicit administrative name",
+       "evidence": "Sementara itu, karhutla di Kabupaten Pulau Taliabu, Provinsi Maluku Utara, bermula pada Senin (5/10) sekitar pukul 15.00 WIT di Desa Salati. Kebakaran kemudian meluas hingga mencakup tiga kecamatan dan 13 desa. Wilayah t",
+       "evidence_kind": "article body",
+       "geocoder": "GeoNames administrative center (CC BY 4.0)"
+      },
+      {
+       "id": "1631789",
+       "name": "Kabupaten Jayawijaya",
+       "level": "ADM2",
+       "lat": -4.08333,
+       "lng": 138.91667,
+       "province_code": "PE",
+       "regency_context": "1631789",
+       "screenable": true,
+       "confidence": "explicit administrative name",
+       "evidence": "Karhutla juga melanda Kampung Menagaima, Distrik Maima, Kabupaten Jayawijaya, Provinsi Papua Pegunungan, pada Sabtu (31/10). Kebakaran mengakibatkan sekitar 2 hektare lahan terbakar. Tidak ada laporan korban jiwa, sedang",
+       "evidence_kind": "article body",
+       "geocoder": "GeoNames administrative center (CC BY 4.0)"
+      },
+      {
+       "id": "6266469",
+       "name": "Kecamatan Karangmalang",
+       "level": "ADM3",
+       "lat": -7.45167,
+       "lng": 111.02361,
+       "province_code": "07",
+       "regency_context": "6266177",
+       "screenable": true,
+       "confidence": "explicit administrative name",
+       "evidence": "Di Kabupaten Sragen, Provinsi Jawa Tengah, karhutla terjadi pada Selasa (3/11) di Desa Puro, Kecamatan Karangmalang. Kebakaran mengakibatkan sekitar 1 hektare lahan terbakar. Tidak ada laporan korban jiwa dalam kejadian ",
+       "evidence_kind": "article body",
+       "geocoder": "GeoNames administrative center (CC BY 4.0)"
+      },
+      {
+       "id": "8379638",
+       "name": "Kecamatan Bluto",
+       "level": "ADM3",
+       "lat": -7.1,
+       "lng": 113.76667,
+       "province_code": "08",
+       "regency_context": "8541464",
+       "screenable": true,
+       "confidence": "explicit administrative name",
+       "evidence": "Angin kencang melanda Desa Guluk Manjung dan Desa Kapedi, Kecamatan Bluto, Kabupaten Sumenep, Jawa Timur, pada Senin (2/11) sekitar pukul 01.00 WIB. Peristiwa tersebut berdampak pada 11 kepala keluarga (KK). Sebanyak 11 ",
+       "evidence_kind": "article body",
+       "geocoder": "GeoNames administrative center (CC BY 4.0)"
+      },
+      {
+       "id": "6769515",
+       "name": "Kecamatan Wanasari",
+       "level": "ADM3",
+       "lat": -6.8725,
+       "lng": 109.01361,
+       "province_code": "07",
+       "regency_context": "1648064",
+       "screenable": true,
+       "confidence": "explicit administrative name",
+       "evidence": "Di Provinsi Jawa Tengah, hujan lebat disertai angin kencang melanda Desa Tegalgandu, Kecamatan Wanasari, Kabupaten Brebes, pada Senin (2/11) sekitar pukul 15.00 WIB. Peristiwa tersebut berdampak pada 33 KK. Sebanyak 33 u",
+       "evidence_kind": "article body",
+       "geocoder": "GeoNames administrative center (CC BY 4.0)"
+      }
+     ],
+     "unresolved_names": [
+      "papua"
+     ],
      "default_radius_km": 10,
      "limitations": "Centers and user-adjustable proximity zones, not predicted hazard boundaries. Location-match confidence is not an impact probability. No SLA change is inferred.",
      "attribution": "GeoNames CC BY 4.0 — https://www.geonames.org/"
-    }
+    },
+    "first_seen": "2026-11-06T07:14:18.406188+00:00",
+    "age_hours": 51.7
    }
   ]
  }
