@@ -167,7 +167,74 @@
      "reason": "no coordinates available"
     },
     "observed": [],
-    "published_at": "2026-11-05T11:11:00+07:00"
+    "published_at": "2026-11-05T11:11:00+07:00",
+    "news_estimate": {
+     "method": "news place-name screening v1",
+     "points": [
+      {
+       "id": "6965922",
+       "name": "Kecamatan Lembo",
+       "level": "ADM3",
+       "lat": -2.12419,
+       "lng": 121.26903,
+       "province_code": "21",
+       "regency_context": "9827971",
+       "screenable": true,
+       "confidence": "explicit administrative name",
+       "evidence": "Karhutla tersebut terjadi pada Rabu (4/11) di Desa Bintangor Mukti, Kecamatan Lembo. Peristiwa ini mengakibatkan lahan seluas 5,5 hektare terdampak kebakaran.",
+       "evidence_kind": "article body",
+       "geocoder": "GeoNames administrative center (CC BY 4.0)"
+      },
+      {
+       "id": "2001315",
+       "name": "Kecamatan Bayat",
+       "level": "ADM3",
+       "lat": -7.77139,
+       "lng": 110.65472,
+       "province_code": "07",
+       "regency_context": "1639899",
+       "screenable": true,
+       "confidence": "explicit administrative name",
+       "evidence": "Penyaluran bantuan tersebut menjangkau tiga desa. Desa Bawak menerima dua tangki, Desa Burikan di Kecamatan Cawas menerima satu tangki, sedangkan Desa Krakitan di Kecamatan Bayat menerima dua tangki.",
+       "evidence_kind": "article body",
+       "geocoder": "GeoNames administrative center (CC BY 4.0)"
+      },
+      {
+       "id": "12243328",
+       "name": "Kecamatan Trumon Tengah",
+       "level": "ADM3",
+       "lat": 2.91222,
+       "lng": 97.65611,
+       "province_code": "01",
+       "regency_context": "1215634",
+       "screenable": true,
+       "confidence": "explicit administrative name",
+       "evidence": "BNPB turut melaporkan perkembangan penanganan banjir di Kabupaten Aceh Selatan, Provinsi Aceh, yang terjadi pada Rabu (28/10). Banjir tersebut berdampak pada tiga gampong atau desa, yakni Gampong Lhok Raya dan Cot Bayu d",
+       "evidence_kind": "article body",
+       "geocoder": "GeoNames administrative center (CC BY 4.0)"
+      },
+      {
+       "id": "1213431",
+       "name": "Kecamatan Trumon",
+       "level": "ADM3",
+       "lat": 2.66667,
+       "lng": 97.7275,
+       "province_code": "01",
+       "regency_context": "1215634",
+       "screenable": true,
+       "confidence": "explicit administrative name",
+       "evidence": "BNPB turut melaporkan perkembangan penanganan banjir di Kabupaten Aceh Selatan, Provinsi Aceh, yang terjadi pada Rabu (28/10). Banjir tersebut berdampak pada tiga gampong atau desa, yakni Gampong Lhok Raya dan Cot Bayu d",
+       "evidence_kind": "article body",
+       "geocoder": "GeoNames administrative center (CC BY 4.0)"
+      }
+     ],
+     "unresolved_names": [
+      "cawas"
+     ],
+     "default_radius_km": 10,
+     "limitations": "Centers and user-adjustable proximity zones, not predicted hazard boundaries. Location-match confidence is not an impact probability. No SLA change is inferred.",
+     "attribution": "GeoNames CC BY 4.0 — https://www.geonames.org/"
+    }
    },
    {
     "id": "bnpb-news:a2def7342645a64cdd3a",
@@ -199,7 +266,15 @@
      "reason": "no coordinates available"
     },
     "observed": [],
-    "published_at": "2026-11-05T09:34:00+07:00"
+    "published_at": "2026-11-05T09:34:00+07:00",
+    "news_estimate": {
+     "method": "news place-name screening v1",
+     "points": [],
+     "unresolved_names": [],
+     "default_radius_km": 10,
+     "limitations": "Centers and user-adjustable proximity zones, not predicted hazard boundaries. Location-match confidence is not an impact probability. No SLA change is inferred.",
+     "attribution": "GeoNames CC BY 4.0 — https://www.geonames.org/"
+    }
    },
    {
     "id": "bnpb-news:ef07a628485288ef2de1",
@@ -231,7 +306,15 @@
      "reason": "no coordinates available"
     },
     "observed": [],
-    "published_at": "2026-11-04T12:13:00+07:00"
+    "published_at": "2026-11-04T12:13:00+07:00",
+    "news_estimate": {
+     "method": "news place-name screening v1",
+     "points": [],
+     "unresolved_names": [],
+     "default_radius_km": 10,
+     "limitations": "Centers and user-adjustable proximity zones, not predicted hazard boundaries. Location-match confidence is not an impact probability. No SLA change is inferred.",
+     "attribution": "GeoNames CC BY 4.0 — https://www.geonames.org/"
+    }
    }
   ]
  }

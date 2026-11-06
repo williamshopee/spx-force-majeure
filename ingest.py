@@ -44,6 +44,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from news import NewsResults, fetch_bnpb_bulletins
+from news_estimates import estimate_news_locations
 
 HERE = Path(__file__).resolve().parent
 LOG = logging.getLogger("fm")
@@ -1078,6 +1079,7 @@ def fetch_gdelt(http: Http, cfg: dict) -> list[dict]:
                 source=f"news/{a.get('domain') or 'unknown'}",
                 source_url=url,
                 attribution="GDELT Project",
+                news_estimate=estimate_news_locations((a.get("title") or "").strip()),
                 notes=["Unverified news lead. Not counted toward SLA until a human "
                        "confirms it and attaches coordinates."],
             ))

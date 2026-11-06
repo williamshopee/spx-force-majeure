@@ -241,6 +241,15 @@
   .news-tools{display:flex;gap:8px;margin:8px 0 12px;flex-wrap:wrap}
   .news-tools label{flex:1;font-size:11.5px;color:var(--muted)}
   .news-tools select{display:block;width:100%;margin-top:3px;background:var(--sea);color:var(--text);border:1px solid var(--line);padding:5px;font:inherit}
+  .news-toggle{display:block;color:#f2bc64;font-size:12px;margin:8px 0}
+  .news-estimate{border:1px dashed #d9a34d;padding:10px;margin:10px 0;background:#282219;font-size:12px}
+  .news-estimate h3{margin:0 0 5px;color:#f2bc64;font-size:14px}
+  .news-estimate p{margin:6px 0;color:var(--muted)}
+  .news-estimate ul{padding-left:16px;max-height:180px;overflow:auto}
+  .news-estimate a{color:var(--focus)}
+  .news-estimate input{accent-color:#f2bc64}
+  .news-place-btn{background:none;border:0;color:#f2bc64;font:inherit;text-align:left;padding:3px 0;cursor:pointer}
+  .news-place-btn:hover{text-decoration:underline}
   .fmfilters{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 10px}
   .fmfilters .ffl{font-size:10.5px;width:100%;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
   .fmfilters label{font-size:11.5px;color:var(--muted);display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border:1px solid var(--line);border-radius:3px;cursor:pointer}
@@ -475,7 +484,20 @@
         <label>Show<select id="eventScope"><option value="all">All updates</option><option value="news">News leads</option><option value="mapped">Mapped events</option></select></label>
         <label>Sort<select id="eventSort"><option value="latest">Latest first</option><option value="impact">Facility exposure</option></select></label>
       </div>
+      <label class="news-toggle"><input type="checkbox" id="newsZonesOn" checked> Show estimated news areas</label>
       <ul class="evlist" id="evlist"></ul>
+      <section id="newsEstimate" class="news-estimate" hidden>
+        <h3>Estimated news areas</h3>
+        <p>Amber dashed circles show proximity to places mentioned in news. They are screening areas, not predicted flood, ash or damage boundaries.</p>
+        <label for="newsRadius">Screening radius: <b id="newsRadiusValue">10 km</b></label>
+        <input id="newsRadius" type="range" min="1" max="50" step="1" value="10" style="width:100%">
+        <p id="newsSummary"></p>
+        <ul id="newsPlaces"></ul>
+        <details><summary>Nearby facilities — estimated exposure</summary><ul id="newsFacilities"></ul></details>
+        <button id="newsExport" type="button" class="dl">Download estimated nearby facilities</button>
+        <p>No automatic SLA changes. Match confidence concerns the location name, not the probability of impact. Counts include all station types.</p>
+        <p>Place centers: <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">GeoNames, CC BY 4.0</a>.</p>
+      </section>
 
       <div class="ctl" id="impCtl" hidden>
         <p class="evhead"><b id="evName"></b><span id="evMeta"></span></p>
@@ -1254,6 +1276,128 @@
 
   /* ---------------- hazard geometry ---------------- */
   var hz = L.layerGroup();
+  var newsZones = L.layerGroup().addTo(map), newsScreeningRows = [];
+
+  function nearbyNewsFacilities(points, radius, stations){
+    var found = [];
+    stations.forEach(function(station, index){
+      var nearest = null, distance = Infinity;
+      points.forEach(function(point){
+        if (!point.screenable) return;
+        var p1 = point.lat * Math.PI / 180, p2 = station[1] * Math.PI / 180;
+        var dp = p2 - p1, dl = (station[2] - point.lng) * Math.PI / 180;
+        var a = Math.sin(dp / 2) ** 2 + Math.cos(p1) * Math.cos(p2) * Math.sin(dl / 2) ** 2;
+        var km = 6371.0088 * 2 * Math.asin(Math.min(1, Math.sqrt(a)));
+        if (km <= radius && km < distance) { nearest = point; distance = km; }
+      });
+      if (nearest) found.push({index:index, name:station[0], lat:station[1], lng:station[2],
+                              km:distance, point:nearest});
+    });
+    return found.sort(function(a, b){ return a.km - b.km; });
+  }
+
+  function drawNewsZones(fit){
+    newsZones.clearLayers(); newsScreeningRows = [];
+    var panel = document.getElementById('newsEstimate'); panel.hidden = true;
+    if (!document.getElementById('newsZonesOn').checked ||
+        document.getElementById('eventScope').value === 'mapped' ||
+        (EV && EV.status !== 'unverified')) return;
+    var reports = EVENTS.filter(function(e){
+      return e.status === 'unverified' && HAZF[e._fk] !== false && (!EV || e === EV);
+    });
+    var points = [], seen = {}, unresolved = [];
+    reports.forEach(function(report){
+      var estimate = report.news_estimate || {};
+      unresolved = unresolved.concat(estimate.unresolved_names || []);
+      (estimate.points || []).forEach(function(point){
+        if (seen[point.id]) return;
+        seen[point.id] = true;
+        points.push(Object.assign({}, point, {report:report}));
+      });
+    });
+    if (!points.length && !unresolved.length) return;
+    panel.hidden = false;
+    var radius = +document.getElementById('newsRadius').value;
+    document.getElementById('newsRadiusValue').textContent = radius + ' km';
+    var placeList = document.getElementById('newsPlaces'); placeList.innerHTML = '';
+    points.forEach(function(point){
+      var popup = document.createElement('div'), heading = document.createElement('b');
+      heading.textContent = point.name + ' — estimated news location'; popup.appendChild(heading);
+      var info = document.createElement('p');
+      info.textContent = point.confidence + '. ' + (point.screenable
+        ? 'Administrative center; actual impact extent unknown.'
+        : 'Province context only: no local impact area or facility count inferred.');
+      popup.appendChild(info);
+      var evidence = document.createElement('p'); evidence.textContent = point.evidence || '';
+      popup.appendChild(evidence);
+      var href = sourceLink(point.report.source_url);
+      if (href) {
+        var link = document.createElement('a'); link.href = href; link.textContent = 'Read source report';
+        link.target = '_blank'; link.rel = 'noopener noreferrer'; popup.appendChild(link);
+      }
+      if (point.screenable) L.circle([point.lat, point.lng], {radius:radius * 1000,
+        pane:'hazard', color:'#f2bc64', weight:1.5, dashArray:'7 6', fillOpacity:.10,
+        interactive:false}).addTo(newsZones);
+      var marker = L.circleMarker([point.lat, point.lng], {pane:'crater', radius:6,
+        color:'#f2bc64', fillColor:'#f2bc64', fillOpacity:.8, weight:2})
+        .bindPopup(popup).addTo(newsZones);
+      var item = document.createElement('li');
+      var placeButton = document.createElement('button');
+      placeButton.type = 'button'; placeButton.className = 'news-place-btn';
+      placeButton.textContent = point.name + ' · ' + point.confidence +
+        (point.report.cached ? ' · cached report' : '') +
+        (point.screenable ? ' · ' + radius + ' km screening' : ' · marker only');
+      placeButton.addEventListener('click', function(){
+        map.setView([point.lat, point.lng], point.screenable ? 11 : 6); marker.openPopup();
+      });
+      item.appendChild(placeButton);
+      placeList.appendChild(item);
+    });
+    if (unresolved.length) {
+      var missing = document.createElement('li');
+      missing.textContent = 'Unresolved / conflicting place context: ' + Array.from(new Set(unresolved)).join(', ');
+      placeList.appendChild(missing);
+    }
+    newsScreeningRows = nearbyNewsFacilities(points, radius, RAW);
+    document.getElementById('newsSummary').textContent = points.length + ' matched location' +
+      (points.length === 1 ? '' : 's') + '; ' + fmt(newsScreeningRows.length) +
+      ' nearby facilities for review. Proximity does not confirm disruption.';
+    var sites = document.getElementById('newsFacilities'); sites.innerHTML = '';
+    newsScreeningRows.slice(0, 15).forEach(function(site){
+      var li = document.createElement('li');
+      li.textContent = site.name + ' · ' + site.km.toFixed(1) + ' km from ' + site.point.name;
+      sites.appendChild(li);
+    });
+    if (newsScreeningRows.length > 15) {
+      var more = document.createElement('li'); more.textContent = 'Download CSV for the full list.';
+      sites.appendChild(more);
+    }
+    document.getElementById('newsExport').disabled = !newsScreeningRows.length;
+    if (fit && points.length) {
+      var bounds = L.latLngBounds(points.map(function(p){ return [p.lat, p.lng]; })).pad(.2);
+      map.fitBounds(bounds, {maxZoom:10, animate:true});
+    }
+  }
+
+  document.getElementById('newsZonesOn').addEventListener('change', function(){ drawNewsZones(false); });
+  document.getElementById('newsRadius').addEventListener('input', function(){ drawNewsZones(false); });
+  document.getElementById('newsExport').addEventListener('click', function(){
+    if (!newsScreeningRows.length) return;
+    var lines = [['assessment','news_title','published_or_discovered','place','location_match',
+                  'station_name','latitude','longitude','distance_km','screening_radius_km','source_url']];
+    newsScreeningRows.forEach(function(site){
+      var report = site.point.report;
+      lines.push(['Estimated proximity only; impact unverified',report.name,
+        report.published_at || report.discovered_at || report.updated || '', site.point.name,
+        site.point.confidence,site.name,site.lat,site.lng,site.km.toFixed(2),
+        document.getElementById('newsRadius').value,report.source_url]);
+    });
+    var url = URL.createObjectURL(new Blob(['\ufeff' + lines.map(function(row){
+      return row.map(csvCell).join(','); }).join('\r\n')], {type:'text/csv;charset=utf-8'}));
+    var link = document.createElement('a'); link.href = url;
+    link.download = 'spx-news-estimated-exposure.csv'; document.body.appendChild(link);
+    link.click(); link.remove(); setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  });
 
   function buildHazard(){
     hz.clearLayers();
@@ -1559,6 +1703,7 @@
   document.getElementById('eventSort').addEventListener('change', renderList);
 
   function renderList(){
+    drawNewsZones(false);
     listEl.innerHTML = '';
     var scope = document.getElementById('eventScope').value;
     var shown = EVENTS.filter(function(e){
@@ -1596,6 +1741,7 @@
       em.textContent = [ev.severity, ev.source,
                         (ev.published_at ? 'Published ' : ev.discovered_at ? 'Discovered ' : '') + dateLabel,
                         ev.cached ? 'cached report' : '',
+                        ev.news_estimate && ev.news_estimate.points.length ? ev.news_estimate.points.length + ' estimated locations' : '',
                         ev.status === 'unverified' ? 'location / impact unverified' : ''
                        ].filter(Boolean).join(' \u00b7 ');
       b.querySelector('.t').appendChild(em);
@@ -1623,10 +1769,16 @@
       renderList(); layer.redraw(); return;
     }
     EV = ev; IMP.on = true;
+    if (ev.status === 'unverified' && ev.news_estimate && ev.news_estimate.points.length) {
+      ctlEl.hidden = true; airBlock.hidden = true; airHit = null; hz.remove(); IMP.on = false;
+      document.getElementById('newsZonesOn').checked = true;
+      renderList(); drawNewsZones(true); layer.redraw();
+      return;
+    }
     if ((ev.lat === null || ev.lat === undefined) && !(ev.air && ev.air.airports)) {
       ctlEl.hidden = true; airBlock.hidden = true; airHit = null; hz.remove(); IMP.on = false;
       statusEl.textContent = 'This lead has no coordinates, so it cannot be placed '
-        + 'on the map or counted. Open the source to check where it is.';
+        + 'on the map or counted. No unambiguous location could be estimated; open the source to review it.';
       renderList(); layer.redraw(); return;
     }
 
@@ -1788,7 +1940,7 @@
       b.textContent = 'Data is ' + (mins < 120 ? mins + ' minutes' : Math.round(mins / 60) + ' hours') + ' old';
       statusEl.appendChild(b);
       statusEl.appendChild(document.createTextNode(
-        'The ingest job runs every 10 minutes, so it has stopped or lost network. ' +
+        'Scheduled refreshes run about every 30 minutes; this snapshot is overdue. ' +
         'What you see below is the last good snapshot \u2014 do not treat it as current. ' +
         'Check the ingest log before acting on any of it.'));
       return mins;

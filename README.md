@@ -130,6 +130,25 @@ Failure behaviour worth knowing before you wire alerting to this:
 
 ### Indonesia news updates
 
+News can now be shown as **Estimated news areas** in both map views. The
+location matcher uses 7,665 Indonesian province, regency/city and district
+centers from [GeoNames](https://www.geonames.org/) (CC BY 4.0). It reads BNPB
+article-body paragraphs, ignores datelines/captions/related-story links, uses
+province/regency context to disambiguate names, and leaves conflicts unresolved.
+GDELT leads use their headline only and carry that evidence label.
+
+Amber dashed circles are **proximity screening areas**, not a physical hazard
+forecast. The default 10 km radius is adjustable from 1–50 km. Click a news
+item to focus its locations, then a place to zoom in and read its evidence.
+Province-only mentions get a context marker with no radius or facility count.
+The separate estimated-exposure CSV lists nearby facilities and source links,
+without SLA extensions. Confirmed impact totals and their CSV remain unchanged.
+
+Rebuild the place dataset with `python build_news_gazetteer.py geonames-ID.zip`
+after downloading the [official Indonesia extract](https://download.geonames.org/export/dump/ID.zip).
+The dataset provides centers, not administrative boundary polygons. Match
+confidence is qualitative location evidence, not a calibrated impact probability.
+
 The `bnpb_news` source reads the official BNPB news index and checks up to eight
 recent hazard bulletins per run, including daily situation reports. It uses the
 article's visible publication timestamp in WIB, keeps a 72-hour window, and

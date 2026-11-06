@@ -408,6 +408,9 @@ with st.sidebar:
                     meta_parts.append("unverified")
                 if ev.get("cached"):
                     meta_parts.append("cached report")
+                estimate_count = len((ev.get("news_estimate") or {}).get("points", []))
+                if estimate_count:
+                    meta_parts.append(f"{estimate_count} estimated locations")
                 meta = escape(" · ".join(p for p in meta_parts if p))
 
                 st.markdown(

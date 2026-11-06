@@ -14,7 +14,7 @@ const els = {eventScope: new Element(), eventSort: new Element()};
 els.eventScope.value = 'all'; els.eventSort.value = 'latest';
 const context = {
   URL, Date, EVENTS: [], EV: null, HAZF: {}, HAZC: {other: '#fff'},
-  fmt: String, selectEvent() {}, listEl: new Element(),
+  fmt: String, selectEvent() {}, drawNewsZones() {}, listEl: new Element(),
   document: {getElementById: id => els[id], createElement: () => new Element(),
              createTextNode: value => ({textContent: value})}
 };
@@ -43,4 +43,13 @@ assert.equal(context.listEl.children.length, 1);
 els.eventScope.value = 'all'; els.eventSort.value = 'impact'; context.renderList();
 assert.equal(context.listEl.children[0].children[0].querySelector('.t').children[0].textContent, 'Older mapped event');
 assert.equal(context.reportTime({discovered_at:'20261105T040000Z'}), Date.parse('2026-11-05T04:00:00Z'));
+const proximityStart = source.indexOf('  function nearbyNewsFacilities(');
+const proximityEnd = source.indexOf('  function drawNewsZones(', proximityStart);
+vm.runInContext(source.slice(proximityStart, proximityEnd), context);
+const points = [{lat:0,lng:100,screenable:true}, {lat:0,lng:100.01,screenable:true}];
+const stations = [['Near station',0,100.02],['Far station',1,101]];
+assert.equal(context.nearbyNewsFacilities(points,10,stations).length, 1, 'overlapping zones count a facility once');
+assert.equal(context.nearbyNewsFacilities(points,1,stations).length, 0, 'radius changes screening candidates');
+assert.equal(context.nearbyNewsFacilities([{lat:0,lng:100,screenable:false}],50,stations).length, 0, 'province markers cannot imply local exposure');
+assert.equal(context.nearbyNewsFacilities(points,10,stations)[0].name, 'Near station');
 console.log('News UI: date sorting, filters, WIB labels, source links and unsafe URL rejection passed.');

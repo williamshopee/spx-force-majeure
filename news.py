@@ -6,6 +6,7 @@ import time
 from datetime import datetime, timedelta, timezone
 from html.parser import HTMLParser
 from urllib.parse import urljoin, urlsplit, urlunsplit
+from news_estimates import estimate_news_locations
 
 WIB = timezone(timedelta(hours=7))
 MONTHS = dict(zip(
@@ -35,6 +36,9 @@ class BulletinHTML(HTMLParser):
         self._anchor = None
         self._skip = 0
         self._h1 = False
+        self.paragraphs = []
+        self._paragraph = None
+        self._article_depth = 0
         self.feed(html)
 
     def handle_starttag(self, tag, attrs):
@@ -45,6 +49,10 @@ class BulletinHTML(HTMLParser):
             self._anchor = [attrs.get("href", ""), []]
         if tag == "h1":
             self._h1 = True
+        if tag == "article":
+            self._article_depth += 1
+        if tag == "p" and (self._article_depth or "justify" in attrs.get("style", "")):
+            self._paragraph = []
 
     def handle_endtag(self, tag):
         if tag in ("script", "style"):
@@ -55,6 +63,13 @@ class BulletinHTML(HTMLParser):
             self._anchor = None
         if tag == "h1":
             self._h1 = False
+        if tag == "article":
+            self._article_depth = max(0, self._article_depth - 1)
+        if tag == "p" and self._paragraph is not None:
+            text = " ".join(" ".join(self._paragraph).split())
+            if text:
+                self.paragraphs.append(text)
+            self._paragraph = None
 
     def handle_data(self, data):
         if self._skip:
@@ -64,6 +79,8 @@ class BulletinHTML(HTMLParser):
             self._anchor[1].append(data)
         if self._h1:
             self.headline.append(data)
+        if self._paragraph is not None:
+            self._paragraph.append(data)
 
 
 def bulletin_url(href, base):
@@ -133,6 +150,7 @@ def fetch_bnpb_bulletins(http, settings, now=None):
                 lat=None, lng=None, started=None,
                 published_at=published.isoformat(), updated=published.isoformat(),
                 source="BNPB bulletin", source_url=url, attribution="BNPB",
+                news_estimate=estimate_news_locations(title, article.paragraphs),
                 notes=["Official BNPB bulletin. Publication time is not the incident start time.",
                        "Location and operational impact require review. No impact zone or SLA change is inferred from this report."],
             ))
