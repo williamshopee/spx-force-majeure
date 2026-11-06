@@ -28,6 +28,7 @@ visible attribution wherever its data is displayed.
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import logging
 import math
@@ -41,6 +42,8 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Iterable
+
+from news import NewsResults, fetch_bnpb_bulletins
 
 HERE = Path(__file__).resolve().parent
 LOG = logging.getLogger("fm")
@@ -1018,6 +1021,17 @@ def fetch_petabencana(http: Http, cfg: dict) -> list[dict]:
     LOG.info("petabencana: %d flood events", len(out))
     return out
 
+def fetch_bnpb(http: Http, cfg: dict) -> list[dict]:
+    settings = cfg["sources"]["bnpb_news"]
+    # Bound news requests so an optional HTML source cannot consume the
+    # Streamlit ingestion timeout. Keep fixture support and shared settings.
+    news_http = copy.copy(http)
+    news_http.timeout = float(settings.get("timeout_seconds", 5))
+    news_http.retries = 1
+    result = fetch_bnpb_bulletins(news_http, settings)
+    return NewsResults([new_event(**record) for record in result], result.warnings)
+
+
 def fetch_gdelt(http: Http, cfg: dict) -> list[dict]:
     """
     News leads. Everything here is status='unverified' and excluded from SLA
@@ -1026,6 +1040,7 @@ def fetch_gdelt(http: Http, cfg: dict) -> list[dict]:
     """
     sc = cfg["sources"]["gdelt_news"]
     out: list[dict] = []
+    failures = []
     for q in sc.get("queries") or []:
         try:
             data = http.get_json(sc["url"], {
@@ -1035,6 +1050,7 @@ def fetch_gdelt(http: Http, cfg: dict) -> list[dict]:
             })
         except Exception as e:
             LOG.warning("gdelt query %r: %s", q[:40], e)
+            failures.append(str(e))
             continue
         for a in (data or {}).get("articles") or []:
             url = a.get("url") or ""
@@ -1046,15 +1062,18 @@ def fetch_gdelt(http: Http, cfg: dict) -> list[dict]:
                 name=(a.get("title") or "").strip()[:180],
                 lat=None, lng=None,
                 status="unverified",
-                started=a.get("seendate"), updated=a.get("seendate"),
+                started=None, updated=a.get("seendate"),
+                discovered_at=a.get("seendate"),
                 source=f"news/{a.get('domain') or 'unknown'}",
                 source_url=url,
                 attribution="GDELT Project",
                 notes=["Unverified news lead. Not counted toward SLA until a human "
                        "confirms it and attaches coordinates."],
             ))
+    if failures and len(failures) == len(sc.get("queries") or []):
+        raise RuntimeError(f"{len(failures)} GDELT queries failed: {failures[0][:250]}")
     LOG.info("gdelt: %d leads (all unverified)", len(out))
-    return out
+    return NewsResults(out, failures)
 
 
 # --------------------------------------------------------------------------
@@ -1410,6 +1429,7 @@ def main(argv=None) -> int:
         ("gdacs", fetch_gdacs),
         ("petabencana_flood", fetch_petabencana),
         ("magma_volcano", fetch_magma),
+        ("bnpb_news", fetch_bnpb),
         ("gdelt_news", fetch_gdelt),
     ]
 
@@ -1424,7 +1444,9 @@ def main(argv=None) -> int:
         try:
             got = fn(http, cfg)
             events.extend(got)
-            health.append({"source": key, "state": "ok", "events": len(got),
+            warnings = getattr(got, "warnings", [])
+            health.append({"source": key, "state": "degraded" if warnings else "ok",
+                           "events": len(got), "warnings": warnings,
                            "seconds": round(time.time() - t0, 2)})
         except Exception as e:                      # noqa: BLE001 — isolation is the point
             LOG.exception("source %s failed", key)
@@ -1495,8 +1517,11 @@ def main(argv=None) -> int:
         "events": light,
     }
 
-    ok_sources = sum(1 for h in health if h["state"] == "ok")
-    if ok_sources == 0:
+    automatic_sources = [h for h in health if h["source"] != "overrides"
+                         and h["state"] != "disabled"]
+    ok_sources = sum(1 for h in automatic_sources
+                     if h["state"] in ("ok", "degraded"))
+    if automatic_sources and ok_sources == 0:
         LOG.error("every source failed — refusing to overwrite events.json")
         return 2
 

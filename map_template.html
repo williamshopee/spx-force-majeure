@@ -237,6 +237,10 @@
   .evlist .c{font-family:var(--cond);font-size:14px;color:var(--muted)}
   .evlist .unv{opacity:.62}
   .evlist .unv .t em{color:#b98b7f}
+  .evlist .report-link{display:inline-block;margin:0 6px 8px 24px;color:var(--focus);font-size:12px}
+  .news-tools{display:flex;gap:8px;margin:8px 0 12px;flex-wrap:wrap}
+  .news-tools label{flex:1;font-size:11.5px;color:var(--muted)}
+  .news-tools select{display:block;width:100%;margin-top:3px;background:var(--sea);color:var(--text);border:1px solid var(--line);padding:5px;font:inherit}
   .fmfilters{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 10px}
   .fmfilters .ffl{font-size:10.5px;width:100%;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
   .fmfilters label{font-size:11.5px;color:var(--muted);display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border:1px solid var(--line);border-radius:3px;cursor:pointer}
@@ -467,6 +471,10 @@
       <h2>Force majeure watch</h2>
       <div class="fmfilters" id="fmFilters"></div>
       <p class="alert-st" id="fmStatus">Loading events&hellip;</p>
+      <div class="news-tools">
+        <label>Show<select id="eventScope"><option value="all">All updates</option><option value="news">News leads</option><option value="mapped">Mapped events</option></select></label>
+        <label>Sort<select id="eventSort"><option value="latest">Latest first</option><option value="impact">Facility exposure</option></select></label>
+      </div>
       <ul class="evlist" id="evlist"></ul>
 
       <div class="ctl" id="impCtl" hidden>
@@ -1534,9 +1542,34 @@
     });
   }
 
+  function reportTime(ev){
+    var raw = ev.published_at || ev.discovered_at || ev.updated || ev.started || '';
+    raw = raw.replace(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/, '$1-$2-$3T$4:$5:$6Z');
+    return Date.parse(raw) || 0;
+  }
+
+  function sourceLink(raw){
+    try {
+      var url = new URL(raw);
+      return /^https?:$/.test(url.protocol) ? url.href : null;
+    } catch (e) { return null; }
+  }
+
+  document.getElementById('eventScope').addEventListener('change', renderList);
+  document.getElementById('eventSort').addEventListener('change', renderList);
+
   function renderList(){
     listEl.innerHTML = '';
-    var shown = EVENTS.filter(function(e){ return HAZF[e._fk] !== false; });
+    var scope = document.getElementById('eventScope').value;
+    var shown = EVENTS.filter(function(e){
+      return HAZF[e._fk] !== false && (scope === 'all' ||
+        (scope === 'news' ? e.status === 'unverified' : e.status !== 'unverified'));
+    });
+    var byImpact = document.getElementById('eventSort').value === 'impact';
+    shown.sort(function(a, b){
+      return (byImpact ? (b._n || 0) - (a._n || 0) : reportTime(b) - reportTime(a)) ||
+        reportTime(b) - reportTime(a);
+    });
     if (!shown.length) {
       listEl.innerHTML = '<li class="evempty">No events match the selected filters.</li>';
       return;
@@ -1555,13 +1588,28 @@
         '<span class="t"></span><span class="c"></span>';
       b.querySelector('.t').appendChild(document.createTextNode(ev.name));
       var em = document.createElement('em');
-      em.textContent = [ev.severity, ev.source, when,
-                        ev.status === 'unverified' ? 'unverified lead' : ''
+      var stamp = reportTime(ev);
+      var dateLabel = stamp ? new Date(stamp).toLocaleString('en-GB', {
+        timeZone:'Asia/Jakarta', day:'2-digit', month:'short', year:'numeric',
+        hour:'2-digit', minute:'2-digit', hour12:false
+      }) + ' WIB' : when;
+      em.textContent = [ev.severity, ev.source,
+                        (ev.published_at ? 'Published ' : ev.discovered_at ? 'Discovered ' : '') + dateLabel,
+                        ev.status === 'unverified' ? 'location / impact unverified' : ''
                        ].filter(Boolean).join(' \u00b7 ');
       b.querySelector('.t').appendChild(em);
       b.querySelector('.c').textContent = ev._n == null ? '' : fmt(ev._n);
       b.addEventListener('click', function(){ selectEvent(ix); });
-      li.appendChild(b); listEl.appendChild(li);
+      li.appendChild(b);
+      var report = sourceLink(ev.source_url);
+      if (report) {
+        var link = document.createElement('a');
+        link.href = report; link.target = '_blank'; link.rel = 'noopener noreferrer';
+        link.className = 'report-link'; link.textContent = 'Open source report';
+        link.setAttribute('aria-label', 'Open source report: ' + ev.name);
+        li.appendChild(link);
+      }
+      listEl.appendChild(li);
     });
   }
 
@@ -1575,7 +1623,7 @@
     }
     EV = ev; IMP.on = true;
     if ((ev.lat === null || ev.lat === undefined) && !(ev.air && ev.air.airports)) {
-      ctlEl.hidden = true; hz.remove(); IMP.on = false;
+      ctlEl.hidden = true; airBlock.hidden = true; airHit = null; hz.remove(); IMP.on = false;
       statusEl.textContent = 'This lead has no coordinates, so it cannot be placed '
         + 'on the map or counted. Open the source to check where it is.';
       renderList(); layer.redraw(); return;
@@ -1613,10 +1661,10 @@
         '. Observed readings beat the modelled bands above.';
       nt.appendChild(p);
     }
-    if (ev.source_url) {
+    if (sourceLink(ev.source_url)) {
       var a = document.createElement('p');
       a.innerHTML = '<a target="_blank" rel="noopener">Open source report</a>';
-      a.querySelector('a').href = ev.source_url;
+      a.querySelector('a').href = sourceLink(ev.source_url);
       nt.appendChild(a);
     }
     if (ev.attribution) {
@@ -1712,7 +1760,8 @@
       var p = document.createElement('p');
       p.textContent = h.source + ': ' + h.state +
         (h.state === 'ok' ? ' (' + h.events + ')' : '') +
-        (h.error ? ' \u2014 ' + h.error : '');
+        (h.error ? ' \u2014 ' + h.error : '') +
+        (h.warnings && h.warnings.length ? ' \u2014 ' + h.warnings.join('; ') : '');
       el.appendChild(p);
     });
     (payload.attribution || []).forEach(function(a){
@@ -1759,7 +1808,7 @@
       ? EVENTS.length : payload.verified_event_count;
     if (mins == null || mins < STALE_MIN) {
       var failed = (payload.source_health || []).filter(function(h){
-        return h.state === 'failed'; });
+        return h.state === 'failed' || h.state === 'degraded'; });
       statusEl.textContent = (EVENTS.length
         ? ver + ' verified event' + (ver === 1 ? '' : 's') +
           (EVENTS.length > ver ? ' and ' + (EVENTS.length - ver) + ' unverified lead'
@@ -1768,7 +1817,7 @@
             : Math.round(mins / 60) + ' h') + ' ago') + '. Pick one to see the zone.'
         : 'No active events currently reach a facility.')
         + (failed.length ? ' ' + failed.length + ' feed' + (failed.length === 1 ? '' : 's')
-            + ' failed this run \u2014 see Feeds and attribution.' : '');
+            + ' incomplete this run \u2014 see Feeds and attribution.' : '');
     }
     renderSources(payload);
     buildFilters();

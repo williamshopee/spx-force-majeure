@@ -128,6 +128,34 @@ Failure behaviour worth knowing before you wire alerting to this:
 
 ## Sources
 
+### Indonesia news updates
+
+The `bnpb_news` source reads the official BNPB news index and checks up to eight
+recent hazard bulletins per run, including daily situation reports. It uses the
+article's visible publication timestamp in WIB, keeps a 72-hour window, and
+does not substitute publication time for the incident start time. Unreadable
+articles produce a degraded feed status while successful articles remain
+available. A missing index layout or complete retrieval failure is a failed feed.
+
+In the map, use **Show → News leads** and **Sort → Latest first**. Each list
+item has a source link even when it has no coordinates. **Facility exposure**
+restores impact ordering. GDELT timestamps are labelled **Discovered** because
+its `seendate` is an indexing time. Neither source infers coordinates, closure
+status, facility impact, or SLA extensions from a headline. Review the source
+before creating a confirmed override.
+
+News uses one attempt per request with a five-second socket timeout and a
+30-second fetch budget. `python preview_news.py` creates `latest_news.json`
+and `preview_news.html` with BNPB bulletins only; it leaves `events.json` intact.
+
+No new dependency is required. Validate with `python -m unittest test_news -v`
+and, when Node is available, `node test_news_ui.cjs`. The existing refresh
+workflow and Streamlit map builder use the updated source and template.
+The refresh workflow runs every 30 minutes around the clock and also after
+source/configuration changes on `main`. GitHub can delay scheduled runs.
+It checks the news parser and map controls before refreshing the data. If all
+enabled automatic sources fail, ingestion preserves the previous data file.
+
 | Source | Hazards | Status | Notes |
 |---|---|---|---|
 | **BMKG** open data | earthquake | **Verified live 2026-09-07** | `data.bmkg.go.id/DataMKG/TEWS/{autogempa,gempadirasakan,gempaterkini}.json`. Also gives observed felt-intensity (MMI) per city, which is better than any model. |

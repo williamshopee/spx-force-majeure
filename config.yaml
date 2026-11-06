@@ -114,6 +114,16 @@ sources:
     activity_url: https://magma.esdm.go.id/v1/gunung-api/tingkat-aktivitas
     optional: true
 
+  bnpb_news:
+    enabled: true
+    # Official Indonesia bulletins; no coordinates or SLA impact inferred.
+    url: https://www.bnpb.go.id/berita
+    lookback_hours: 72
+    max_articles: 8
+    timeout_seconds: 5
+    fetch_budget_seconds: 30
+    optional: true
+
   gdelt_news:
     enabled: true
     # Free, no key. Covers what official feeds never will: demos blocking a

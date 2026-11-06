@@ -11,6 +11,7 @@ and anything committed to the repo is readable without passing this screen.
 """
 
 import json
+from html import escape
 import subprocess
 import sys
 import time
@@ -306,7 +307,7 @@ with st.sidebar:
         st.rerun()
 
     ts = time_bucket()
-    with st.spinner("Fetching from BMKG, GDACS, PetaBencana, MAGMA..."):
+    with st.spinner("Fetching hazards and Indonesia news..."):
         report = cached_ingest(ts)
 
     if not report["ok"]:
@@ -327,13 +328,14 @@ with st.sidebar:
         except (ValueError, AttributeError):
             age = "just now"
 
-        failed = [h for h in events.get("source_health", []) if h["state"] == "failed"]
+        failed = [h for h in events.get("source_health", [])
+                  if h["state"] in ("failed", "degraded")]
         status = f"{v} verified event{'s' if v != 1 else ''}"
         if n > v:
             status += f", {n - v} unverified"
         status += f" — updated {age}"
         if failed:
-            status += f". {len(failed)} feed{'s' if len(failed) != 1 else ''} down."
+            status += f". {len(failed)} feed{'s' if len(failed) != 1 else ''} incomplete."
         st.caption(status)
 
         with st.expander("Feed status"):
@@ -347,6 +349,8 @@ with st.sidebar:
                 detail = f" ({h['events']})" if h["state"] == "ok" else ""
                 if h.get("error"):
                     detail += f" — {h['error'][:60]}"
+                if h.get("warnings"):
+                    detail += " — " + "; ".join(h["warnings"])[:160]
                 st.markdown(f"<span class='{cls}'>{icon}</span> {h['source']}{detail}",
                             unsafe_allow_html=True)
 
@@ -396,11 +400,11 @@ with st.sidebar:
 
                 unv = ev.get("status") == "unverified"
                 cls = "ev-item ev-unverified" if unv else "ev-item"
-                name = ev.get("name", "Unknown")[:58]
+                name = escape(ev.get("name", "Unknown")[:58])
                 meta_parts = [ev.get("severity", ""), ev.get("source", "")]
                 if unv:
                     meta_parts.append("unverified")
-                meta = " · ".join(p for p in meta_parts if p)
+                meta = escape(" · ".join(p for p in meta_parts if p))
 
                 st.markdown(
                     f'<div class="{cls}">'
