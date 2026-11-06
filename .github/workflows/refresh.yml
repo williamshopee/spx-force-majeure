@@ -11,6 +11,14 @@ on:
       - news.py
       - news_estimates.py
       - news_places.json
+      - admin_boundaries.py
+      - admin_boundaries.json.gz
+      - weather_cap.py
+      - source_freshness.py
+      - build_map.py
+      - turf.min.js
+      - test_map_upgrades.py
+      - requirements.txt
       - config.yaml
       - map_template.html
       - streamlit_app.py
@@ -43,7 +51,7 @@ jobs:
 
       - name: Check news ingestion and map controls
         run: |
-          python -m unittest test_news test_news_estimates -v
+          python -m unittest test_news test_news_estimates test_map_upgrades -v
           node test_news_ui.cjs
 
       - name: Run ingest
