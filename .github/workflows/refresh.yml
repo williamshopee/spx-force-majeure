@@ -2,13 +2,29 @@ name: Refresh events
 
 on:
   schedule:
-    # Runs every 30 minutes during work hours (UTC+7)
-    - cron: '*/30 1-12 * * *'   # 08:00-19:00 WIB
+    # Every 30 minutes, including nights and weekends. Off the busy hour boundary.
+    - cron: '17,47 * * * *'
+  push:
+    branches: [main]
+    paths:
+      - ingest.py
+      - news.py
+      - config.yaml
+      - map_template.html
+      - streamlit_app.py
+      - test_news.py
+      - test_news_ui.cjs
+      - .github/workflows/refresh.yml
   workflow_dispatch:              # manual trigger button
+
+concurrency:
+  group: force-majeure-refresh-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   ingest:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: write
 
@@ -21,6 +37,11 @@ jobs:
 
       - name: Install dependencies
         run: pip install pyyaml
+
+      - name: Check news ingestion and map controls
+        run: |
+          python -m unittest test_news -v
+          node test_news_ui.cjs
 
       - name: Run ingest
         run: python ingest.py --config config.yaml
