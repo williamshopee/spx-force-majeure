@@ -112,6 +112,17 @@ class NewsTests(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             fetch_gdelt(BrokenGDELT(), {"sources": {"gdelt_news": {"url": "test", "queries": ["a", "b"]}}})
 
+    def test_gdelt_rate_limit_defers_remaining_queries(self):
+        calls = []
+        class RateLimitedGDELT:
+            def get_json(self, url, params):
+                calls.append(params["query"])
+                raise RuntimeError("HTTP Error 429: Too Many Requests")
+        with self.assertRaises(RuntimeError):
+            fetch_gdelt(RateLimitedGDELT(), {"sources": {"gdelt_news": {
+                "url": "test", "queries": ["a", "b", "c"]}}})
+        self.assertEqual(calls, ["a"])
+
     def test_gdelt_partial_failure_keeps_leads(self):
         class PartialGDELT:
             def get_json(self, url, params):

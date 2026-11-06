@@ -145,7 +145,8 @@ status, facility impact, or SLA extensions from a headline. Review the source
 before creating a confirmed override.
 
 News uses one attempt per request with a five-second socket timeout and a
-30-second fetch budget. `python preview_news.py` creates `latest_news.json`
+30-second BNPB fetch budget. GDELT has a 20-second budget and defers remaining
+queries when rate limited. `python preview_news.py` creates `latest_news.json`
 and `preview_news.html` with BNPB bulletins only; it leaves `events.json` intact.
 
 No new dependency is required. Validate with `python -m unittest test_news -v`

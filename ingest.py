@@ -1039,18 +1039,29 @@ def fetch_gdelt(http: Http, cfg: dict) -> list[dict]:
     guessing coordinates from prose is how you extend SLA on the wrong region.
     """
     sc = cfg["sources"]["gdelt_news"]
+    news_http = copy.copy(http)
+    news_http.timeout = float(sc.get("timeout_seconds", 5))
+    news_http.retries = 1
+    deadline = time.monotonic() + float(sc.get("fetch_budget_seconds", 20))
     out: list[dict] = []
     failures = []
+    succeeded = 0
     for q in sc.get("queries") or []:
+        if time.monotonic() >= deadline:
+            failures.append("GDELT news request budget reached")
+            break
         try:
-            data = http.get_json(sc["url"], {
+            data = news_http.get_json(sc["url"], {
                 "query": q, "mode": "artlist", "format": "json",
                 "timespan": sc.get("timespan", "48h"),
                 "maxrecords": sc.get("max_records", 60), "sort": "datedesc",
             })
+            succeeded += 1
         except Exception as e:
             LOG.warning("gdelt query %r: %s", q[:40], e)
             failures.append(str(e))
+            if "429" in str(e):
+                break  # Rate limited: defer remaining queries to the next run.
             continue
         for a in (data or {}).get("articles") or []:
             url = a.get("url") or ""
@@ -1070,7 +1081,7 @@ def fetch_gdelt(http: Http, cfg: dict) -> list[dict]:
                 notes=["Unverified news lead. Not counted toward SLA until a human "
                        "confirms it and attaches coordinates."],
             ))
-    if failures and len(failures) == len(sc.get("queries") or []):
+    if failures and not succeeded:
         raise RuntimeError(f"{len(failures)} GDELT queries failed: {failures[0][:250]}")
     LOG.info("gdelt: %d leads (all unverified)", len(out))
     return NewsResults(out, failures)

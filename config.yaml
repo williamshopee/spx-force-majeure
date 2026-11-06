@@ -132,6 +132,8 @@ sources:
     url: https://api.gdeltproject.org/api/v2/doc/doc
     timespan: 48h
     max_records: 60
+    timeout_seconds: 5
+    fetch_budget_seconds: 20
     optional: true
     queries:
       - '(banjir OR "jalan tertutup" OR "akses terputus") sourcecountry:indonesia'
