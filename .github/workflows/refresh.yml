@@ -9,10 +9,13 @@ on:
     paths:
       - ingest.py
       - news.py
+      - news_estimates.py
+      - news_places.json
       - config.yaml
       - map_template.html
       - streamlit_app.py
       - test_news.py
+      - test_news_estimates.py
       - test_news_ui.cjs
       - .github/workflows/refresh.yml
   workflow_dispatch:              # manual trigger button
@@ -40,7 +43,7 @@ jobs:
 
       - name: Check news ingestion and map controls
         run: |
-          python -m unittest test_news -v
+          python -m unittest test_news test_news_estimates -v
           node test_news_ui.cjs
 
       - name: Run ingest
