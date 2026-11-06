@@ -1,7 +1,7 @@
 {
- "generated_at": "2026-11-06T07:14:18+00:00",
+ "generated_at": "2026-11-06T07:15:56+00:00",
  "facility_count": 8853,
- "event_count": 28,
+ "event_count": 25,
  "verified_event_count": 25,
  "source_health": [
   {
@@ -9,46 +9,40 @@
    "state": "ok",
    "events": 18,
    "warnings": [],
-   "seconds": 0.95
+   "seconds": 0.92
   },
   {
    "source": "gdacs",
    "state": "ok",
    "events": 0,
    "warnings": [],
-   "seconds": 2.18
+   "seconds": 3.69
   },
   {
    "source": "petabencana_flood",
    "state": "ok",
    "events": 1,
    "warnings": [],
-   "seconds": 0.79
+   "seconds": 0.63
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 26,
    "warnings": [],
-   "seconds": 1.89
+   "seconds": 1.71
   },
   {
    "source": "bnpb_news",
-   "state": "ok",
-   "events": 3,
-   "warnings": [],
-   "seconds": 13.69
+   "state": "failed",
+   "events": 0,
+   "error": "GET https://www.bnpb.go.id/berita failed after 1 tries: HTTP Error 404: Not Found"
   },
   {
    "source": "gdelt_news",
-   "state": "degraded",
+   "state": "failed",
    "events": 0,
-   "warnings": [
-    "GET https://api.gdeltproject.org/api/v2/doc/doc?query=%28banjir+OR+%22jalan+tertutup%22+OR+%22akses+terputus%22%29+sourcecountry%3Aindonesia&mode=artlist&format=json&timespan=48h&maxrecords=60&sort=datedesc failed after 2 tries: HTTP Error 429: Too Many Requests",
-    "GET https://api.gdeltproject.org/api/v2/doc/doc?query=%28%22pelabuhan%22+OR+%22bandara%22%29+%28ditutup+OR+lumpuh%29+sourcecountry%3Aindonesia&mode=artlist&format=json&timespan=48h&maxrecords=60&sort=datedesc failed after 2 tries: HTTP Error 429: Too Many Requests",
-    "GET https://api.gdeltproject.org/api/v2/doc/doc?query=%28longsor+OR+%22tanah+bergerak%22%29+%28jalan+OR+jembatan%29+sourcecountry%3Aindonesia&mode=artlist&format=json&timespan=48h&maxrecords=60&sort=datedesc failed after 2 tries: HTTP Error 429: Too Many Requests"
-   ],
-   "seconds": 99.31
+   "error": "4 GDELT queries failed: GET https://api.gdeltproject.org/api/v2/doc/doc?query=%28banjir+OR+%22jalan+tertutup%22+OR+%22akses+terputus%22%29+sourcecountry%3Aindonesia&mode=artlist&format=json&timespan=48h&maxrecords=60&sort=datedesc failed after 1 tries: <urlopen error _ssl.c"
   },
   {
    "source": "overrides",
@@ -57,7 +51,6 @@
   }
  ],
  "attribution": [
-  "BNPB",
   "Data gempabumi: BMKG",
   "Pusat Vulkanologi dan Mitigasi Bencana Geologi (PVMBG), Badan Geologi ESDM"
  ],
@@ -1918,105 +1911,6 @@
      0
     ],
     "total": 2
-   }
-  },
-  {
-   "id": "bnpb-news:c65c3f6b2ab9ea8fe0dc",
-   "hazard": "other",
-   "name": "Perkembangan Situasi dan Penanganan Bencana di Tanah Air 5 November 2026",
-   "lat": null,
-   "lng": null,
-   "severity": null,
-   "severity_value": null,
-   "alert": "unknown",
-   "status": "unverified",
-   "started": null,
-   "updated": "2026-11-05T11:11:00+07:00",
-   "source": "BNPB bulletin",
-   "source_url": "https://www.bnpb.go.id/berita/perkembangan-situasi-dan-penanganan-bencana-di-tanah-air-5-november-2026",
-   "attribution": "BNPB",
-   "notes": [
-    "Official BNPB bulletin. Publication time is not the incident start time.",
-    "Location and operational impact require review. No impact zone or SLA change is inferred from this report."
-   ],
-   "polygons": [],
-   "observed": [],
-   "published_at": "2026-11-05T11:11:00+07:00",
-   "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 27.1,
-   "impact": {
-    "model": "none",
-    "bands": [],
-    "corridors": [],
-    "counts": [],
-    "total": 0,
-    "reason": "no coordinates available"
-   }
-  },
-  {
-   "id": "bnpb-news:a2def7342645a64cdd3a",
-   "hazard": "wildfire",
-   "name": "BNPB Optimalkan Penanganan Karhutla, Kemitraan Internasional Perkokoh Operasi Udara",
-   "lat": null,
-   "lng": null,
-   "severity": null,
-   "severity_value": null,
-   "alert": "unknown",
-   "status": "unverified",
-   "started": null,
-   "updated": "2026-11-05T09:34:00+07:00",
-   "source": "BNPB bulletin",
-   "source_url": "https://www.bnpb.go.id/berita/bnpb-optimalkan-penanganan-karhutla-kemitraan-internasional-perkokoh-operasi-udara",
-   "attribution": "BNPB",
-   "notes": [
-    "Official BNPB bulletin. Publication time is not the incident start time.",
-    "Location and operational impact require review. No impact zone or SLA change is inferred from this report."
-   ],
-   "polygons": [],
-   "observed": [],
-   "published_at": "2026-11-05T09:34:00+07:00",
-   "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 28.7,
-   "impact": {
-    "model": "none",
-    "bands": [],
-    "corridors": [],
-    "counts": [],
-    "total": 0,
-    "reason": "no coordinates available"
-   }
-  },
-  {
-   "id": "bnpb-news:ef07a628485288ef2de1",
-   "hazard": "other",
-   "name": "Perkembangan Situasi dan Penanganan Bencana di Tanah Air 4 November 2026",
-   "lat": null,
-   "lng": null,
-   "severity": null,
-   "severity_value": null,
-   "alert": "unknown",
-   "status": "unverified",
-   "started": null,
-   "updated": "2026-11-04T12:13:00+07:00",
-   "source": "BNPB bulletin",
-   "source_url": "https://www.bnpb.go.id/berita/perkembangan-situasi-dan-penanganan-bencana-di-tanah-air-4-november-2026",
-   "attribution": "BNPB",
-   "notes": [
-    "Official BNPB bulletin. Publication time is not the incident start time.",
-    "Location and operational impact require review. No impact zone or SLA change is inferred from this report."
-   ],
-   "polygons": [],
-   "observed": [],
-   "published_at": "2026-11-04T12:13:00+07:00",
-   "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 50.0,
-   "impact": {
-    "model": "none",
-    "bands": [],
-    "corridors": [],
-    "counts": [],
-    "total": 0,
-    "reason": "no coordinates available"
    }
   }
  ]
