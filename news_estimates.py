@@ -5,6 +5,7 @@ import unicodedata
 from collections import defaultdict
 from functools import lru_cache
 from pathlib import Path
+from admin_boundaries import attach_boundaries, match_boundary, contains
 
 
 def normalize(text):
@@ -81,6 +82,14 @@ class PlaceMatcher:
                     choices = [p for p in choices if normalize(p[1]).startswith("kota ") == is_city]
                 if regency:
                     choices = [p for p in choices if p[2] != "ADM3" or not p[4] or p[4] == regency[4]]
+                reconciled = False
+                if not choices and wanted == "ADM3" and regency:
+                    parent = match_boundary({"name": regency[1], "level": "ADM2", "lat": regency[5], "lng": regency[6]})
+                    if parent:
+                        choices = [p for p in candidates if p[2] == "ADM3"
+                                   and contains(parent["geometry"], p[5], p[6])
+                                   and match_boundary({"name": p[1], "level": p[2], "lat": p[5], "lng": p[6]})]
+                        reconciled = len(choices) == 1
                 # Bare common district names are too easy to confuse with ordinary words.
                 if not wanted and paragraphs:
                     choices = [p for p in choices if p[2] != "ADM3"]
@@ -97,6 +106,7 @@ class PlaceMatcher:
                     "regency_context": str(regency[0]) if regency else None,
                     "screenable": not broad,
                     "confidence": "broad province context" if broad else
+                                  "administrative name; parent reconciled by boundary" if reconciled else
                                   "explicit administrative name" if wanted else "unique name match",
                     "evidence": clean[:220], "evidence_kind": source_kind,
                     "geocoder": "GeoNames administrative center (CC BY 4.0)",
@@ -107,12 +117,12 @@ class PlaceMatcher:
         local_provinces = {p["province_code"] for p in values if p["screenable"]}
         values = [p for p in values if p["id"] not in district_parents
                   and not (p["level"] == "ADM1" and p["province_code"] in local_provinces)]
-        return {
+        return attach_boundaries({
             "method": "news place-name screening v1", "points": values[:20],
             "unresolved_names": sorted(unresolved), "default_radius_km": 10,
             "limitations": "Centers and user-adjustable proximity zones, not predicted hazard boundaries. Location-match confidence is not an impact probability. No SLA change is inferred.",
             "attribution": "GeoNames CC BY 4.0 — https://www.geonames.org/",
-        }
+        })
 
 
 @lru_cache(maxsize=1)

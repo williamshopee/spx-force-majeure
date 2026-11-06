@@ -241,6 +241,9 @@
   .news-tools{display:flex;gap:8px;margin:8px 0 12px;flex-wrap:wrap}
   .news-tools label{flex:1;font-size:11.5px;color:var(--muted)}
   .news-tools select{display:block;width:100%;margin-top:3px;background:var(--sea);color:var(--text);border:1px solid var(--line);padding:5px;font:inherit}
+  .news-estimate select{display:block;width:100%;margin:5px 0 10px;background:var(--sea);color:var(--text);border:1px solid var(--line);padding:5px;font:inherit}
+  #weatherDetail{border-color:#67c9ff;background:#142937}
+  #weatherDetail h3{color:#67c9ff}
   .news-toggle{display:block;color:#f2bc64;font-size:12px;margin:8px 0}
   .news-estimate{border:1px dashed #d9a34d;padding:10px;margin:10px 0;background:#282219;font-size:12px}
   .news-estimate h3{margin:0 0 5px;color:#f2bc64;font-size:14px}
@@ -481,22 +484,32 @@
       <div class="fmfilters" id="fmFilters"></div>
       <p class="alert-st" id="fmStatus">Loading events&hellip;</p>
       <div class="news-tools">
-        <label>Show<select id="eventScope"><option value="all">All updates</option><option value="news">News leads</option><option value="mapped">Mapped events</option></select></label>
+        <label>Show<select id="eventScope"><option value="all">All updates</option><option value="news">News leads</option><option value="mapped">Confirmed events</option><option value="warnings">Weather warnings</option></select></label>
         <label>Sort<select id="eventSort"><option value="latest">Latest first</option><option value="impact">Facility exposure</option></select></label>
       </div>
       <label class="news-toggle"><input type="checkbox" id="newsZonesOn" checked> Show estimated news areas</label>
+      <label class="news-toggle"><input type="checkbox" id="bmkgWarningsOn" checked> Show BMKG warning polygons (blue)</label>
+      <p id="weatherStatus" class="alert-st"></p>
+      <section id="weatherDetail" class="news-estimate" hidden></section>
       <ul class="evlist" id="evlist"></ul>
       <section id="newsEstimate" class="news-estimate" hidden>
         <h3>Estimated news areas</h3>
-        <p>Amber dashed circles show proximity to places mentioned in news. They are screening areas, not predicted flood, ash or damage boundaries.</p>
+        <p>Amber outlines show administrative areas mentioned in news. They identify areas to review; they do not predict a hazard footprint.</p>
+        <label>Area method <select id="newsAreaMode"><option value="boundary">Administrative boundary</option><option value="radius">Center and radius</option></select></label>
+        <div id="newsBufferControl">
+          <label for="newsBuffer">Buffer beyond boundary: <b id="newsBufferValue">0 km</b></label>
+          <input id="newsBuffer" type="range" min="0" max="50" step="1" value="0" style="width:100%">
+        </div>
+        <div id="newsRadiusControl" hidden>
         <label for="newsRadius">Screening radius: <b id="newsRadiusValue">10 km</b></label>
         <input id="newsRadius" type="range" min="1" max="50" step="1" value="10" style="width:100%">
+        </div>
         <p id="newsSummary"></p>
         <ul id="newsPlaces"></ul>
         <details><summary>Nearby facilities — estimated exposure</summary><ul id="newsFacilities"></ul></details>
         <button id="newsExport" type="button" class="dl">Download estimated nearby facilities</button>
         <p>No automatic SLA changes. Match confidence concerns the location name, not the probability of impact. Counts include all station types.</p>
-        <p>Place centers: <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">GeoNames, CC BY 4.0</a>.</p>
+        <p>Place centers: <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">GeoNames, CC BY 4.0</a>. Boundaries: <a href="https://www.geoboundaries.org/api.html" target="_blank" rel="noopener noreferrer">geoBoundaries / BPS / OCHA, CC BY 3.0 IGO</a>, regencies 2020, districts 2019. Administrative areas can include unaffected places.</p>
       </section>
 
       <div class="ctl" id="impCtl" hidden>
@@ -539,7 +552,7 @@
         <details class="src" id="evNotes"></details>
       </div>
 
-      <details class="src" id="fmSources"></details>
+      <details class="src" id="fmSources" open></details>
     </div>
 
     <div class="block">
@@ -590,6 +603,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>__TURF__</script>
 <script id="data" type="application/json">__DATA__</script>
 <!-- build_map.py replaces the contents of this tag with events.json so the
      page works when opened as a local file (fetch is blocked by CORS there). -->
@@ -1278,6 +1292,44 @@
   var hz = L.layerGroup();
   var newsZones = L.layerGroup().addTo(map), newsScreeningRows = [];
 
+
+  function geometryContains(geometry, latitude, longitude){
+    function inRing(ring){
+      var inside = false;
+      for (var i=0, j=ring.length-1; i<ring.length; j=i++) {
+        var a=ring[i], b=ring[j];
+        if (((a[1]>latitude)!==(b[1]>latitude)) &&
+            longitude < (b[0]-a[0])*(latitude-a[1])/(b[1]-a[1])+a[0]) inside=!inside;
+      }
+      return inside;
+    }
+    var polygons = geometry.type === 'Polygon' ? [geometry.coordinates] : geometry.coordinates;
+    return polygons.some(function(rings){
+      return rings.length && inRing(rings[0]) && !rings.slice(1).some(inRing);
+    });
+  }
+
+  function prepareNewsAreas(points, mode, buffer){
+    points.forEach(function(p){
+      p.areaGeometry = null;
+      p.areaMethod = !p.screenable ? 'Province marker only' : 'Center radius';
+      if (!p.screenable || mode !== 'boundary' || !p.boundary) return;
+      p.areaGeometry = p.boundary.geometry;
+      p.areaMethod = 'Administrative boundary (' + p.boundary.year + ')';
+      if (buffer > 0) {
+        try {
+          var buffered = turf.buffer({type:'Feature',properties:{},geometry:p.areaGeometry}, buffer,
+                                     {units:'kilometers',steps:8});
+          if (!buffered || !buffered.geometry) throw new Error('No geometry');
+          p.areaGeometry = buffered.geometry;
+          p.areaMethod += ' + ' + buffer + ' km buffer';
+        } catch (err) {
+          p.areaMethod += ' (buffer unavailable; original boundary shown)';
+        }
+      }
+    });
+  }
+
   function nearbyNewsFacilities(points, radius, stations){
     var found = [];
     stations.forEach(function(station, index){
@@ -1288,7 +1340,8 @@
         var dp = p2 - p1, dl = (station[2] - point.lng) * Math.PI / 180;
         var a = Math.sin(dp / 2) ** 2 + Math.cos(p1) * Math.cos(p2) * Math.sin(dl / 2) ** 2;
         var km = 6371.0088 * 2 * Math.asin(Math.min(1, Math.sqrt(a)));
-        if (km <= radius && km < distance) { nearest = point; distance = km; }
+        var within = point.areaGeometry ? geometryContains(point.areaGeometry, station[1], station[2]) : km <= radius;
+        if (within && km < distance) { nearest = point; distance = km; }
       });
       if (nearest) found.push({index:index, name:station[0], lat:station[1], lng:station[2],
                               km:distance, point:nearest});
@@ -1299,8 +1352,8 @@
   function drawNewsZones(fit){
     newsZones.clearLayers(); newsScreeningRows = [];
     var panel = document.getElementById('newsEstimate'); panel.hidden = true;
-    if (!document.getElementById('newsZonesOn').checked ||
-        document.getElementById('eventScope').value === 'mapped' ||
+    var scope = document.getElementById('eventScope').value;
+    if (!document.getElementById('newsZonesOn').checked || scope === 'mapped' || scope === 'warnings' ||
         (EV && EV.status !== 'unverified')) return;
     var reports = EVENTS.filter(function(e){
       return e.status === 'unverified' && HAZF[e._fk] !== false && (!EV || e === EV);
@@ -1318,16 +1371,28 @@
     if (!points.length && !unresolved.length) return;
     panel.hidden = false;
     var radius = +document.getElementById('newsRadius').value;
+    var mode = document.getElementById('newsAreaMode').value;
+    var buffer = +document.getElementById('newsBuffer').value;
+    document.getElementById('newsBufferControl').hidden = mode !== 'boundary';
+    document.getElementById('newsRadiusControl').hidden = mode !== 'radius';
     document.getElementById('newsRadiusValue').textContent = radius + ' km';
+    document.getElementById('newsBufferValue').textContent = buffer + ' km';
+    prepareNewsAreas(points, mode, buffer);
     var placeList = document.getElementById('newsPlaces'); placeList.innerHTML = '';
     points.forEach(function(point){
       var popup = document.createElement('div'), heading = document.createElement('b');
       heading.textContent = point.name + ' — estimated news location'; popup.appendChild(heading);
       var info = document.createElement('p');
-      info.textContent = point.confidence + '. ' + (point.screenable
-        ? 'Administrative center; actual impact extent unknown.'
-        : 'Province context only: no local impact area or facility count inferred.');
+      var method = point.areaGeometry ? point.areaMethod : point.screenable
+        ? radius + ' km radius' + (mode === 'boundary' ? ' (boundary unavailable)' : '') : 'Province marker only';
+      info.textContent = point.confidence + '. ' + method + '. ' + (point.screenable
+        ? 'Area for review; actual impact extent unknown.' : 'No local impact area or facility count inferred.');
       popup.appendChild(info);
+      if (point.boundary) {
+        var provenance = document.createElement('p');
+        provenance.textContent = point.boundary.source + ', ' + point.boundary.year + '. ' + point.boundary.match;
+        popup.appendChild(provenance);
+      }
       var evidence = document.createElement('p'); evidence.textContent = point.evidence || '';
       popup.appendChild(evidence);
       var href = sourceLink(point.report.source_url);
@@ -1335,23 +1400,23 @@
         var link = document.createElement('a'); link.href = href; link.textContent = 'Read source report';
         link.target = '_blank'; link.rel = 'noopener noreferrer'; popup.appendChild(link);
       }
-      if (point.screenable) L.circle([point.lat, point.lng], {radius:radius * 1000,
-        pane:'hazard', color:'#f2bc64', weight:1.5, dashArray:'7 6', fillOpacity:.10,
-        interactive:false}).addTo(newsZones);
+      var area = null;
+      var style = {pane:'hazard',color:'#f2bc64',weight:1.5,dashArray:'7 6',fillOpacity:.10,interactive:false};
+      if (point.areaGeometry) area = L.geoJSON(point.areaGeometry, {style:style}).addTo(newsZones);
+      else if (point.screenable) area = L.circle([point.lat,point.lng], Object.assign({},style,{radius:radius*1000})).addTo(newsZones);
       var marker = L.circleMarker([point.lat, point.lng], {pane:'crater', radius:6,
         color:'#f2bc64', fillColor:'#f2bc64', fillOpacity:.8, weight:2})
         .bindPopup(popup).addTo(newsZones);
       var item = document.createElement('li');
       var placeButton = document.createElement('button');
       placeButton.type = 'button'; placeButton.className = 'news-place-btn';
-      placeButton.textContent = point.name + ' · ' + point.confidence +
-        (point.report.cached ? ' · cached report' : '') +
-        (point.screenable ? ' · ' + radius + ' km screening' : ' · marker only');
+      placeButton.textContent = point.name + ' · ' + method + (point.report.cached ? ' · cached report' : '');
       placeButton.addEventListener('click', function(){
-        map.setView([point.lat, point.lng], point.screenable ? 11 : 6); marker.openPopup();
+        if (area) map.fitBounds(area.getBounds(),{maxZoom:12});
+        else map.setView([point.lat, point.lng], 6);
+        marker.openPopup();
       });
-      item.appendChild(placeButton);
-      placeList.appendChild(item);
+      item.appendChild(placeButton); placeList.appendChild(item);
     });
     if (unresolved.length) {
       var missing = document.createElement('li');
@@ -1359,38 +1424,42 @@
       placeList.appendChild(missing);
     }
     newsScreeningRows = nearbyNewsFacilities(points, radius, RAW);
-    document.getElementById('newsSummary').textContent = points.length + ' matched location' +
-      (points.length === 1 ? '' : 's') + '; ' + fmt(newsScreeningRows.length) +
-      ' nearby facilities for review. Proximity does not confirm disruption.';
+    var fallback = points.filter(function(p){return p.screenable && !p.areaGeometry;}).length;
+    document.getElementById('newsSummary').textContent = points.length + ' matched locations; ' +
+      fmt(newsScreeningRows.length) + ' facilities in selected screening areas for review. ' +
+      (mode === 'boundary' && fallback ? fallback + ' areas use a ' + radius + ' km fallback radius. ' : '') +
+      'Exposure does not confirm disruption. Overlaps count each facility once.';
     var sites = document.getElementById('newsFacilities'); sites.innerHTML = '';
     newsScreeningRows.slice(0, 15).forEach(function(site){
       var li = document.createElement('li');
-      li.textContent = site.name + ' · ' + site.km.toFixed(1) + ' km from ' + site.point.name;
+      li.textContent = site.name + ' · ' + site.point.name + ' · ' + site.km.toFixed(1) + ' km from center';
       sites.appendChild(li);
     });
     if (newsScreeningRows.length > 15) {
-      var more = document.createElement('li'); more.textContent = 'Download CSV for the full list.';
-      sites.appendChild(more);
+      var more = document.createElement('li'); more.textContent = 'Download CSV for the full list.'; sites.appendChild(more);
     }
     document.getElementById('newsExport').disabled = !newsScreeningRows.length;
     if (fit && points.length) {
-      var bounds = L.latLngBounds(points.map(function(p){ return [p.lat, p.lng]; })).pad(.2);
-      map.fitBounds(bounds, {maxZoom:10, animate:true});
+      map.fitBounds(L.latLngBounds(points.map(function(p){ return [p.lat, p.lng]; })).pad(.2), {maxZoom:10,animate:true});
     }
   }
 
-  document.getElementById('newsZonesOn').addEventListener('change', function(){ drawNewsZones(false); });
-  document.getElementById('newsRadius').addEventListener('input', function(){ drawNewsZones(false); });
+  ['newsZonesOn','newsAreaMode'].forEach(function(id){
+    document.getElementById(id).addEventListener('change', function(){drawNewsZones(false);});
+  });
+  ['newsRadius','newsBuffer'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', function(){drawNewsZones(false);});
+  });
   document.getElementById('newsExport').addEventListener('click', function(){
     if (!newsScreeningRows.length) return;
     var lines = [['assessment','news_title','published_or_discovered','place','location_match',
-                  'station_name','latitude','longitude','distance_km','screening_radius_km','source_url']];
+                  'station_name','latitude','longitude','distance_from_center_km','area_method','source_url']];
     newsScreeningRows.forEach(function(site){
       var report = site.point.report;
-      lines.push(['Estimated proximity only; impact unverified',report.name,
+      lines.push(['Estimated area exposure; impact unverified',report.name,
         report.published_at || report.discovered_at || report.updated || '', site.point.name,
         site.point.confidence,site.name,site.lat,site.lng,site.km.toFixed(2),
-        document.getElementById('newsRadius').value,report.source_url]);
+        site.point.areaGeometry ? site.point.areaMethod : document.getElementById('newsRadius').value + ' km radius', report.source_url]);
     });
     var url = URL.createObjectURL(new Blob(['\ufeff' + lines.map(function(row){
       return row.map(csvCell).join(','); }).join('\r\n')], {type:'text/csv;charset=utf-8'}));
@@ -1398,6 +1467,55 @@
     link.download = 'spx-news-estimated-exposure.csv'; document.body.appendChild(link);
     link.click(); link.remove(); setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
   });
+
+  var weatherZones = L.layerGroup().addTo(map);
+  function isActiveWarning(ev){
+    return ev.assessment === 'official_warning' && Date.parse(ev.expires) > Date.now();
+  }
+  function wibTime(value){
+    var stamp=Date.parse(value);
+    return Number.isFinite(stamp) ? new Date(stamp).toLocaleString('en-GB',{
+      timeZone:'Asia/Jakarta',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',hour12:false
+    }) + ' WIB' : 'not recorded';
+  }
+  function drawWeatherWarnings(fit){
+    weatherZones.clearLayers();
+    var detail=document.getElementById('weatherDetail'); detail.hidden=true; detail.innerHTML='';
+    var active=EVENTS.filter(isActiveWarning);
+    var feed=lastGood && (lastGood.source_health || []).find(function(h){return h.source==='bmkg_cap';});
+    var stale= !feed || feed.state!=='ok' || !feed.last_success_at || Date.now()-Date.parse(feed.last_success_at)>45*60000;
+    document.getElementById('weatherStatus').textContent=active.length + ' active BMKG weather warnings' +
+      (stale ? ' · feed incomplete or overdue; coverage may be missing.' : ' · blue polygons, valid only until their expiry.');
+    var scope=document.getElementById('eventScope').value;
+    if (!document.getElementById('bmkgWarningsOn').checked || scope==='news' || scope==='mapped') return;
+    var shown=active.filter(function(e){return HAZF[e._fk]!==false && (!EV || EV===e);});
+    shown.forEach(function(ev){
+      var pending=Date.parse(ev.effective)>Date.now();
+      var area=L.geoJSON({type:'MultiPolygon',coordinates:ev.polygons.map(function(r){return [r];})},
+        {style:{pane:'hazard',color:'#67c9ff',weight:2,dashArray:pending?'3 6':null,fillOpacity:.16}}).addTo(weatherZones);
+      var popup=document.createElement('div');
+      popup.textContent=ev.name + ' · ' + (pending?'Starts ':'Valid from ') + wibTime(ev.effective) + ' until ' + wibTime(ev.expires) + ' · BMKG';
+      area.bindPopup(popup);
+      area.on('click',function(){selectEvent(EVENTS.indexOf(ev));});
+      if (EV===ev) {
+        detail.hidden=false;
+        var title=document.createElement('h3'); title.textContent='BMKG weather warning'; detail.appendChild(title);
+        [ev.name, 'Issued '+wibTime(ev.issued_at), (pending?'Effective from ':'Valid from ')+wibTime(ev.effective)+' until '+wibTime(ev.expires),
+         'Severity: '+ev.severity+' · certainty: '+ev.certainty,
+         (ev.warning_exposure || {}).facility_count+' facilities within the warning polygons; disruption is unconfirmed.',
+         ev.cached?'Cached warning retained during a feed issue; expires automatically.':'Official BMKG CAP geometry.',
+         'No automatic SLA changes. Data: BMKG.'].forEach(function(text){
+          var row=document.createElement('p');row.textContent=text;detail.appendChild(row);
+        });
+        if(sourceLink(ev.source_url)){
+          var link=document.createElement('a');link.href=sourceLink(ev.source_url);link.textContent='Open BMKG warning';
+          link.target='_blank';link.rel='noopener noreferrer';detail.appendChild(link);
+        }
+        if(fit)map.fitBounds(area.getBounds(),{maxZoom:10});
+      }
+    });
+  }
+  document.getElementById('bmkgWarningsOn').addEventListener('change',function(){drawWeatherWarnings(false);});
 
   function buildHazard(){
     hz.clearLayers();
@@ -1627,11 +1745,17 @@
       radialWrap = document.getElementById('evRadial'), polyNote = document.getElementById('evPoly');
 
   function quickCount(ev){
+    if (ev.assessment === 'official_warning') return (ev.warning_exposure || {}).facility_count || 0;
     // cheap pre-count for the list, using the event's own default geometry
     var save = EV, saveOn = IMP.on, saveR = IMP.radius;
     var saveFilter = on.slice();
     on[0] = on[1] = on[2] = true;
     EV = ev; IMP.on = true;
+    if (ev.assessment === 'official_warning') {
+      IMP.on = false; ctlEl.hidden = true; airBlock.hidden = true; airHit = null; hz.remove();
+      document.getElementById('bmkgWarningsOn').checked = true;
+      renderList(); drawWeatherWarnings(true); layer.redraw(); return;
+    }
     var B = ev.impact && ev.impact.bands || [];
     IMP.radius = B.length ? B[B.length - 1].to_km : 0;
     if (ev.lat != null) project(ev);
@@ -1704,11 +1828,13 @@
 
   function renderList(){
     drawNewsZones(false);
+    drawWeatherWarnings(false);
     listEl.innerHTML = '';
     var scope = document.getElementById('eventScope').value;
     var shown = EVENTS.filter(function(e){
-      return HAZF[e._fk] !== false && (scope === 'all' ||
-        (scope === 'news' ? e.status === 'unverified' : e.status !== 'unverified'));
+      return (e.assessment !== 'official_warning' || isActiveWarning(e)) && HAZF[e._fk] !== false && (scope === 'all' ||
+        (scope === 'news' ? e.status === 'unverified' : scope === 'warnings' ? e.assessment === 'official_warning' :
+         e.status !== 'unverified' && e.assessment !== 'official_warning'));
     });
     var byImpact = document.getElementById('eventSort').value === 'impact';
     shown.sort(function(a, b){
@@ -1740,12 +1866,13 @@
       }) + ' WIB' : when;
       em.textContent = [ev.severity, ev.source,
                         (ev.published_at ? 'Published ' : ev.discovered_at ? 'Discovered ' : '') + dateLabel,
-                        ev.cached ? 'cached report' : '',
+                        ev.cached ? 'cached source record' : '',
+                        ev.assessment === 'official_warning' ? 'warning expires ' + wibTime(ev.expires) : '',
                         ev.news_estimate && ev.news_estimate.points.length ? ev.news_estimate.points.length + ' estimated locations' : '',
                         ev.status === 'unverified' ? 'location / impact unverified' : ''
                        ].filter(Boolean).join(' \u00b7 ');
       b.querySelector('.t').appendChild(em);
-      b.querySelector('.c').textContent = ev._n == null ? '' : fmt(ev._n);
+      b.querySelector('.c').textContent = ev._n == null ? '' : fmt(ev._n) + (ev.assessment === 'official_warning' ? ' review' : '');
       b.addEventListener('click', function(){ selectEvent(ix); });
       li.appendChild(b);
       var report = sourceLink(ev.source_url);
@@ -1769,6 +1896,11 @@
       renderList(); layer.redraw(); return;
     }
     EV = ev; IMP.on = true;
+    if (ev.assessment === 'official_warning') {
+      IMP.on = false; ctlEl.hidden = true; airBlock.hidden = true; airHit = null; hz.remove();
+      document.getElementById('bmkgWarningsOn').checked = true;
+      renderList(); drawWeatherWarnings(true); layer.redraw(); return;
+    }
     if (ev.status === 'unverified' && ev.news_estimate && ev.news_estimate.points.length) {
       ctlEl.hidden = true; airBlock.hidden = true; airHit = null; hz.remove(); IMP.on = false;
       document.getElementById('newsZonesOn').checked = true;
@@ -1908,13 +2040,16 @@
   /* ---------------- load events.json ---------------- */
   function renderSources(payload){
     var el = document.getElementById('fmSources');
-    el.innerHTML = '<summary>Feeds and attribution</summary>';
+    el.innerHTML = '<summary>Source freshness and attribution</summary>';
     (payload.source_health || []).forEach(function(h){
       var p = document.createElement('p');
       p.textContent = h.source + ': ' + h.state +
         (h.state === 'ok' ? ' (' + h.events + ')' : '') +
         (h.error ? ' \u2014 ' + h.error : '') +
         (h.retained_news ? ' (' + h.retained_news + ' cached reports retained)' : '') +
+        (h.retained_warnings ? ' (' + h.retained_warnings + ' cached warnings retained)' : '') +
+        ' · checked ' + wibTime(h.last_checked_at) + ' · last complete success ' + wibTime(h.last_success_at) +
+        (h.last_success_at ? ' (' + Math.max(0,Math.floor((Date.now()-Date.parse(h.last_success_at))/60000)) + ' min ago)' : '') +
         (h.warnings && h.warnings.length ? ' \u2014 ' + h.warnings.join('; ') : '');
       el.appendChild(p);
     });
@@ -1958,20 +2093,13 @@
 
     lastGood = payload;
     var mins = showAge(payload);
-    var ver = payload.verified_event_count == null
-      ? EVENTS.length : payload.verified_event_count;
     if (mins == null || mins < STALE_MIN) {
-      var failed = (payload.source_health || []).filter(function(h){
-        return h.state === 'failed' || h.state === 'degraded'; });
-      statusEl.textContent = (EVENTS.length
-        ? ver + ' verified event' + (ver === 1 ? '' : 's') +
-          (EVENTS.length > ver ? ' and ' + (EVENTS.length - ver) + ' unverified lead'
-            + (EVENTS.length - ver === 1 ? '' : 's') : '') +
-          (mins == null ? '' : ', updated ' + (mins < 60 ? mins + ' min'
-            : Math.round(mins / 60) + ' h') + ' ago') + '. Pick one to see the zone.'
-        : 'No active events currently reach a facility.')
-        + (failed.length ? ' ' + failed.length + ' feed' + (failed.length === 1 ? '' : 's')
-            + ' incomplete this run \u2014 see Feeds and attribution.' : '');
+      var failed = (payload.source_health || []).filter(function(h){return h.state==='failed'||h.state==='degraded';});
+      var ver=EVENTS.filter(function(e){return e.status!=='unverified' && e.assessment!=='official_warning';}).length;
+      var leads=EVENTS.filter(function(e){return e.status==='unverified';}).length;
+      statusEl.textContent=ver+' confirmed events · '+leads+' unverified news leads · snapshot '+
+        (mins==null?'age unknown':mins+' min old')+'. '+
+        (failed.length?failed.length+' feeds incomplete. See source freshness.':'Select an update to review its area.');
     }
     renderSources(payload);
     buildFilters();
@@ -2036,6 +2164,12 @@
       'or run build_map.py to embed the events.';
   }
 
+  setInterval(function(){
+    if (EV && EV.assessment==='official_warning' && !isActiveWarning(EV)) {
+      EV=null; IMP.on=false; ctlEl.hidden=true; airHit=null; layer.redraw();
+    }
+    if (lastGood) {renderList(); renderSources(lastGood); showAge(lastGood);}
+  },30000);
   loadEvents();
   if (location.protocol.indexOf('http') === 0) setInterval(loadEvents, 5 * 60 * 1000);
 

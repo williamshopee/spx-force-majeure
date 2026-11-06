@@ -248,6 +248,23 @@ def time_bucket():
     return int(time.time()) // 600
 
 
+def source_time(value):
+    from zoneinfo import ZoneInfo
+    try:
+        stamp = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        age = max(0, int((datetime.now(timezone.utc) - stamp).total_seconds() / 60))
+        return stamp.astimezone(ZoneInfo("Asia/Jakarta")).strftime("%d %b %H:%M WIB") + f" ({age} min ago)"
+    except (ValueError, AttributeError, TypeError):
+        return "not recorded"
+
+
+def visible_event(ev):
+    if ev.get("assessment") != "official_warning":
+        return True
+    from weather_cap import active_warning
+    return active_warning(ev)
+
+
 def classify_event(ev: dict) -> str:
     hazard = ev.get("hazard", "other")
     if hazard == "volcano":
@@ -330,9 +347,10 @@ with st.sidebar:
 
         failed = [h for h in events.get("source_health", [])
                   if h["state"] in ("failed", "degraded")]
-        status = f"{v} verified event{'s' if v != 1 else ''}"
-        if n > v:
-            status += f", {n - v} unverified"
+        leads = sum(e.get("status") == "unverified" for e in events.get("events", []))
+        warnings = sum(e.get("assessment") == "official_warning" and visible_event(e)
+                       for e in events.get("events", []))
+        status = f"{v} confirmed events, {leads} news leads, {warnings} active weather warnings"
         status += f" — updated {age}"
         if failed:
             status += f". {len(failed)} feed{'s' if len(failed) != 1 else ''} incomplete."
@@ -353,12 +371,16 @@ with st.sidebar:
                     detail += " — " + "; ".join(h["warnings"])[:160]
                 if h.get("retained_news"):
                     detail += f" — {h['retained_news']} cached reports retained"
-                st.markdown(f"<span class='{cls}'>{icon}</span> {h['source']}{detail}",
+                if h.get("retained_warnings"):
+                    detail += f" — {h['retained_warnings']} cached warnings retained"
+                st.markdown(f"<span class='{cls}'>{icon}</span> {escape(h['source'] + detail)}",
                             unsafe_allow_html=True)
+                st.caption("Checked: " + source_time(h.get("last_checked_at")) +
+                           " · Last complete success: " + source_time(h.get("last_success_at")))
 
         st.markdown("---")
 
-        all_events = events.get("events", [])
+        all_events = [ev for ev in events.get("events", []) if visible_event(ev)]
         for ev in all_events:
             ev["_category"] = classify_event(ev)
             ev["_filter_key"] = CAT_TO_KEY.get(ev["_category"], "lainnya")
@@ -406,8 +428,11 @@ with st.sidebar:
                 meta_parts = [ev.get("severity", ""), ev.get("source", "")]
                 if unv:
                     meta_parts.append("unverified")
+                if ev.get("assessment") == "official_warning":
+                    total = (ev.get("warning_exposure") or {}).get("facility_count", 0)
+                    meta_parts.append("warning exposure for review; expires " + source_time(ev.get("expires")))
                 if ev.get("cached"):
-                    meta_parts.append("cached report")
+                    meta_parts.append("cached source record")
                 estimate_count = len((ev.get("news_estimate") or {}).get("points", []))
                 if estimate_count:
                     meta_parts.append(f"{estimate_count} estimated locations")
@@ -457,10 +482,27 @@ if VIEW == "soc":
         )
 
 map_revision = tuple((name, (HERE / name).stat().st_mtime_ns)
-                     for name in ("events.json", "map_template.html", "build_map.py")
+                     for name in ("events.json", "map_template.html", "build_map.py", "turf.min.js")
                      if (HERE / name).exists())
 html = cached_map(ts, VIEW, map_revision)
 if html:
     st.components.v1.html(html, height=880 if VIEW == "soc" else 920, scrolling=False)
 else:
     st.error("Map could not be built.")
+
+
+# A running session checks for a new ingestion bucket or repository snapshot.
+# The iframe also expires CAP polygons every 30 seconds between app reruns.
+st.session_state["map_refresh_checkpoint"] = (ts, map_revision)
+
+
+@st.fragment(run_every="60s")
+def watch_snapshot():
+    revision = tuple((name, (HERE / name).stat().st_mtime_ns)
+                     for name in ("events.json", "map_template.html", "build_map.py", "turf.min.js")
+                     if (HERE / name).exists())
+    if (time_bucket(), revision) != st.session_state.get("map_refresh_checkpoint"):
+        st.rerun()
+
+
+watch_snapshot()

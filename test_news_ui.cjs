@@ -14,7 +14,7 @@ const els = {eventScope: new Element(), eventSort: new Element()};
 els.eventScope.value = 'all'; els.eventSort.value = 'latest';
 const context = {
   URL, Date, EVENTS: [], EV: null, HAZF: {}, HAZC: {other: '#fff'},
-  fmt: String, selectEvent() {}, drawNewsZones() {}, listEl: new Element(),
+  fmt: String, selectEvent() {}, drawNewsZones() {}, drawWeatherWarnings() {}, listEl: new Element(),
   document: {getElementById: id => els[id], createElement: () => new Element(),
              createTextNode: value => ({textContent: value})}
 };
@@ -26,6 +26,9 @@ for (const match of source.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)) {
 const start = source.indexOf('  function reportTime(');
 const end = source.indexOf('  function selectEvent(', start);
 vm.runInContext(source.slice(start, end), context);
+const warningStart = source.indexOf('  function isActiveWarning(');
+const warningEnd = source.indexOf('  function drawWeatherWarnings(', warningStart);
+vm.runInContext(source.slice(warningStart, warningEnd), context);
 context.EVENTS = [
   {name:'Older mapped event', hazard:'other', _n:50, status:'active', updated:'2026-11-04T10:00:00Z'},
   {name:'Latest BNPB lead', hazard:'other', status:'unverified', published_at:'2026-11-05T11:11:00+07:00', source_url:'https://www.bnpb.go.id/berita/banjir'},
@@ -46,10 +49,32 @@ assert.equal(context.reportTime({discovered_at:'20261105T040000Z'}), Date.parse(
 const proximityStart = source.indexOf('  function nearbyNewsFacilities(');
 const proximityEnd = source.indexOf('  function drawNewsZones(', proximityStart);
 vm.runInContext(source.slice(proximityStart, proximityEnd), context);
+vm.runInContext(source.slice(source.indexOf('  function geometryContains('), proximityStart), context);
 const points = [{lat:0,lng:100,screenable:true}, {lat:0,lng:100.01,screenable:true}];
 const stations = [['Near station',0,100.02],['Far station',1,101]];
 assert.equal(context.nearbyNewsFacilities(points,10,stations).length, 1, 'overlapping zones count a facility once');
 assert.equal(context.nearbyNewsFacilities(points,1,stations).length, 0, 'radius changes screening candidates');
 assert.equal(context.nearbyNewsFacilities([{lat:0,lng:100,screenable:false}],50,stations).length, 0, 'province markers cannot imply local exposure');
 assert.equal(context.nearbyNewsFacilities(points,10,stations)[0].name, 'Near station');
+vm.runInContext(fs.readFileSync('turf.min.js','utf8'),context);
+const outer=[[100,0],[102,0],[102,2],[100,2],[100,0]];
+const hole=[[100.5,.5],[101.5,.5],[101.5,1.5],[100.5,1.5],[100.5,.5]];
+const polygon={type:'Polygon',coordinates:[outer,hole]};
+assert.equal(context.geometryContains(polygon,1,101),false,'polygon holes exclude facilities');
+assert.equal(context.geometryContains({type:'MultiPolygon',coordinates:[[outer,hole]]},.25,100.25),true);
+const boundaryPoints=[{lat:.25,lng:100.25,screenable:true,boundary:{year:2019,geometry:polygon}}];
+context.prepareNewsAreas(boundaryPoints,'boundary',0);
+assert.equal(context.nearbyNewsFacilities(boundaryPoints,1,[['Inside',1.75,101.75]]).length,1,'boundary controls count beyond center radius');
+assert.equal(context.nearbyNewsFacilities(boundaryPoints,50,[['Hole',1,101]]).length,0);
+assert.equal(context.nearbyNewsFacilities(boundaryPoints,50,[['Outside',2.02,101]]).length,0);
+context.prepareNewsAreas(boundaryPoints,'boundary',5);
+assert.equal(context.nearbyNewsFacilities(boundaryPoints,1,[['Buffered',2.02,101]]).length,1,'buffer affects the drawn geometry and spatial count');
+context.prepareNewsAreas(boundaryPoints,'radius',0);
+assert.equal(context.nearbyNewsFacilities(boundaryPoints,1,[['Far',1.75,101.75]]).length,0);
+context.EVENTS.push({name:'Active weather warning',hazard:'weather',assessment:'official_warning',status:'active',expires:'2099-01-01T00:00:00Z',updated:'2026-11-06T00:00:00Z'},
+                    {name:'Expired warning',assessment:'official_warning',status:'active',expires:'2020-01-01T00:00:00Z'});
+els.eventScope.value='warnings'; context.renderList();
+assert.equal(context.listEl.children.length,1,'expired warnings disappear from warning list');
+els.eventScope.value='mapped'; context.renderList();
+assert.equal(context.listEl.children.length,1,'weather warnings do not become confirmed events');
 console.log('News UI: date sorting, filters, WIB labels, source links and unsafe URL rejection passed.');

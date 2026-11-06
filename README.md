@@ -1,5 +1,61 @@
 # SPX force-majeure watch
 
+## Weather warnings, administrative areas and freshness
+
+The map separates three kinds of updates: confirmed source events with the
+existing impact model, unverified news leads, and official BMKG weather
+warnings. A warning or a news screening area does not confirm an operational
+disruption and never adds an automatic SLA extension or an impacted-CSV row.
+
+- **BMKG weather warnings:** the official [CAP nowcast RSS](https://www.bmkg.go.id/alerts/nowcast/id)
+  and its CAP 1.2 detail messages supply blue polygons, issue/effective/expiry
+  times, severity and certainty. Only Actual/Public messages are accepted.
+  Updates and cancellations supersede referenced identifiers. Expired warnings
+  are removed during ingestion and within 30 seconds in an open map. During a
+  partial failure, only unexpired, non-superseded cached warnings are retained.
+  A malformed polygon makes that detail incomplete; it is not mapped as healthy
+  empty coverage. Requests use a 30-second budget, 4 workers and a maximum of
+  40 detail links (41 requests including the index), below BMKG's published
+  60 requests/minute limit per IP for one ingestion run. Concurrent app sessions
+  share the Streamlit ingestion cache. Source: BMKG, visibly attributed.
+- **Administrative screening:** news locations match by administrative name
+  and center containment, with a labeled unique-name/nearby-center fallback.
+  Ambiguous matches are skipped. Matched regency/city (ADM2) and district (ADM3)
+  boundaries are embedded only for relevant news locations. The UI defaults to
+  these amber areas, with an optional 0–50 km buffer; radius screening remains
+  selectable. A missing boundary uses an explicit 10 km fallback radius.
+  Province mentions remain markers without local exposure counts. Facility
+  screening handles polygon holes and multipolygons and deduplicates overlaps.
+  The separate news CSV records the area method and source, without SLA fields.
+- **Freshness:** each feed shows its last attempted check and last complete
+  successful fetch in WIB, separately from snapshot generation time. Failed
+  and partial checks preserve the previous success timestamp. Cached records
+  retain their original publication/issue time and are labeled. Older versions
+  of the cache without a success ledger show "not recorded" until a full fetch
+  succeeds.
+
+Boundary data is a historical administrative reference, not a hazard footprint
+or a claim about current legal boundaries: [geoBoundaries gbOpen IDN ADM2](https://www.geoboundaries.org/api/current/gbOpen/IDN/ADM2/)
+(2020, 519 areas; BPS/WFP/OCHA) and [gbHumanitarian IDN ADM3](https://www.geoboundaries.org/api/current/gbHumanitarian/IDN/ADM3/)
+(2019, 7,069 areas; OCHA ROAP/HDX), CC BY 3.0 IGO. The compressed dataset preserves
+provider-simplified Polygon/MultiPolygon geometry and holes, with coordinates
+rounded to five decimals. Place centers: GeoNames, CC BY 4.0. TurfJS 7.2.0
+(MIT, `TURF-LICENSE`) is vendored from the official npm package and embedded by
+`build_map.py` for geodesic buffers without another runtime CDN dependency.
+
+**Production cadence:** `.github/workflows/refresh.yml` runs at minutes 17 and
+47 of every hour (24/7), and on relevant source pushes or manual dispatch.
+GitHub scheduling can be delayed. An active Streamlit session also fetches on
+a shared 10-minute cache bucket; a 60-second fragment checks for a new bucket
+or changed snapshot and reruns the app. Standalone HTTP maps poll JSON every
+5 minutes. A downloaded HTML snapshot remains frozen. Warning expiry and
+freshness age labels update in the browser every 30 seconds.
+
+Validation: `python -m unittest test_news test_news_estimates test_map_upgrades -v`
+and `node test_news_ui.cjs` cover parser failures, CAP expiry and supersession,
+cached warning recovery, SLA isolation, source timestamps, polygon holes,
+multipolygons, buffers, filters and overlapping facility counts.
+
 Pulls active hazard events in Indonesia from official feeds, works out which
 SPX facilities each one reaches, and feeds the station map. Two artifacts come
 out of every run:
@@ -43,7 +99,7 @@ This is the part most likely to trip you up, so plainly: **the HTML never
 changes. The data file next to it does.**
 
 ```
-cron, every 10 min          static web host              browser tab
+cron, every 30 min          static web host              browser tab
   ingest.py ──writes──▶  events.json  ◀──fetch every 5 min──  index.html
                          index.html   ◀──loaded once────────
 ```
@@ -86,8 +142,8 @@ instead:
 | No `events.json` at all | Tells you to run `ingest.py` or serve the folder |
 | A feed failed but the run succeeded | Status line notes it, details under *Feeds and attribution* |
 
-The 45-minute threshold assumes a 10-minute cron, so it means several missed
-runs rather than one blip. `STALE_MIN` and `DEAD_MIN` are at the top of the
+The 45-minute threshold flags a delayed 30-minute refresh. `STALE_MIN` and
+`DEAD_MIN` are at the top of the
 event-loading section in `map_template.html` if you change the cadence.
 
 Two things the page cannot tell you, so put them in your own monitoring: the
@@ -404,11 +460,10 @@ it flags *risk*, not a confirmed closure.
 OurAirports' size classification. That is a proxy for cargo importance, not
 your network. Fix the `tier` column.
 
-**No administrative boundaries.** Impact is geographic. If you need
-"all facilities in Kabupaten Pandeglang" rather than "within 80 km", that needs
-a kecamatan/kabupaten shapefile and a spatial join. Worth doing: BNPB and local
-BPBD declare impact by administrative area, not by radius, so this is the
-mismatch you will feel most when justifying an SLA change.
+**Administrative screening is approximate.** Historical district/regency
+boundaries identify places named in news. They can include unaffected areas,
+and missing or ambiguous names still require review. The optional buffer is
+an operator-selected screening distance, not a calibrated risk prediction.
 
 **MAGMA will break.** It is a scrape. When it does, volcano events still arrive
 via GDACS, just without Indonesian alert levels and official exclusion radii.

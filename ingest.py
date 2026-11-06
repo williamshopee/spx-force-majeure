@@ -45,6 +45,9 @@ from typing import Any, Iterable
 
 from news import NewsResults, fetch_bnpb_bulletins
 from news_estimates import estimate_news_locations
+from admin_boundaries import attach_boundaries
+from weather_cap import CAPResults, active_warning, fetch_cap
+from source_freshness import record_health
 
 HERE = Path(__file__).resolve().parent
 LOG = logging.getLogger("fm")
@@ -1033,6 +1036,13 @@ def fetch_bnpb(http: Http, cfg: dict) -> list[dict]:
     return NewsResults([new_event(**record) for record in result], result.warnings)
 
 
+def fetch_bmkg_cap(http: Http, cfg: dict) -> list[dict]:
+    result = fetch_cap(http, cfg["sources"]["bmkg_cap"])
+    fetched_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    return CAPResults([new_event(**dict(record, fetched_at=fetched_at)) for record in result],
+                      result.warnings, result.superseded)
+
+
 def fetch_gdelt(http: Http, cfg: dict) -> list[dict]:
     """
     News leads. Everything here is status='unverified' and excluded from SLA
@@ -1210,6 +1220,17 @@ def apply_impact_model(ev: dict, cfg: dict, facilities: list[tuple[str, float, f
       radial  — distance bands, optionally limited to bearing corridors.
                 An approximation, and labelled as one.
     """
+    if ev.get("assessment") == "official_warning":
+        ev["impact"] = {"model": "warning_area", "bands": [], "corridors": [],
+                        "counts": [], "total": 0, "facilities": [],
+                        "reason": "Official warning exposure is separate from confirmed disruption"}
+        boxes = [(min(p[0] for p in ring), min(p[1] for p in ring),
+                  max(p[0] for p in ring), max(p[1] for p in ring), ring)
+                 for ring in ev.get("polygons", [])]
+        ev["warning_exposure"] = {"facility_count": sum(
+            any(w <= lo <= e and s <= la <= n and in_polygons(la, lo, [ring])
+                for w, s, e, n, ring in boxes) for _, la, lo in facilities)}
+        return
     model_cfg = (cfg.get("impact_models") or {}).get(ev["hazard"]) or \
                 (cfg.get("impact_models") or {}).get("other") or {}
 
@@ -1322,6 +1343,8 @@ def apply_retention(events: list[dict], cfg: dict, state: dict) -> list[dict]:
     seen = state.setdefault("first_seen", {})
     out = []
     for ev in events:
+        if ev.get("expires") and (_parse_dt(ev["expires"]) or now) <= now:
+            continue
         seen.setdefault(ev["id"], now.isoformat())
         ev["first_seen"] = seen[ev["id"]]
         ref = _parse_dt(ev.get("updated")) or _parse_dt(ev.get("started")) \
@@ -1384,6 +1407,8 @@ def write_impact_csv(path: Path, events: list[dict]) -> int:
                     "longitude", "distance_km", "bearing_deg", "severity_band",
                     "sla_extension_days", "impact_model", "source_url"])
         for ev in events:
+            if ev.get("assessment") == "official_warning":
+                continue
             imp = ev.get("impact") or {}
             seen = set()
             for h in imp.get("facilities") or []:
@@ -1459,6 +1484,7 @@ def main(argv=None) -> int:
 
     fetchers = [
         ("bmkg_quake", fetch_bmkg),
+        ("bmkg_cap", fetch_bmkg_cap),
         ("gdacs", fetch_gdacs),
         ("petabencana_flood", fetch_petabencana),
         ("magma_volcano", fetch_magma),
@@ -1477,6 +1503,15 @@ def main(argv=None) -> int:
         t0 = time.time()
         try:
             got = fn(http, cfg)
+            if key == "bmkg_cap":
+                if getattr(got, "warnings", []):
+                    ids = {e["id"] for e in got}
+                    removed = getattr(got, "superseded", set())
+                    got.extend(new_event(**dict(e, cached=True))
+                               for e in state.get("weather_warning_cache", [])
+                               if e["id"] not in ids and e.get("cap_identifier") not in removed
+                               and active_warning(e))
+                state["weather_warning_cache"] = [e for e in got if active_warning(e)]
             if key in ("bnpb_news", "gdelt_news"):
                 # Retain dated reports in state.json independently of the
                 # current snapshot, so a transient outage does not erase them.
@@ -1495,9 +1530,13 @@ def main(argv=None) -> int:
             LOG.exception("source %s failed", key)
             recovered = recent_cached_news(news_cache.get(key, []), sc) \
                 if key in ("bnpb_news", "gdelt_news") else []
+            if key == "bmkg_cap":
+                recovered = [new_event(**dict(e, cached=True))
+                             for e in state.get("weather_warning_cache", []) if active_warning(e)]
             events.extend(recovered)
             health.append({"source": key, "state": "failed", "events": 0,
-                           "retained_news": len(recovered),
+                           "retained_news": len(recovered) if key != "bmkg_cap" else 0,
+                           "retained_warnings": len(recovered) if key == "bmkg_cap" else 0,
                            "error": str(e)[:300]})
             if not sc.get("optional"):
                 LOG.error("  ^ non-optional source failed; continuing with degraded data")
@@ -1507,12 +1546,16 @@ def main(argv=None) -> int:
     manual = load_overrides(base / "overrides.yaml")
     events.extend(manual)
     health.append({"source": "overrides", "state": "ok", "events": len(manual)})
+    record_health(state, health, datetime.now(timezone.utc).isoformat(timespec="seconds"))
 
     events = dedupe(events)
     events = merge_volcano_levels(events, load_gazetteer(base / "volcanoes.csv"))
     for ev in events:
+        if ev.get("status") == "unverified" and ev.get("news_estimate"):
+            attach_boundaries(ev["news_estimate"])
         apply_impact_model(ev, cfg, facilities)
-        apply_air_linehaul(ev, cfg, airports, routing)
+        if ev.get("assessment") != "official_warning":
+            apply_air_linehaul(ev, cfg, airports, routing)
     events = apply_retention(events, cfg, state)
 
     if cfg.get("drop_events_with_zero_facilities"):
@@ -1521,6 +1564,7 @@ def main(argv=None) -> int:
                   if (e["impact"] or {}).get("total", 0) > 0
                   or (e.get("air") or {}).get("direct_count", 0) > 0
                   or (e.get("air") or {}).get("via_hub_count", 0) > 0
+                  or e.get("assessment") == "official_warning"
                   or e["status"] == "unverified"]
         if before != len(events):
             LOG.info("dropped %d events with no facility in range", before - len(events))
@@ -1556,7 +1600,10 @@ def main(argv=None) -> int:
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "facility_count": len(facilities),
         "event_count": len(events),
-        "verified_event_count": sum(1 for e in events if e["status"] != "unverified"),
+        "verified_event_count": sum(1 for e in events if e["status"] != "unverified"
+                                    and e.get("assessment") != "official_warning"),
+        "official_warning_count": sum(e.get("assessment") == "official_warning" for e in events),
+        "news_lead_count": sum(e["status"] == "unverified" for e in events),
         "source_health": health,
         "attribution": sorted({part.strip()
                                for e in events for part in (e.get("attribution") or "").split("|")

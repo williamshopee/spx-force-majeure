@@ -67,6 +67,14 @@ lanes: lanes.csv
 # ---------------------------------------------------------------------------
 sources:
 
+  bmkg_cap:
+    enabled: true
+    url: https://www.bmkg.go.id/alerts/nowcast/id
+    timeout_seconds: 5
+    fetch_budget_seconds: 30
+    max_alerts: 40
+    optional: true
+
   petabencana_flood:
     enabled: true
     # Verified live. No API key. Polygon per RT/RW — far more precise than
