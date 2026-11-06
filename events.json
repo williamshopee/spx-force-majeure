@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-06T08:56:41+00:00",
+ "generated_at": "2026-11-06T08:58:20+00:00",
  "facility_count": 8853,
  "event_count": 28,
  "verified_event_count": 25,
@@ -9,35 +9,35 @@
    "state": "ok",
    "events": 18,
    "warnings": [],
-   "seconds": 0.66
+   "seconds": 0.4
   },
   {
    "source": "gdacs",
    "state": "ok",
    "events": 0,
    "warnings": [],
-   "seconds": 2.08
+   "seconds": 2.61
   },
   {
    "source": "petabencana_flood",
    "state": "ok",
    "events": 1,
    "warnings": [],
-   "seconds": 0.75
+   "seconds": 0.68
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 26,
    "warnings": [],
-   "seconds": 1.99
+   "seconds": 1.56
   },
   {
    "source": "bnpb_news",
    "state": "ok",
    "events": 3,
    "warnings": [],
-   "seconds": 13.75
+   "seconds": 9.23
   },
   {
    "source": "gdelt_news",
@@ -2218,7 +2218,7 @@
     "attribution": "GeoNames CC BY 4.0 — https://www.geonames.org/"
    },
    "first_seen": "2026-11-06T07:14:18.406188+00:00",
-   "age_hours": 51.7,
+   "age_hours": 51.8,
    "impact": {
     "model": "none",
     "bands": [],
