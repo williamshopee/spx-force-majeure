@@ -252,8 +252,9 @@ def source_time(value):
     from zoneinfo import ZoneInfo
     try:
         stamp = datetime.fromisoformat(value.replace("Z", "+00:00"))
-        age = max(0, int((datetime.now(timezone.utc) - stamp).total_seconds() / 60))
-        return stamp.astimezone(ZoneInfo("Asia/Jakarta")).strftime("%d %b %H:%M WIB") + f" ({age} min ago)"
+        age = int((datetime.now(timezone.utc) - stamp).total_seconds() / 60)
+        relative = f"{age} min ago" if age >= 0 else f"in {-age} min"
+        return stamp.astimezone(ZoneInfo("Asia/Jakarta")).strftime("%d %b %H:%M WIB") + f" ({relative})"
     except (ValueError, AttributeError, TypeError):
         return "not recorded"
 

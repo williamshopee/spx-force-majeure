@@ -51,6 +51,11 @@ or changed snapshot and reruns the app. Standalone HTTP maps poll JSON every
 5 minutes. A downloaded HTML snapshot remains frozen. Warning expiry and
 freshness age labels update in the browser every 30 seconds.
 
+Queued refresh jobs check out the current `main` branch, including the previous
+job's data commit. Rebuild the boundary package with
+`python build_admin_boundaries.py --download`; the bundled provider metadata
+pins the simplified geometry downloads used to create it.
+
 Validation: `python -m unittest test_news test_news_estimates test_map_upgrades -v`
 and `node test_news_ui.cjs` cover parser failures, CAP expiry and supersession,
 cached warning recovery, SLA isolation, source timestamps, polygon holes,
@@ -95,8 +100,9 @@ python build_map.py --embed --out ../out/map.html
 
 ## How it stays current
 
-This is the part most likely to trip you up, so plainly: **the HTML never
-changes. The data file next to it does.**
+For a standalone HTTP deployment, **the data file changes between map builds**.
+The live Streamlit app instead rebuilds its embedded map when its snapshot
+changes, as described under Production cadence above.
 
 ```
 cron, every 30 min          static web host              browser tab
@@ -170,9 +176,9 @@ BashOperator(
 )
 ```
 
-The script is idempotent and holds no long-lived state beyond
-`out/state.json`, which only records when each event was first seen so
-`first_seen` survives restarts. Deleting it is harmless.
+The script is idempotent. `state.json` stores first-seen timestamps, dated news
+and unexpired warning caches, and the source freshness ledger. Preserve it
+across runs so temporary feed failures do not discard useful recent evidence.
 
 Failure behaviour worth knowing before you wire alerting to this:
 
@@ -193,17 +199,20 @@ article-body paragraphs, ignores datelines/captions/related-story links, uses
 province/regency context to disambiguate names, and leaves conflicts unresolved.
 GDELT leads use their headline only and carry that evidence label.
 
-Amber dashed circles are **proximity screening areas**, not a physical hazard
-forecast. The default 10 km radius is adjustable from 1–50 km. Click a news
-item to focus its locations, then a place to zoom in and read its evidence.
+Amber outlines are **administrative screening areas**, not a physical hazard
+forecast. Matched boundaries are the default, with an optional 0–50 km buffer.
+Center/radius mode remains available at 1–50 km, default 10 km, and is an
+explicit fallback for missing boundaries. Click a news item to focus its
+locations, then a place to zoom in and read its evidence.
 Province-only mentions get a context marker with no radius or facility count.
 The separate estimated-exposure CSV lists nearby facilities and source links,
 without SLA extensions. Confirmed impact totals and their CSV remain unchanged.
 
 Rebuild the place dataset with `python build_news_gazetteer.py geonames-ID.zip`
 after downloading the [official Indonesia extract](https://download.geonames.org/export/dump/ID.zip).
-The dataset provides centers, not administrative boundary polygons. Match
-confidence is qualitative location evidence, not a calibrated impact probability.
+The GeoNames dataset supplies centers; `admin_boundaries.json.gz` supplies the
+separate licensed boundaries. Match confidence is qualitative location
+evidence, not a calibrated impact probability.
 
 The `bnpb_news` source reads the official BNPB news index and checks up to eight
 recent hazard bulletins per run, including daily situation reports. It uses the
@@ -215,9 +224,9 @@ available. A missing index layout or complete retrieval failure is a failed feed
 In the map, use **Show → News leads** and **Sort → Latest first**. Each list
 item has a source link even when it has no coordinates. **Facility exposure**
 restores impact ordering. GDELT timestamps are labelled **Discovered** because
-its `seendate` is an indexing time. Neither source infers coordinates, closure
-status, facility impact, or SLA extensions from a headline. Review the source
-before creating a confirmed override.
+its `seendate` is an indexing time. Place-name screening can estimate areas
+from text, but never confirms closure status, operational impact or SLA
+extensions. Review the source before creating a confirmed override.
 
 News uses one attempt per request with a five-second socket timeout and a
 30-second BNPB fetch budget. GDELT has a 20-second budget and defers remaining

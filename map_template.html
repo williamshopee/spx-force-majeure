@@ -1751,11 +1751,6 @@
     var saveFilter = on.slice();
     on[0] = on[1] = on[2] = true;
     EV = ev; IMP.on = true;
-    if (ev.assessment === 'official_warning') {
-      IMP.on = false; ctlEl.hidden = true; airBlock.hidden = true; airHit = null; hz.remove();
-      document.getElementById('bmkgWarningsOn').checked = true;
-      renderList(); drawWeatherWarnings(true); layer.redraw(); return;
-    }
     var B = ev.impact && ev.impact.bands || [];
     IMP.radius = B.length ? B[B.length - 1].to_km : 0;
     if (ev.lat != null) project(ev);
