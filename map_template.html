@@ -468,33 +468,179 @@
     #side{width:100%;flex:1 1 auto;border-right:0;border-bottom:1px solid var(--line)}
     #mapwrap{flex:0 0 56dvh}
   }
+
+  /* Focused workspace: one scrolling panel, task tabs and progressive disclosure. */
+  :root{--panel:#101d2b;--sea:#0c1723;--line:#283a4b;--line-soft:#1b2c3d;--text:#e7eef5;--muted:#9db0c1;--dim:#8297a9}
+  [hidden]{display:none!important}
+  button,input,select,summary{-webkit-tap-highlight-color:transparent}
+  button:focus-visible,summary:focus-visible,select:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  #side{width:360px;flex:0 0 360px;overflow:hidden;border-right:1px solid var(--line);background:var(--panel)}
+  .side-head{padding:22px 22px 0;flex:0 0 auto;background:#122132;border-bottom:1px solid var(--line)}
+  .brand-row,.head-meta{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand-mark{font-family:var(--cond);font-size:17px;font-weight:600;font-style:italic;letter-spacing:.02em;color:#ff8a55}
+  .view-tag{font-size:11px;color:var(--muted);padding:3px 8px;border:1px solid #304354;border-radius:20px}
+  .side-head h1{font-size:25px;font-weight:600;line-height:1.2;letter-spacing:-.02em;margin:12px 0 8px}
+  .head-meta{font-size:12px;color:var(--muted);margin-bottom:17px}
+  .head-meta b{font-weight:500;color:var(--text)}
+  .health-link{font:inherit;color:#b3c1ce;background:none;border:0;padding:3px 0;cursor:pointer;display:flex;align-items:center;gap:5px}
+  .health-link::before{content:'';width:6px;height:6px;background:#71c7a3;border-radius:50%}
+  .health-link[data-state="incomplete"]::before{background:#eac17b}
+  .workspace-tabs{display:flex;gap:18px}
+  .workspace-tabs button{background:none;color:var(--muted);border:0;border-bottom:2px solid transparent;padding:11px 0 12px;font:inherit;font-size:13px;font-weight:500;cursor:pointer;min-height:44px;flex:1}
+  .workspace-tabs button[aria-selected="true"]{color:var(--text);border-bottom-color:#ff8a55}
+  .workspace-tabs button:hover{color:#fff}
+  .side-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#3b4e60 transparent}
+  .workspace-panel{padding:20px 22px 24px}
+  .overview-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
+  .overview-cards button{font:inherit;text-align:left;background:#152637;border:1px solid #2a3b4b;border-radius:9px;color:var(--text);padding:11px 10px;cursor:pointer}
+  .overview-cards b{display:block;font-family:var(--cond);font-size:24px;font-weight:500;line-height:1.15}
+  .overview-cards span{display:block;color:var(--muted);font-size:11px;margin-top:4px;white-space:nowrap}
+  .overview-cards button[aria-pressed="true"]{border-color:#ff8a55;background:#2b2a2d}
+  .overview-cards button:hover{border-color:#667c8e}
+  #fmStatus{font-size:11.5px;color:var(--muted);margin:0 0 18px;line-height:1.5}
+  #fmStatus.stale{color:#ffe0ab}
+  .update-toolbar{display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;position:relative;z-index:5}
+  .scope-label{flex:1;min-width:0}
+  select{color-scheme:dark}
+  .scope-label select,.filter-content select{width:100%;min-height:38px;border:1px solid var(--line);border-radius:6px;background:#142433;color:var(--text);font:inherit;font-size:12px;padding:8px 10px}
+  .filter-menu>summary{cursor:pointer;list-style:none;color:var(--muted);font-size:12px;border:1px solid var(--line);border-radius:6px;padding:9px 10px;min-height:38px}
+  .filter-menu>summary::-webkit-details-marker{display:none}
+  .filter-menu[open]>summary{color:var(--text);border-color:#647b8d}
+  .filter-content{position:absolute;top:46px;left:0;right:0;padding:16px;background:#1a2d3f;border:1px solid #40576b;border-radius:9px;box-shadow:0 18px 45px #0008}
+  .filter-content label{color:var(--muted);font-size:12px}
+  .filter-content select{margin:5px 0 15px}
+  .fmfilters{gap:7px;margin:0}
+  .fmfilters label{padding:7px 8px;background:#122233;border-radius:5px;color:#c9d6e1;font-size:12px}
+  .fmfilters .ffl{font-size:11px;color:var(--muted)}
+  .list-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:3px}
+  .list-heading h2,.section-heading h2{margin:0;font-size:15px;font-weight:500}
+  #updateCount{color:var(--dim);font-size:11px}
+  .list-hint{font-size:12px;color:var(--muted);margin:6px 0 15px}
+  .evlist{max-height:none;overflow:visible;margin:0;padding:0}
+  .evlist li{border:1px solid var(--line-soft);border-radius:8px;background:#132333;margin-bottom:9px;overflow:hidden}
+  .evlist li+li{margin-top:0}
+  .evlist button{padding:12px 12px 5px;grid-template-columns:7px minmax(0,1fr) auto;gap:9px;align-items:start;border-radius:0;min-height:48px}
+  .evlist button:hover{background:#1a3044}
+  .evlist button[aria-current="true"]{background:#243545;box-shadow:inset 3px 0 0 #ff8a55}
+  .evlist .hz{width:6px;height:6px;margin-top:6px}
+  .evlist .t{font-size:13px;line-height:1.45;min-width:0}
+  .ev-title{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:500}
+  .evlist .t em{font-size:11px;line-height:1.5;margin-top:6px;color:var(--muted)}
+  .evlist .unv{opacity:1}
+  .evlist .unv .t em{color:var(--muted)}
+  .evlist .c{color:#bbccda;font-size:12px;min-width:22px;text-align:right;padding-top:2px}
+  .evlist .c:not(:empty)::after{content:'sites';display:block;font:10px var(--sans);color:var(--dim);margin-top:3px}
+  .evlist .report-link{margin:0 12px 11px 28px;font-size:11px;color:#9dc5e0}
+  .evempty{padding:18px 12px;font-size:13px;line-height:1.5}
+  .secondary-button{font:inherit;font-size:12px;min-height:40px;width:100%;border:1px solid #3d5366;border-radius:7px;color:#cfdeea;background:none;cursor:pointer;margin-top:4px}
+  .secondary-button:hover{background:#1c3042}
+  .selection-bar{display:flex;justify-content:space-between;gap:10px;align-items:center;color:#e8c393;font-size:11px;margin:0 0 10px}
+  .selection-bar button{background:none;border:0;color:#b1c6d6;text-decoration:underline;text-underline-offset:3px;font:inherit;cursor:pointer;padding:6px 0}
+  .selection-headline{font-size:14px;line-height:1.5;font-weight:500;margin:4px 0 12px;color:var(--text)}
+  .news-estimate,.ctl{border:1px solid #4a4540;background:#1b2935;border-radius:9px;padding:15px;margin:0 0 20px;font-size:12px}
+  .news-estimate h3{font-size:14px;font-weight:500;color:#e9c68f;margin-bottom:8px}
+  #weatherDetail{background:#142b3a;border-color:#37596f}
+  #weatherDetail h3{color:#9bd5f1}
+  .news-estimate p{line-height:1.6;margin:9px 0}
+  .news-estimate ul{max-height:none;overflow:visible;padding-left:16px;margin:10px 0}
+  #newsSummary{font-size:13px;color:#d6e2ec;padding:11px;background:#14222f;border-radius:6px}
+  .tool-disclosure{border-top:1px solid #344452;padding:11px 0 0;margin:11px 0;color:var(--muted)}
+  .tool-disclosure>summary{cursor:pointer;color:#c3d2de;font-size:12px}
+  .tool-disclosure select{margin-top:7px}
+  .news-estimate input[type=range]::-webkit-slider-thumb{background:#e6bb74;border-color:#1b2935}
+  .news-place-btn{color:#e5c18b;padding:5px 0;line-height:1.55}
+  .dl{background:#c65b34;border-color:#d9774e;border-radius:6px;color:#fff;padding:10px;font-size:12px}
+  .dl:hover{background:#dd6c43}
+  .section-heading p,.muted-note{font-size:12px;color:var(--muted);line-height:1.6;margin:6px 0 16px}
+  .settings-group{margin:22px 0 0;padding-top:20px;border-top:1px solid var(--line)}
+  .settings-group h3{font-size:12px;font-weight:500;color:#c3d2df;margin:0 0 12px}
+  .settings-group>summary{font-size:13px;color:#d9e5ee;cursor:pointer;margin-bottom:12px}
+  .settings-group p{margin:12px 0}
+  #q{border-radius:7px;padding:12px;font-size:13px;min-height:44px}
+  .types label{padding:10px 3px;grid-template-columns:11px minmax(0,1fr) auto}
+  .region-disclosure .isl button{padding:11px 3px}
+  .region-disclosure .bar{height:3px;opacity:.75}
+  .seg{border-radius:7px;padding:4px}
+  .seg button{min-height:35px;border-radius:4px;font-size:12px}
+  .layer-toggle{display:flex;justify-content:space-between;align-items:center;gap:18px;cursor:pointer;padding:12px 0}
+  .layer-toggle b{display:block;font-size:13px;font-weight:500}
+  .layer-toggle small{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+  .layer-toggle input{width:17px;height:17px;accent-color:#ec8657;flex:0 0 auto}
+  #weatherStatus{border-left:2px solid #5d95b7;padding-left:10px;font-size:11px}
+  details.src{font-size:12px;color:var(--muted);margin-top:0}
+  details.src>summary{font-size:12px;color:#cad9e4;padding:6px 0;cursor:pointer}
+  .source-row{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+  .source-row strong{display:block;font-size:12px;color:#d7e4ee;font-weight:500}
+  .source-row p{font-size:11px;margin:5px 0!important;overflow-wrap:anywhere}
+  .source-row .source-state{font-size:10px;display:inline-block;padding:2px 6px;border-radius:4px;background:#293a46;color:#bfcdd8;margin-left:5px}
+  .source-row .source-state.ok{background:#193c35;color:#a6dbc8}
+  .source-row details{font-size:11px;margin-top:6px}
+  .source-row summary{cursor:pointer;color:#a6bfd1}
+  .review-note{font-size:12px;line-height:1.6;color:#dac196}
+  .inview{border-radius:8px;background:#102131e8;box-shadow:0 5px 18px #0002}
+  .net-hint{border-radius:8px;font-size:11px;max-width:220px}
+  .leaflet-popup-content-wrapper{border-radius:10px}
+  @media(max-width:700px){
+    #app{flex-direction:column}
+    #side{width:100%;flex:0 0 54dvh;height:54dvh;border-right:0;border-bottom:1px solid var(--line);overflow:hidden}
+    #mapwrap{flex:1;min-height:0}
+    .side-head{padding:12px 18px 0}
+    .brand-row{gap:10px}
+    .side-head h1{font-size:21px;margin:7px 0 5px}
+    .head-meta{margin-bottom:5px;font-size:11px}
+    .workspace-tabs{gap:14px}
+    .workspace-tabs button{padding:8px 0;min-height:38px;font-size:12px}
+    .workspace-panel{padding:12px 18px 20px}
+    .overview-cards{margin-bottom:8px}
+    .overview-cards b{font-size:19px}
+    .overview-cards button{display:flex;align-items:baseline;gap:6px;padding:8px 9px}
+    .overview-cards span{font-size:10px;margin-top:0}
+    #fmStatus{font-size:10.5px;margin-bottom:10px}
+    .update-toolbar{margin-bottom:12px}
+    .list-hint{font-size:11px;margin:4px 0 9px}
+    .net-hint{font-size:10px;right:10px;top:10px;max-width:150px}
+  }
+
 </style>
 </head>
 <body>
 <div id="app">
-  <aside id="side">
-    <div class="pad masthead">
-      <h1>SPX Facility Distribution Map</h1>
-      <p>Live facility map with force majeure monitoring.</p>
-      <div class="tally"><b id="total">0</b><span>stations mapped</span></div>
-    </div>
-
-    <div class="block alert" id="fmBlock">
-      <h2>Force majeure watch</h2>
-      <div class="fmfilters" id="fmFilters"></div>
-      <p class="alert-st" id="fmStatus">Loading events&hellip;</p>
-      <div class="news-tools">
-        <label>Show<select id="eventScope"><option value="all">All updates</option><option value="news">News leads</option><option value="mapped">Confirmed events</option><option value="warnings">Weather warnings</option></select></label>
-        <label>Sort<select id="eventSort"><option value="latest">Latest first</option><option value="impact">Facility exposure</option></select></label>
-      </div>
-      <label class="news-toggle"><input type="checkbox" id="newsZonesOn" checked> Show estimated news areas</label>
-      <label class="news-toggle"><input type="checkbox" id="bmkgWarningsOn" checked> Show BMKG warning polygons (blue)</label>
-      <p id="weatherStatus" class="alert-st"></p>
-      <section id="weatherDetail" class="news-estimate" hidden></section>
-      <ul class="evlist" id="evlist"></ul>
+  <aside id="side" aria-label="Map workspace">
+    <header class="side-head">
+      <div class="brand-row"><span class="brand-mark">SPX</span><span class="view-tag" id="viewLabel">Indonesia</span></div>
+      <h1>Operations map</h1>
+      <div class="head-meta"><span><b id="total">0</b> facilities</span><button id="dataHealthBtn" class="health-link" type="button">Checking feeds…</button></div>
+      <nav class="workspace-tabs" role="tablist" aria-label="Map workspace sections">
+        <button id="tabUpdates" role="tab" aria-selected="true" aria-controls="panelUpdates" data-sidebar-tab="Updates" type="button">Updates</button>
+        <button id="tabFacilities" role="tab" aria-selected="false" aria-controls="panelFacilities" data-sidebar-tab="Facilities" tabindex="-1" type="button">Facilities</button>
+        <button id="tabLayers" role="tab" aria-selected="false" aria-controls="panelLayers" data-sidebar-tab="Layers" tabindex="-1" type="button">Layers</button>
+      </nav>
+    </header>
+    <div class="side-scroll">
+      <section id="panelUpdates" role="tabpanel" aria-labelledby="tabUpdates" class="workspace-panel">
+        <div class="overview-cards" aria-label="Update categories">
+          <button type="button" data-update-scope="mapped" aria-pressed="false"><b id="confirmedCount">—</b><span>Confirmed</span></button>
+          <button type="button" data-update-scope="news" aria-pressed="false"><b id="newsCount">—</b><span>News leads</span></button>
+          <button type="button" data-update-scope="warnings" aria-pressed="false"><b id="warningCount">—</b><span>Warnings</span></button>
+        </div>
+        <p class="alert-st" id="fmStatus" role="status">Loading updates…</p>
+        <div id="fmBlock">
+          <div class="update-toolbar">
+            <label class="scope-label"><span class="sr-only">Show</span><select id="eventScope" aria-label="Show"><option value="all">All updates</option><option value="news">News leads</option><option value="mapped">Confirmed events</option><option value="warnings">Weather warnings</option></select></label>
+            <details id="updateFilters" class="filter-menu"><summary>Filters &amp; sort</summary><div class="filter-content">
+              <label>Order by<select id="eventSort"><option value="latest">Latest first</option><option value="impact">Facility exposure</option></select></label>
+              <div class="fmfilters" id="fmFilters"></div>
+            </div></details>
+          </div>
+          <div id="selectionBar" class="selection-bar" hidden><span id="selectionType"></span><button type="button" id="clearSelection">Clear selection</button></div>
+          <h2 id="selectionHeadline" class="selection-headline" hidden></h2>
+          <p id="selectionNotice" class="review-note" hidden></p>
+          <section id="weatherDetail" class="news-estimate" hidden></section>
       <section id="newsEstimate" class="news-estimate" hidden>
-        <h3>Estimated news areas</h3>
-        <p>Amber outlines show administrative areas mentioned in news. They identify areas to review; they do not predict a hazard footprint.</p>
+        <h3>Area screening</h3>
+        <p class="review-note">Estimated area from news. Impact is unverified.</p>
+        <details class="tool-disclosure"><summary>Adjust screening area</summary>
         <label>Area method <select id="newsAreaMode"><option value="boundary">Administrative boundary</option><option value="radius">Center and radius</option></select></label>
         <div id="newsBufferControl">
           <label for="newsBuffer">Buffer beyond boundary: <b id="newsBufferValue">0 km</b></label>
@@ -504,14 +650,14 @@
         <label for="newsRadius">Screening radius: <b id="newsRadiusValue">10 km</b></label>
         <input id="newsRadius" type="range" min="1" max="50" step="1" value="10" style="width:100%">
         </div>
+        </details>
         <p id="newsSummary"></p>
-        <ul id="newsPlaces"></ul>
+        <details class="tool-disclosure"><summary>Places mentioned in the report</summary><ul id="newsPlaces"></ul></details>
         <details><summary>Nearby facilities — estimated exposure</summary><ul id="newsFacilities"></ul></details>
         <button id="newsExport" type="button" class="dl">Download estimated nearby facilities</button>
-        <p>No automatic SLA changes. Match confidence concerns the location name, not the probability of impact. Counts include all station types.</p>
-        <p>Place centers: <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">GeoNames, CC BY 4.0</a>. Boundaries: <a href="https://www.geoboundaries.org/api.html" target="_blank" rel="noopener noreferrer">geoBoundaries / BPS / OCHA, CC BY 3.0 IGO</a>, regencies 2020, districts 2019. Administrative areas can include unaffected places.</p>
+        <details class="tool-disclosure"><summary>Method and attribution</summary><p>No automatic SLA changes. Match confidence concerns the location name, not the probability of impact. Counts include all station types.</p>
+        <p>Place centers: <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">GeoNames, CC BY 4.0</a>. Boundaries: <a href="https://www.geoboundaries.org/api.html" target="_blank" rel="noopener noreferrer">geoBoundaries / BPS / OCHA, CC BY 3.0 IGO</a>, regencies 2020, districts 2019. Administrative areas can include unaffected places.</p></details>
       </section>
-
       <div class="ctl" id="impCtl" hidden>
         <p class="evhead"><b id="evName"></b><span id="evMeta"></span></p>
 
@@ -551,38 +697,34 @@
 
         <details class="src" id="evNotes"></details>
       </div>
-
-      <details class="src" id="fmSources" open></details>
-    </div>
-
-    <div class="block">
-      <h2>Find a station</h2>
-      <div class="searchwrap">
-        <input id="q" type="search" autocomplete="off" placeholder="Type a station name" aria-label="Search stations by name" aria-expanded="false" aria-controls="hits" role="combobox">
-        <ul id="hits" role="listbox" aria-label="Matching stations"></ul>
-      </div>
-    </div>
-
-    <div class="block">
-      <h2>How to draw it</h2>
-      <div class="seg" role="group" aria-label="Map style">
-        <button id="mPoints" aria-pressed="true">One dot per station</button>
-        <button id="mHeat" aria-pressed="false">Density</button>
-      </div>
-    </div>
-
-    <div class="block">
-      <h2>Station type</h2>
-      <ul class="types" id="types"></ul>
-    </div>
-
-    <div class="block">
-      <h2>Islands</h2>
-      <ul class="isl" id="islands"></ul>
-    </div>
-
-    <div class="foot">
-      Regions are derived from each station's coordinates, so island totals here are geographic, not administrative.
+          <div class="list-heading"><h2>Latest updates</h2><span id="updateCount"></span></div>
+          <p class="list-hint">Select an update to show its area on the map.</p>
+          <ul class="evlist" id="evlist" aria-label="Updates"></ul>
+          <button type="button" id="updatesMore" class="secondary-button" hidden>Show more updates</button>
+        </div>
+      </section>
+      <section id="panelFacilities" role="tabpanel" aria-labelledby="tabFacilities" class="workspace-panel" hidden>
+        <div class="section-heading"><h2>Find a facility</h2><p>Search by name, or explore an island.</p></div>
+        <div class="searchwrap">
+          <input id="q" type="search" autocomplete="off" placeholder="Search a facility…" aria-label="Search stations by name" aria-expanded="false" aria-controls="hits" role="combobox">
+          <ul id="hits" role="listbox" aria-label="Matching stations"></ul>
+        </div>
+        <div class="settings-group"><h3>Facility types</h3><ul class="types" id="types"></ul></div>
+        <details class="settings-group region-disclosure" open><summary>Explore by island</summary><ul class="isl" id="islands"></ul><p class="muted-note">Island groups follow facility coordinates.</p></details>
+        <p class="muted-note" id="facilityHelp">Select a facility on the map to see its details.</p>
+      </section>
+      <section id="panelLayers" role="tabpanel" aria-labelledby="tabLayers" class="workspace-panel" hidden>
+        <div class="section-heading"><h2>Map layers</h2><p>Keep the map focused on what you need.</p></div>
+        <div class="settings-group"><h3>Facility display</h3><div class="seg" role="group" aria-label="Map style"><button id="mPoints" aria-pressed="true">Locations</button><button id="mHeat" aria-pressed="false">Density</button></div></div>
+        <div class="settings-group"><h3>Area overlays</h3>
+          <label class="layer-toggle"><span><b>News screening areas</b><small>All estimated areas · amber</small></span><input type="checkbox" id="newsZonesOn"></label>
+          <label class="layer-toggle"><span><b>BMKG weather warnings</b><small>All valid warning areas · blue</small></span><input type="checkbox" id="bmkgWarningsOn"></label>
+          <p class="muted-note">Selecting an update always shows its area. Use these switches to display all areas together.</p>
+          <p id="weatherStatus" class="muted-note"></p>
+        </div>
+        <div class="settings-group"><h3>Data &amp; sources</h3><details class="src" id="fmSources"></details></div>
+        <details class="settings-group"><summary>Reading the map</summary><p class="muted-note">Amber areas are estimates from news. Blue polygons are official BMKG warnings. Neither confirms a delivery disruption or changes SLA automatically.</p><p class="muted-note">Facility colors: teal for last mile, orange for first mile, yellow for sorting centers. Use Facilities to filter these types.</p></details>
+      </section>
     </div>
   </aside>
 
@@ -1064,7 +1206,7 @@
     },
     _drawPoints: function(ctx, px, py, pi, w, h){
       var z = this._map.getZoom();
-      var r = Math.max(1.3, Math.min(8.5, (z - 2.3) * 0.92));
+      var r = Math.max(1.3, Math.min(5.5, (z - 2.3) * 0.65));
       var halo = z >= 9;
       ctx.globalCompositeOperation = 'source-over';
 
@@ -1080,7 +1222,7 @@
         }
         for (var g = 0; g < bands().length; g++) groups.push({c:bandColor(g), a:0.95, r:r, k:g});
       } else {
-        groups = TYPE.map(function(t, g){ return {c:t.c, a:z < 7 ? 0.8 : 0.92, r:r, t:g}; });
+        groups = TYPE.map(function(t, g){ return {c:t.c, a:z < 7 ? 0.72 : 0.82, r:r, t:g}; });
       }
 
       for (var q = 0; q < groups.length; q++) {
@@ -1353,7 +1495,7 @@
     newsZones.clearLayers(); newsScreeningRows = [];
     var panel = document.getElementById('newsEstimate'); panel.hidden = true;
     var scope = document.getElementById('eventScope').value;
-    if (!document.getElementById('newsZonesOn').checked || scope === 'mapped' || scope === 'warnings' ||
+    if ((!EV && !document.getElementById('newsZonesOn').checked) || scope === 'mapped' || scope === 'warnings' ||
         (EV && EV.status !== 'unverified')) return;
     var reports = EVENTS.filter(function(e){
       return e.status === 'unverified' && HAZF[e._fk] !== false && (!EV || e === EV);
@@ -1487,7 +1629,7 @@
     document.getElementById('weatherStatus').textContent=active.length + ' active BMKG weather warnings' +
       (stale ? ' · feed incomplete or overdue; coverage may be missing.' : ' · blue polygons, valid only until their expiry.');
     var scope=document.getElementById('eventScope').value;
-    if (!document.getElementById('bmkgWarningsOn').checked || scope==='news' || scope==='mapped') return;
+    if ((!EV && !document.getElementById('bmkgWarningsOn').checked) || scope==='news' || scope==='mapped') return;
     var shown=active.filter(function(e){return HAZF[e._fk]!==false && (!EV || EV===e);});
     shown.forEach(function(ev){
       var pending=Date.parse(ev.effective)>Date.now();
@@ -1500,13 +1642,18 @@
       if (EV===ev) {
         detail.hidden=false;
         var title=document.createElement('h3'); title.textContent='BMKG weather warning'; detail.appendChild(title);
-        [ev.name, 'Issued '+wibTime(ev.issued_at), (pending?'Effective from ':'Valid from ')+wibTime(ev.effective)+' until '+wibTime(ev.expires),
-         'Severity: '+ev.severity+' · certainty: '+ev.certainty,
-         (ev.warning_exposure || {}).facility_count+' facilities within the warning polygons; disruption is unconfirmed.',
-         ev.cached?'Cached warning retained during a feed issue; expires automatically.':'Official BMKG CAP geometry.',
-         'No automatic SLA changes. Data: BMKG.'].forEach(function(text){
+        [ev.name, (pending?'Starts ':'Valid ')+wibTime(ev.effective)+' until '+wibTime(ev.expires),
+         (ev.warning_exposure || {}).facility_count+' facilities within the warning area. Disruption is unconfirmed.',
+         ev.cached?'Cached warning · no automatic SLA changes.':'No automatic SLA changes.'].forEach(function(text){
           var row=document.createElement('p');row.textContent=text;detail.appendChild(row);
         });
+        var info=document.createElement('details');info.className='tool-disclosure';
+        var summary=document.createElement('summary');summary.textContent='Warning details';info.appendChild(summary);
+        ['Issued '+wibTime(ev.issued_at),'Severity: '+ev.severity+' · certainty: '+ev.certainty,
+         ev.cached?'Retained during a feed issue; expires automatically.':'Official BMKG CAP geometry.'].forEach(function(text){
+          var row=document.createElement('p');row.textContent=text;info.appendChild(row);
+        });
+        detail.appendChild(info);
         if(sourceLink(ev.source_url)){
           var link=document.createElement('a');link.href=sourceLink(ev.source_url);link.textContent='Open BMKG warning';
           link.target='_blank';link.rel='noopener noreferrer';detail.appendChild(link);
@@ -1795,6 +1942,7 @@
       var cb = document.createElement('input');
       cb.type = 'checkbox'; cb.checked = true;
       cb.addEventListener('change', function(){
+        updateLimit=4;
         HAZF[c[0]] = this.checked;
         lb.className = this.checked ? '' : 'off';
         renderList();
@@ -1818,12 +1966,56 @@
     } catch (e) { return null; }
   }
 
-  document.getElementById('eventScope').addEventListener('change', renderList);
-  document.getElementById('eventSort').addEventListener('change', renderList);
+
+  var updateLimit = 4;
+  function switchSidebar(name, focus){
+    var tabs=Array.from(document.querySelectorAll('[data-sidebar-tab]'));
+    tabs.forEach(function(tab){
+      var active=tab.dataset.sidebarTab===name;
+      tab.setAttribute('aria-selected',String(active)); tab.tabIndex=active?0:-1;
+      document.getElementById(tab.getAttribute('aria-controls')).hidden=!active;
+      if(active && focus)tab.focus();
+    });
+  }
+  function clearEventSelection(){
+    EV=null; IMP.on=false; airHit=null;
+    ctlEl.hidden=true; airBlock.hidden=true; hz.remove(); map.closePopup();
+    layer.redraw();
+  }
+  function changeUpdateScope(){
+    updateLimit=4; clearEventSelection(); renderList();
+  }
+  function revealSelection(){
+    switchSidebar('Updates',false);
+    updateSidebarSummary();
+    document.getElementById('selectionBar').scrollIntoView({block:'start',behavior:'smooth'});
+  }
+  function updateSidebarSummary(){
+    var confirmed=document.getElementById('confirmedCount');
+    if(!confirmed)return;
+    confirmed.textContent=EVENTS.filter(function(e){return e.status!=='unverified'&&e.assessment!=='official_warning';}).length;
+    document.getElementById('newsCount').textContent=EVENTS.filter(function(e){return e.status==='unverified';}).length;
+    document.getElementById('warningCount').textContent=EVENTS.filter(isActiveWarning).length;
+    var scope=document.getElementById('eventScope').value;
+    document.querySelectorAll('[data-update-scope]').forEach(function(b){
+      b.setAttribute('aria-pressed',String(b.dataset.updateScope===scope));
+    });
+    var bar=document.getElementById('selectionBar');bar.hidden=!EV;
+    var headline=document.getElementById('selectionHeadline');headline.hidden=!(EV && EV.status==='unverified');
+    headline.textContent=EV?EV.name:'';
+    document.getElementById('selectionType').textContent=!EV?'':EV.assessment==='official_warning'
+      ?'OFFICIAL WEATHER WARNING':EV.status==='unverified'?'NEWS · IMPACT UNVERIFIED':'EVENT EXPOSURE';
+    var note=document.getElementById('selectionNotice');
+    note.hidden=!(EV && EV.status==='unverified' && !(EV.news_estimate && EV.news_estimate.points.length));
+    note.textContent='No unambiguous location is available for this report. Open its source below to review it.';
+  }
+  document.getElementById('eventScope').addEventListener('change', changeUpdateScope);
+  document.getElementById('eventSort').addEventListener('change',function(){updateLimit=4;renderList();});
 
   function renderList(){
     drawNewsZones(false);
     drawWeatherWarnings(false);
+    updateSidebarSummary();
     listEl.innerHTML = '';
     var scope = document.getElementById('eventScope').value;
     var shown = EVENTS.filter(function(e){
@@ -1836,11 +2028,14 @@
       return (byImpact ? (b._n || 0) - (a._n || 0) : reportTime(b) - reportTime(a)) ||
         reportTime(b) - reportTime(a);
     });
+    var count=document.getElementById('updateCount'), more=document.getElementById('updatesMore');
+    if(count)count.textContent=Math.min(updateLimit,shown.length)+' of '+shown.length;
+    if(more){more.hidden=shown.length<=updateLimit;more.textContent='Show more updates';}
     if (!shown.length) {
-      listEl.innerHTML = '<li class="evempty">No events match the selected filters.</li>';
+      listEl.innerHTML = '<li class="evempty">No updates match. Try another category or enable more hazard types in Filters.</li>';
       return;
     }
-    shown.forEach(function(ev){
+    shown.slice(0,updateLimit).forEach(function(ev){
       var ix = EVENTS.indexOf(ev);
       var li = document.createElement('li'), b = document.createElement('button');
       b.type = 'button';
@@ -1852,22 +2047,22 @@
       b.innerHTML =
         '<span class="hz" style="background:' + (HAZC[ev.hazard] || HAZC.other) + '"></span>' +
         '<span class="t"></span><span class="c"></span>';
-      b.querySelector('.t').appendChild(document.createTextNode(ev.name));
+      var title=document.createElement('span'); title.className='ev-title'; title.textContent=ev.name;
+      b.querySelector('.t').appendChild(title); b.title=ev.name;
       var em = document.createElement('em');
       var stamp = reportTime(ev);
       var dateLabel = stamp ? new Date(stamp).toLocaleString('en-GB', {
         timeZone:'Asia/Jakarta', day:'2-digit', month:'short', year:'numeric',
         hour:'2-digit', minute:'2-digit', hour12:false
       }) + ' WIB' : when;
-      em.textContent = [ev.severity, ev.source,
-                        (ev.published_at ? 'Published ' : ev.discovered_at ? 'Discovered ' : '') + dateLabel,
-                        ev.cached ? 'cached source record' : '',
-                        ev.assessment === 'official_warning' ? 'warning expires ' + wibTime(ev.expires) : '',
-                        ev.news_estimate && ev.news_estimate.points.length ? ev.news_estimate.points.length + ' estimated locations' : '',
-                        ev.status === 'unverified' ? 'location / impact unverified' : ''
-                       ].filter(Boolean).join(' \u00b7 ');
+      var category=ev.assessment==='official_warning'?'Weather warning':ev.status==='unverified'?'News lead':'Confirmed event';
+      em.textContent = [category,ev.source,
+        (ev.published_at?'Published ':ev.discovered_at?'Discovered ':'')+dateLabel,
+        ev.cached?'Cached':''
+      ].filter(Boolean).join(' · ');
       b.querySelector('.t').appendChild(em);
-      b.querySelector('.c').textContent = ev._n == null ? '' : fmt(ev._n) + (ev.assessment === 'official_warning' ? ' review' : '');
+      b.querySelector('.c').textContent = ev._n == null || ev.status==='unverified' ? '' : fmt(ev._n);
+      b.querySelector('.c').title=ev.assessment==='official_warning'?'Facilities inside warning area; disruption unconfirmed':'Facilities in modeled exposure area';
       b.addEventListener('click', function(){ selectEvent(ix); });
       li.appendChild(b);
       var report = sourceLink(ev.source_url);
@@ -1893,19 +2088,18 @@
     EV = ev; IMP.on = true;
     if (ev.assessment === 'official_warning') {
       IMP.on = false; ctlEl.hidden = true; airBlock.hidden = true; airHit = null; hz.remove();
-      document.getElementById('bmkgWarningsOn').checked = true;
+      revealSelection();
       renderList(); drawWeatherWarnings(true); layer.redraw(); return;
     }
     if (ev.status === 'unverified' && ev.news_estimate && ev.news_estimate.points.length) {
       ctlEl.hidden = true; airBlock.hidden = true; airHit = null; hz.remove(); IMP.on = false;
-      document.getElementById('newsZonesOn').checked = true;
+      revealSelection();
       renderList(); drawNewsZones(true); layer.redraw();
       return;
     }
     if ((ev.lat === null || ev.lat === undefined) && !(ev.air && ev.air.airports)) {
       ctlEl.hidden = true; airBlock.hidden = true; airHit = null; hz.remove(); IMP.on = false;
-      statusEl.textContent = 'This lead has no coordinates, so it cannot be placed '
-        + 'on the map or counted. No unambiguous location could be estimated; open the source to review it.';
+      revealSelection();
       renderList(); layer.redraw(); return;
     }
 
@@ -1953,6 +2147,7 @@
     }
 
     ctlEl.hidden = false;
+    revealSelection();
     buildBandRows(); setupAir(); buildHazard(); hz.addTo(map);
     tallyImpact(); layer.redraw(); renderList();
 
@@ -2034,23 +2229,36 @@
 
   /* ---------------- load events.json ---------------- */
   function renderSources(payload){
-    var el = document.getElementById('fmSources');
-    el.innerHTML = '<summary>Source freshness and attribution</summary>';
-    (payload.source_health || []).forEach(function(h){
-      var p = document.createElement('p');
-      p.textContent = h.source + ': ' + h.state +
-        (h.state === 'ok' ? ' (' + h.events + ')' : '') +
-        (h.error ? ' \u2014 ' + h.error : '') +
-        (h.retained_news ? ' (' + h.retained_news + ' cached reports retained)' : '') +
-        (h.retained_warnings ? ' (' + h.retained_warnings + ' cached warnings retained)' : '') +
-        ' · checked ' + wibTime(h.last_checked_at) + ' · last complete success ' + wibTime(h.last_success_at) +
-        (h.last_success_at ? ' (' + Math.max(0,Math.floor((Date.now()-Date.parse(h.last_success_at))/60000)) + ' min ago)' : '') +
-        (h.warnings && h.warnings.length ? ' \u2014 ' + h.warnings.join('; ') : '');
-      el.appendChild(p);
+    var el=document.getElementById('fmSources');
+    el.innerHTML='<summary>Feed status &amp; attribution</summary>';
+    var names={bmkg_quake:'BMKG earthquakes',bmkg_cap:'BMKG weather warnings',gdacs:'GDACS',
+      petabencana_flood:'PetaBencana floods',magma_volcano:'PVMBG / MAGMA',bnpb_news:'BNPB news',
+      gdelt_news:'GDELT news',overrides:'Operations overrides'};
+    var states={ok:'Complete',degraded:'Partial',failed:'Unavailable',disabled:'Off'};
+    (payload.source_health||[]).forEach(function(h){
+      var row=document.createElement('div');row.className='source-row';
+      var label=document.createElement('strong');label.textContent=names[h.source]||h.source;
+      var state=document.createElement('span');state.className='source-state '+(h.state==='ok'?'ok':'');
+      state.textContent=states[h.state]||h.state;label.appendChild(state);row.appendChild(label);
+      var success=document.createElement('p');success.textContent='Last complete success: '+wibTime(h.last_success_at);row.appendChild(success);
+      var details=document.createElement('details'),summary=document.createElement('summary');
+      summary.textContent='Check details';details.appendChild(summary);
+      var checked=document.createElement('p');checked.textContent='Last checked: '+wibTime(h.last_checked_at);details.appendChild(checked);
+      var messages=[h.error].concat(h.warnings||[]).filter(Boolean);
+      if(h.retained_news)messages.push(h.retained_news+' cached news reports retained with original dates.');
+      if(h.retained_warnings)messages.push(h.retained_warnings+' unexpired cached warnings retained.');
+      messages.forEach(function(message){var p=document.createElement('p');p.textContent=message;details.appendChild(p);});
+      row.appendChild(details);el.appendChild(row);
     });
-    (payload.attribution || []).forEach(function(a){
-      var p = document.createElement('p'); p.textContent = a; el.appendChild(p);
-    });
+    var attribution=document.createElement('details'),heading=document.createElement('summary');
+    heading.textContent='Attribution';attribution.appendChild(heading);
+    (payload.attribution||[]).forEach(function(text){var p=document.createElement('p');p.textContent=text;attribution.appendChild(p);});
+    el.appendChild(attribution);
+    var issues=(payload.source_health||[]).filter(function(h){return h.state==='degraded'||h.state==='failed';}).length;
+    var health=document.getElementById('dataHealthBtn');
+    var overdue=Date.now()-Date.parse(payload.generated_at)>45*60000;
+    health.textContent=overdue?'Snapshot overdue':issues?issues+' feeds incomplete':'Feeds up to date';
+    health.dataset.state=overdue||issues?'incomplete':'ok';
   }
 
   // How old events.json may get before we stop trusting it. The ingest job is
@@ -2070,32 +2278,31 @@
       b.textContent = 'Data is ' + (mins < 120 ? mins + ' minutes' : Math.round(mins / 60) + ' hours') + ' old';
       statusEl.appendChild(b);
       statusEl.appendChild(document.createTextNode(
-        'Scheduled refreshes run about every 30 minutes; this snapshot is overdue. ' +
-        'What you see below is the last good snapshot \u2014 do not treat it as current. ' +
-        'Check the ingest log before acting on any of it.'));
+        'Updates are overdue. This saved snapshot may be outdated; review source freshness before acting.'));
       return mins;
     }
     return mins;
   }
 
+  function updateSnapshotStatus(payload){
+    if(fetchFails)return;
+    var mins=showAge(payload);
+    if(mins>=STALE_MIN){var health=document.getElementById('dataHealthBtn');health.textContent='Snapshot overdue';health.dataset.state='incomplete';}
+    if(mins==null || mins<STALE_MIN)statusEl.textContent=mins==null?'Snapshot time unavailable':
+      'Snapshot updated '+(mins<1?'just now':mins<60?mins+' min ago':Math.floor(mins/60)+'h ago')+' · Times in WIB';
+  }
+
   function ingest(payload){
     var evs = (payload.events || []).filter(function(e){ return e && e.impact; });
     EVENTS = evs;
+    visibleWarnings=EVENTS.filter(isActiveWarning).length;
     EVENTS.forEach(function(e){
       e._n = (e.lat === null || e.lat === undefined) ? null : quickCount(e);
     });
     EVENTS.sort(function(a, b){ return (b._n || 0) - (a._n || 0); });
 
     lastGood = payload;
-    var mins = showAge(payload);
-    if (mins == null || mins < STALE_MIN) {
-      var failed = (payload.source_health || []).filter(function(h){return h.state==='failed'||h.state==='degraded';});
-      var ver=EVENTS.filter(function(e){return e.status!=='unverified' && e.assessment!=='official_warning';}).length;
-      var leads=EVENTS.filter(function(e){return e.status==='unverified';}).length;
-      statusEl.textContent=ver+' confirmed events · '+leads+' unverified news leads · snapshot '+
-        (mins==null?'age unknown':mins+' min old')+'. '+
-        (failed.length?failed.length+' feeds incomplete. See source freshness.':'Select an update to review its area.');
-    }
+    updateSnapshotStatus(payload);
     renderSources(payload);
     buildFilters();
     renderList();
@@ -2159,12 +2366,48 @@
       'or run build_map.py to embed the events.';
   }
 
+  var visibleWarnings=0;
   setInterval(function(){
-    if (EV && EV.assessment==='official_warning' && !isActiveWarning(EV)) {
-      EV=null; IMP.on=false; ctlEl.hidden=true; airHit=null; layer.redraw();
+    var warningCount=EVENTS.filter(isActiveWarning).length;
+    if (EV && EV.assessment==='official_warning' && !isActiveWarning(EV))clearEventSelection();
+    if(lastGood){
+      if(warningCount!==visibleWarnings){renderList();visibleWarnings=warningCount;}
+      else updateSidebarSummary();
+      updateSnapshotStatus(lastGood);
     }
-    if (lastGood) {renderList(); renderSources(lastGood); showAge(lastGood);}
   },30000);
+  document.querySelectorAll('[data-sidebar-tab]').forEach(function(tab,index,tabs){
+    tab.addEventListener('click',function(){switchSidebar(tab.dataset.sidebarTab,false);});
+    tab.addEventListener('keydown',function(event){
+      var target=event.key==='ArrowRight'?(index+1)%tabs.length:event.key==='ArrowLeft'?(index+tabs.length-1)%tabs.length:
+        event.key==='Home'?0:event.key==='End'?tabs.length-1:null;
+      if(target!==null){event.preventDefault();switchSidebar(tabs[target].dataset.sidebarTab,true);}
+    });
+  });
+  document.querySelectorAll('[data-update-scope]').forEach(function(button){
+    button.addEventListener('click',function(){
+      var select=document.getElementById('eventScope');
+      select.value=select.value===button.dataset.updateScope?'all':button.dataset.updateScope;
+      changeUpdateScope();
+    });
+  });
+  document.getElementById('clearSelection').addEventListener('click',function(){clearEventSelection();renderList();});
+  document.getElementById('updatesMore').addEventListener('click',function(){updateLimit+=4;renderList();});
+  document.getElementById('dataHealthBtn').addEventListener('click',function(){
+    switchSidebar('Layers',false);var sources=document.getElementById('fmSources');sources.open=true;
+    sources.scrollIntoView({block:'start',behavior:'smooth'});
+  });
+  document.addEventListener('pointerdown',function(event){
+    var filters=document.getElementById('updateFilters');
+    if(filters.open && !filters.contains(event.target))filters.open=false;
+  });
+  document.addEventListener('keydown',function(event){
+    var filters=document.getElementById('updateFilters');
+    if(event.key==='Escape' && filters.open){filters.open=false;filters.querySelector('summary').focus();}
+  });
+  document.getElementById('viewLabel').textContent=NET && NET.length?'SOC map':'General map';
+  if(NET && NET.length)document.getElementById('facilityHelp').textContent='Select a facility to trace its network. Teal lines are outbound; dashed orange lines are inbound.';
+
   loadEvents();
   if (location.protocol.indexOf('http') === 0) setInterval(loadEvents, 5 * 60 * 1000);
 

@@ -97,72 +97,41 @@ VIEW_NAME = "General Map" if VIEW == "general" else "SOC Map"
 
 st.markdown("""
 <style>
-    /* remove all padding and gaps */
-    .block-container { padding: 0 !important; margin: 0 !important; max-width: 100% !important; }
-    footer, header { visibility: hidden; height: 0; }
-    #MainMenu { visibility: hidden; }
-    .stAppDeployButton { display: none; }
-    section[data-testid="stSidebar"] + div { padding: 0 !important; }
-    .stMainBlockContainer { padding: 0 !important; }
-    iframe { width: 100%; min-height: 100vh; border: none; display: block; margin: -1rem 0; }
-    .stElementContainer, [data-testid="element-container"] { padding: 0 !important; margin: 0 !important; }
+    .block-container, .stMainBlockContainer {
+        padding: 0 !important; margin: 0 !important; max-width: 100% !important;
+    }
+    footer, header, #MainMenu, .stAppDeployButton { display: none !important; }
+    [data-testid="stSidebar"] { display: none !important; }
+    .stMain { overflow: hidden; background: #0c1723; }
+    .stElementContainer, [data-testid="element-container"] {
+        padding: 0 !important; margin: 0 !important;
+    }
     [data-testid="stVerticalBlock"] { gap: 0 !important; }
-    .stApp > header { display: none; }
-
-    /* sidebar dark theme */
-    [data-testid="stSidebar"] { background: #0b1520; border-right: 1px solid #1a2a3a; }
-    [data-testid="stSidebar"] [data-testid="stSidebarContent"] { padding-top: 1rem; }
-
-    [data-testid="stSidebar"] h3 { color: #f0f4f8 !important; font-size: 17px !important; }
-    [data-testid="stSidebar"] p,
-    [data-testid="stSidebar"] span,
-    [data-testid="stSidebar"] label,
-    [data-testid="stSidebar"] .stMarkdown,
-    [data-testid="stSidebar"] .stCaption p,
-    [data-testid="stSidebar"] [data-testid="stCaptionContainer"] p { color: #c0d0e0 !important; }
-
-    [data-testid="stSidebar"] [data-testid="stCaptionContainer"] p {
-        color: #90a8c0 !important; font-size: 13px !important;
+    [data-testid="stHorizontalBlock"] {
+        min-height: 48px; height: 48px; align-items: center;
+        flex-wrap: nowrap !important; padding: 5px 16px;
+        background: #101d2b; border-bottom: 1px solid #283a4b;
     }
-
-    [data-testid="stSidebar"] .stCheckbox label p { color: #d8e4f0 !important; font-size: 13.5px !important; }
-    [data-testid="stSidebar"] .stCheckbox { margin-bottom: -8px; }
-
-    [data-testid="stSidebar"] .stExpander summary span { color: #90a8c0 !important; }
-    [data-testid="stSidebar"] .stExpander div p { color: #90a8c0 !important; }
-
-    .filter-head { color: #7090a8 !important; font-size: 11px; text-transform: uppercase;
-                   letter-spacing: 0.06em; margin: 6px 0 6px; }
-
-    .ev-item { padding: 7px 0; border-bottom: 1px solid #182838; }
-    .ev-name { font-weight: 600; font-size: 13.5px; color: #e0eaf4; }
-    .ev-meta { color: #7892a8; font-size: 12px; }
-    .ev-count { float: right; font-family: monospace; color: #88aabb; font-size: 13px; }
-    .ev-unverified .ev-name { color: #707070; }
-    .ev-empty { color: #506878; font-size: 13px; padding: 10px 0; }
-
-    .feed-ok { color: #4caf80; }
-    .feed-fail { color: #e05555; }
-    .feed-off { color: #505050; }
-
-    .team-tag { color: #6f8ba3; font-size: 11.5px; letter-spacing: 0.03em; }
-
-    [data-testid="stSidebar"] .stDownloadButton button {
-        background: #152535 !important; border: 1px solid #2a4055 !important;
-        color: #c0d8e8 !important;
+    [data-testid="stHorizontalBlock"] [data-testid="stColumn"] {
+        min-width: 0 !important;
     }
-    [data-testid="stSidebar"] .stDownloadButton button:hover {
-        background: #1a3045 !important; border-color: #3a5a75 !important;
+    [data-testid="stHorizontalBlock"] [data-testid="stCaptionContainer"] p {
+        color: #a5b8c8; font-size: 11px; margin: 0;
+    }
+    [data-testid="stPopover"] { display: flex; justify-content: flex-end; }
+    [data-testid="stPopover"] > button {
+        min-height: 30px; padding: 3px 12px; border: 1px solid #344b60;
+        background: #172839; color: #dce8f1; border-radius: 6px;
+    }
+    [data-testid="stPopover"] > button p { font-size: 12px; }
+    [data-testid="stPopoverBody"] { background: #122132; color: #dce8f1; }
+    [data-testid="stPopoverBody"] [data-testid="stVerticalBlock"] { gap: 10px !important; }
+    iframe[title="st.iframe"] {
+        display: block; width: 100%; height: calc(100dvh - 48px) !important;
+        min-height: 0 !important; border: none; margin: 0;
     }
 </style>
 """, unsafe_allow_html=True)
-
-HAZARD_COLORS = {
-    "earthquake": "#e05555", "volcano": "#ff5b2b", "flood": "#3d9bff",
-    "cyclone": "#8f6bff", "wildfire": "#ff9a1f", "weather": "#4ccfc4",
-    "airport_closure": "#5b8fd6", "unrest": "#ff6fae", "other": "#8fa6b8",
-}
-ALERT_COLORS = {"red": "#e05555", "orange": "#e08a30", "green": "#4caf80"}
 
 
 def ensure_deps():
@@ -266,221 +235,36 @@ def visible_event(ev):
     return active_warning(ev)
 
 
-def classify_event(ev: dict) -> str:
-    hazard = ev.get("hazard", "other")
-    if hazard == "volcano":
-        sev = (ev.get("severity") or ev.get("alert") or "").lower()
-        if "awas" in sev or "level iv" in sev:
-            return "volcano_iv"
-        elif "siaga" in sev or "level iii" in sev:
-            return "volcano_iii"
-        elif "waspada" in sev or "level ii" in sev:
-            return "volcano_ii"
-        elif "red" in str(ev.get("alert", "")):
-            return "volcano_iv"
-        elif "orange" in str(ev.get("alert", "")):
-            return "volcano_iii"
-        else:
-            return "volcano_ii"
-    return hazard
+# Keep account controls outside the map; the map owns all filters and analysis.
+ts = time_bucket()
+with st.spinner("Updating the map…"):
+    report = cached_ingest(ts)
+events = load_events()
 
-
-FILTER_CONFIG = [
-    ("gempa_bumi",  "Gempa Bumi",                      "earthquake",      "#e05555"),
-    ("volcano_iv",  "Gunung Api — Level IV (Awas)",     "volcano_iv",      "#ff2020"),
-    ("volcano_iii", "Gunung Api — Level III (Siaga)",   "volcano_iii",     "#ff5b2b"),
-    ("volcano_ii",  "Gunung Api — Level II (Waspada)",  "volcano_ii",      "#ff9a1f"),
-    ("banjir",      "Banjir",                           "flood",           "#3d9bff"),
-    ("siklon",      "Siklon Tropis",                    "cyclone",         "#8f6bff"),
-    ("kebakaran",   "Kebakaran Hutan",                  "wildfire",        "#ff9a1f"),
-    ("airport",     "Airport Closure",                  "airport_closure", "#5b8fd6"),
-    ("cuaca",       "Cuaca Ekstrem",                    "weather",         "#4ccfc4"),
-    ("kerusuhan",   "Kerusuhan / Unrest",               "unrest",          "#ff6fae"),
-    ("lainnya",     "Lainnya",                          "other",           "#8fa6b8"),
-]
-
-CAT_TO_KEY = {
-    "earthquake": "gempa_bumi", "volcano_iv": "volcano_iv", "volcano_iii": "volcano_iii",
-    "volcano_ii": "volcano_ii", "flood": "banjir", "cyclone": "siklon",
-    "wildfire": "kebakaran", "airport_closure": "airport", "weather": "cuaca",
-    "unrest": "kerusuhan", "other": "lainnya",
-}
-
-
-# ---------------------------------------------------------------------------
-# sidebar
-# ---------------------------------------------------------------------------
-
-with st.sidebar:
-    st.markdown(f"### SPX BCP - {VIEW_NAME}")
-    st.markdown(f'<p class="team-tag">Signed in as {TEAM}</p>', unsafe_allow_html=True)
-
-    c1, c2 = st.columns(2)
-    if c1.button("Refresh", use_container_width=True):
+identity, account = st.columns([4, 1])
+identity.caption(f"{VIEW_NAME} · Indonesia")
+with account.popover("Account"):
+    st.markdown(f"**{VIEW_NAME}**")
+    st.caption(f"Signed in as {TEAM}")
+    if events:
+        st.caption("Snapshot: " + source_time(events.get("generated_at")))
+    if st.button("Refresh data", use_container_width=True):
         st.cache_data.clear()
         st.rerun()
-    if c2.button("Sign out", use_container_width=True):
-        for k in ("team", "map_view"):
-            st.session_state.pop(k, None)
-        st.rerun()
-
-    ts = time_bucket()
-    with st.spinner("Fetching hazards and Indonesia news..."):
-        report = cached_ingest(ts)
-
+    csv_data = load_csv()
+    if csv_data:
+        st.download_button("Download impact CSV", data=csv_data,
+                           file_name="spx-impacted-facilities.csv", mime="text/csv",
+                           use_container_width=True)
     if not report["ok"]:
-        st.warning(f"Ingestion issue: {report['stderr'][:120]}")
-        with st.expander("Details"):
+        st.warning("The latest refresh could not finish. Check source freshness in Layers.")
+        with st.expander("Refresh diagnostics"):
             st.code(report["stderr"] or report["stdout"] or "No output", language="text")
-
-    events = load_events()
-    if events:
-        gen = events.get("generated_at", "")
-        n = events.get("event_count", 0)
-        v = events.get("verified_event_count", 0)
-
-        try:
-            dt = datetime.fromisoformat(gen.replace("Z", "+00:00"))
-            mins = int((datetime.now(timezone.utc) - dt).total_seconds() / 60)
-            age = f"{mins} min ago" if mins < 60 else f"{mins // 60}h ago"
-        except (ValueError, AttributeError):
-            age = "just now"
-
-        failed = [h for h in events.get("source_health", [])
-                  if h["state"] in ("failed", "degraded")]
-        leads = sum(e.get("status") == "unverified" for e in events.get("events", []))
-        warnings = sum(e.get("assessment") == "official_warning" and visible_event(e)
-                       for e in events.get("events", []))
-        status = f"{v} confirmed events, {leads} news leads, {warnings} active weather warnings"
-        status += f" — updated {age}"
-        if failed:
-            status += f". {len(failed)} feed{'s' if len(failed) != 1 else ''} incomplete."
-        st.caption(status)
-
-        with st.expander("Feed status"):
-            for h in events.get("source_health", []):
-                if h["state"] == "ok":
-                    cls, icon = "feed-ok", "●"
-                elif h["state"] == "disabled":
-                    cls, icon = "feed-off", "○"
-                else:
-                    cls, icon = "feed-fail", "✕"
-                detail = f" ({h['events']})" if h["state"] == "ok" else ""
-                if h.get("error"):
-                    detail += f" — {h['error'][:60]}"
-                if h.get("warnings"):
-                    detail += " — " + "; ".join(h["warnings"])[:160]
-                if h.get("retained_news"):
-                    detail += f" — {h['retained_news']} cached reports retained"
-                if h.get("retained_warnings"):
-                    detail += f" — {h['retained_warnings']} cached warnings retained"
-                st.markdown(f"<span class='{cls}'>{icon}</span> {escape(h['source'] + detail)}",
-                            unsafe_allow_html=True)
-                st.caption("Checked: " + source_time(h.get("last_checked_at")) +
-                           " · Last complete success: " + source_time(h.get("last_success_at")))
-
-        st.markdown("---")
-
-        all_events = [ev for ev in events.get("events", []) if visible_event(ev)]
-        for ev in all_events:
-            ev["_category"] = classify_event(ev)
-            ev["_filter_key"] = CAT_TO_KEY.get(ev["_category"], "lainnya")
-
-        counts = {}
-        for ev in all_events:
-            counts[ev["_filter_key"]] = counts.get(ev["_filter_key"], 0) + 1
-
-        active_filters = [f for f in FILTER_CONFIG if f[0] in counts]
-
-        if active_filters:
-            st.markdown('<p class="filter-head">Filter by type</p>', unsafe_allow_html=True)
-            for fkey, label, cat, color in active_filters:
-                c = counts.get(fkey, 0)
-                st.checkbox(f"{label} ({c})", value=True, key=f"filter_{fkey}")
-
-        active_keys = set()
-        for fkey, _, _, _ in FILTER_CONFIG:
-            if st.session_state.get(f"filter_{fkey}", True):
-                active_keys.add(fkey)
-
-        filtered = [ev for ev in all_events if ev["_filter_key"] in active_keys]
-
-        st.markdown("---")
-
-        if not filtered:
-            st.markdown('<div class="ev-empty">No events match the selected filters.</div>',
-                        unsafe_allow_html=True)
-        else:
-            for ev in filtered:
-                imp = ev.get("impact") or {}
-                air = ev.get("air") or {}
-                total = (imp.get("total", 0) + air.get("direct_count", 0)
-                         + air.get("via_hub_count", 0))
-
-                color = HAZARD_COLORS.get(ev.get("hazard", "other"), "#666")
-                for fk, _, _, fc in FILTER_CONFIG:
-                    if fk == ev["_filter_key"]:
-                        color = fc
-                        break
-
-                unv = ev.get("status") == "unverified"
-                cls = "ev-item ev-unverified" if unv else "ev-item"
-                name = escape(ev.get("name", "Unknown")[:58])
-                meta_parts = [ev.get("severity", ""), ev.get("source", "")]
-                if unv:
-                    meta_parts.append("unverified")
-                if ev.get("assessment") == "official_warning":
-                    total = (ev.get("warning_exposure") or {}).get("facility_count", 0)
-                    meta_parts.append("warning exposure for review; expires " + source_time(ev.get("expires")))
-                if ev.get("cached"):
-                    meta_parts.append("cached source record")
-                estimate_count = len((ev.get("news_estimate") or {}).get("points", []))
-                if estimate_count:
-                    meta_parts.append(f"{estimate_count} estimated locations")
-                meta = escape(" · ".join(p for p in meta_parts if p))
-
-                st.markdown(
-                    f'<div class="{cls}">'
-                    f'<span class="ev-count">{total:,}</span>'
-                    f'<span style="color:{color}">●</span> '
-                    f'<span class="ev-name">{name}</span><br>'
-                    f'<span class="ev-meta">{meta}</span>'
-                    f'</div>', unsafe_allow_html=True)
-
-        st.markdown("---")
-
-        csv_data = load_csv()
-        if csv_data:
-            stamp = datetime.now().strftime("%Y-%m-%d")
-            st.download_button("Download impacted facilities (.csv)", data=csv_data,
-                               file_name=f"spx-impacted-facilities-{stamp}.csv",
-                               mime="text/csv", use_container_width=True)
-
-        with st.expander("Attribution"):
-            for a in events.get("attribution", []):
-                st.caption(a)
-    else:
-        st.info("No event data yet. Click Refresh or wait for the first fetch.")
-
-    st.markdown("---")
-    st.caption("Select an event on the map to view the impact zone and export affected facilities.")
-
-# ---------------------------------------------------------------------------
-# map
-# ---------------------------------------------------------------------------
-
-if VIEW == "soc":
-    if (HERE / "network.csv").exists():
-        st.caption(
-            "SOC Map - click any facility to trace its network chain. "
-            "Teal lines are outbound, orange dashed lines are inbound. "
-            "Manpower and capacity layers are still in development."
-        )
-    else:
-        st.info(
-            "SOC Map: network.csv not found in the repo, so the network chain "
-            "is unavailable. The force majeure base map is shown below."
-        )
+    st.caption("Use Updates to review events, Facilities to search, and Layers for overlays and source freshness.")
+    if st.button("Sign out", use_container_width=True):
+        for key in ("team", "map_view"):
+            st.session_state.pop(key, None)
+        st.rerun()
 
 map_revision = tuple((name, (HERE / name).stat().st_mtime_ns)
                      for name in ("events.json", "map_template.html", "build_map.py", "turf.min.js")

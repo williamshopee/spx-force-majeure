@@ -1,5 +1,25 @@
 # SPX force-majeure watch
 
+## Map workspace
+
+The sidebar has three task sections. **Updates** shows category counts, four
+recent updates and a **Show more** button. **Filters & sort** contains hazard
+filters and ordering. Select an update to show its area and review controls;
+clear the selection to return to the overview. News area controls, evidence
+and attribution expand when needed. **Facilities** contains name search,
+facility types and island navigation. **Layers** contains point/density mode,
+optional overlays and source freshness. The feed-status link in the header
+opens source details directly.
+
+Area overlays start off for a calmer overview; selecting a news item or BMKG
+warning shows that item's area automatically. Layers can display all areas
+together. The map uses smaller facility dots at regional zooms. Each workspace
+panel has one scroll area, with keyboard-accessible tabs and a stacked layout
+on small screens. Account, manual refresh, global impact download and sign-out
+are in the compact account menu above the map. The previous duplicate
+Streamlit event list and filters have been removed. Data refresh, exposure
+calculations and General/SOC data separation are unchanged.
+
 ## Weather warnings, administrative areas and freshness
 
 The map separates three kinds of updates: confirmed source events with the
