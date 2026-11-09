@@ -1,13 +1,42 @@
 # SPX force-majeure watch
 
+## Facility navigation
+
+Open **Navigate**, search for a start facility (A) and destination (B), and
+select exact matches from the suggestions. Duplicate names remain separate
+records, with coordinates shown for identification. **Get driving directions**
+opens Google Maps with both facility coordinates and driving mode. Google Maps
+displays its road route, road distance and travel-time estimate there; these
+values are not calculated or copied into this dashboard. No API key is needed
+for the [official Maps URL integration](https://developers.google.com/maps/documentation/urls/get-started).
+
+**Preview A and B on the map** adds labeled endpoint markers. The optional
+straight-line reference is geographic separation, not road distance or a
+driving route. Editing either selected name clears stale markers, distance and
+directions until another exact facility is chosen. Swap and clear controls are
+included. Facility popups also offer **Directions from here** and **Directions
+to here** shortcuts. The same controls work in General and SOC views.
+
+Google directions use stored facility coordinates; check entrances and road
+access before dispatch. Hazard overlays do not automatically reroute the trip,
+and driving mode does not validate truck restrictions. Displaying road routes
+and driving estimates directly inside the dashboard would require a separately
+configured routing API; this key-free implementation hands that calculation to
+Google Maps instead of inventing an ETA from straight-line distance.
+
+`navigation.js` is embedded by `build_map.py`. `node test_news_ui.cjs` includes
+`test_navigation.cjs`, covering coordinate order, URL encoding, duplicate
+facility identity, endpoint previews, swap, edited-input invalidation and clear.
+
 ## Map workspace
 
-The sidebar has three task sections. **Updates** shows category counts, four
+The sidebar has four task sections. **Updates** shows category counts, four
 recent updates and a **Show more** button. **Filters & sort** contains hazard
 filters and ordering. Select an update to show its area and review controls;
 clear the selection to return to the overview. News area controls, evidence
 and attribution expand when needed. **Facilities** contains name search,
-facility types and island navigation. **Layers** contains point/density mode,
+facility types and island navigation. **Navigate** plans facility-to-facility
+directions. **Layers** contains point/density mode,
 optional overlays and source freshness. The feed-status link in the header
 opens source details directly.
 

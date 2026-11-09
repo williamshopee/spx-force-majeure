@@ -89,3 +89,4 @@ context.updateLimit+=4;context.renderList();
 assert.equal(context.listEl.children.length,9);
 assert.equal(els.updatesMore.hidden,true,'pagination ends at the available data');
 console.log('News UI: date sorting, filters, WIB labels, source links and unsafe URL rejection passed.');
+require('./test_navigation.cjs');

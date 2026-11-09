@@ -260,14 +260,14 @@ with account.popover("Account"):
         st.warning("The latest refresh could not finish. Check source freshness in Layers.")
         with st.expander("Refresh diagnostics"):
             st.code(report["stderr"] or report["stdout"] or "No output", language="text")
-    st.caption("Use Updates to review events, Facilities to search, and Layers for overlays and source freshness.")
+    st.caption("Use Updates to review events, Facilities to search, Navigate for directions, and Layers for overlays and source freshness.")
     if st.button("Sign out", use_container_width=True):
         for key in ("team", "map_view"):
             st.session_state.pop(key, None)
         st.rerun()
 
 map_revision = tuple((name, (HERE / name).stat().st_mtime_ns)
-                     for name in ("events.json", "map_template.html", "build_map.py", "turf.min.js")
+                     for name in ("events.json", "map_template.html", "build_map.py", "turf.min.js", "navigation.js")
                      if (HERE / name).exists())
 html = cached_map(ts, VIEW, map_revision)
 if html:
@@ -284,7 +284,7 @@ st.session_state["map_refresh_checkpoint"] = (ts, map_revision)
 @st.fragment(run_every="60s")
 def watch_snapshot():
     revision = tuple((name, (HERE / name).stat().st_mtime_ns)
-                     for name in ("events.json", "map_template.html", "build_map.py", "turf.min.js")
+                     for name in ("events.json", "map_template.html", "build_map.py", "turf.min.js", "navigation.js")
                      if (HERE / name).exists())
     if (time_bucket(), revision) != st.session_state.get("map_refresh_checkpoint"):
         st.rerun()

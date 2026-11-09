@@ -202,6 +202,7 @@ def main(argv=None) -> int:
     turf_js = "/* TurfJS 7.2.0\n" + (HERE / "TURF-LICENSE").read_text(encoding="utf-8") + "\n*/\n"
     turf_js += (HERE / "turf.min.js").read_text(encoding="utf-8")
     html = html.replace("__TURF__", turf_js.replace("</", "<\\/"))
+    html = html.replace("__NAVIGATION__", (HERE / "navigation.js").read_text(encoding="utf-8").replace("</", "<\\/"))
     stations = load_stations(a.stations)
     if not stations:
         print(f"no usable rows in {a.stations}", file=sys.stderr)

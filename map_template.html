@@ -581,6 +581,36 @@
   .inview{border-radius:8px;background:#102131e8;box-shadow:0 5px 18px #0002}
   .net-hint{border-radius:8px;font-size:11px;max-width:220px}
   .leaflet-popup-content-wrapper{border-radius:10px}
+  .workspace-tabs{gap:9px}
+  .navigation-field{position:relative;margin-top:18px}
+  .navigation-field>label{display:flex;align-items:center;gap:8px;color:#dae5ee;font-size:12px;font-weight:500;margin-bottom:8px}
+  .navigation-letter{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#25594f;color:#d6fff5;font-weight:600;font-size:11px}
+  .navigation-letter.destination{background:#73442b;color:#ffdfc6}
+  .navigation-field>input{display:block;width:100%;min-height:42px;padding:10px 11px;font:inherit;font-size:13px;color:var(--text);background:#0d1b29;border:1px solid #354a5b;border-radius:7px}
+  .navigation-field>input:focus{outline:2px solid var(--focus);outline-offset:1px}
+  .navigation-field>small{display:block;font-size:10.5px;line-height:1.5;color:var(--muted);margin-top:7px}
+  .navigation-results{position:absolute;left:0;right:0;top:70px;z-index:850;max-height:225px;overflow:auto;list-style:none;padding:4px;margin:0;background:#1c3043;border:1px solid #4f667a;border-radius:7px;box-shadow:0 12px 28px #0008}
+  .navigation-results button{width:100%;text-align:left;border:0;background:none;color:var(--text);font:inherit;font-size:12px;padding:10px;border-radius:4px;cursor:pointer}
+  .navigation-results button:hover,.navigation-results button:focus{background:#2b455b}
+  .navigation-results small{display:block;color:var(--muted);font-size:10px;margin-top:3px}
+  .navigation-no-match{color:var(--muted);font-size:12px;padding:12px}
+  .navigation-between{display:flex;justify-content:flex-end;margin:7px 0 -7px}
+  .navigation-text-button{font:inherit;font-size:11px;color:#b5cada;background:none;border:0;padding:5px 0;cursor:pointer}
+  .navigation-text-button:hover{text-decoration:underline}
+  #navigationStatus{margin:20px 0 13px;font-size:12px}
+  .navigation-primary{display:block;width:100%;text-decoration:none;text-align:center;font:inherit;font-size:12px;font-weight:500;color:#fff;background:#c65b34;border:1px solid #d9774e;border-radius:7px;padding:11px;min-height:42px}
+  .navigation-primary:hover{background:#db7047}
+  .navigation-primary[aria-disabled="true"]{opacity:.4;pointer-events:none}
+  #navigationPreview{margin-top:9px}
+  #navigationPreview:disabled{opacity:.4;cursor:not-allowed}
+  .navigation-preview{border:1px solid #344e62;background:#142637;border-radius:8px;padding:13px;margin-top:23px;font-size:12px}
+  .navigation-preview h3{font-size:12px;font-weight:500;margin:0 0 6px;color:#d0dfe9}
+  .navigation-preview p{font-size:12px;line-height:1.6;color:var(--muted);margin:8px 0}
+  .navigation-marker{background:#267d70;color:#fff;border:2px solid #e9f4fb;border-radius:50%;box-shadow:0 2px 8px #0008;font:600 15px var(--sans);text-align:center;line-height:25px}
+  .navigation-endpoint-popup{display:flex;gap:8px;align-items:baseline}
+  .navigation-marker.destination{background:#bc6439}
+  .navigation-popup-actions{display:flex;flex-wrap:wrap;gap:7px;border-top:1px solid var(--line);margin-top:12px;padding-top:10px}
+  .navigation-popup-actions button{background:#1e3a50;border:1px solid #44637b;color:#d8e9f7;font:inherit;font-size:11px;border-radius:5px;padding:7px 9px;cursor:pointer}
   @media(max-width:700px){
     #app{flex-direction:column}
     #side{width:100%;flex:0 0 54dvh;height:54dvh;border-right:0;border-bottom:1px solid var(--line);overflow:hidden}
@@ -614,6 +644,7 @@
       <nav class="workspace-tabs" role="tablist" aria-label="Map workspace sections">
         <button id="tabUpdates" role="tab" aria-selected="true" aria-controls="panelUpdates" data-sidebar-tab="Updates" type="button">Updates</button>
         <button id="tabFacilities" role="tab" aria-selected="false" aria-controls="panelFacilities" data-sidebar-tab="Facilities" tabindex="-1" type="button">Facilities</button>
+        <button id="tabNavigate" role="tab" aria-selected="false" aria-controls="panelNavigate" data-sidebar-tab="Navigate" tabindex="-1" type="button">Navigate</button>
         <button id="tabLayers" role="tab" aria-selected="false" aria-controls="panelLayers" data-sidebar-tab="Layers" tabindex="-1" type="button">Layers</button>
       </nav>
     </header>
@@ -713,6 +744,33 @@
         <details class="settings-group region-disclosure" open><summary>Explore by island</summary><ul class="isl" id="islands"></ul><p class="muted-note">Island groups follow facility coordinates.</p></details>
         <p class="muted-note" id="facilityHelp">Select a facility on the map to see its details.</p>
       </section>
+      <section id="panelNavigate" role="tabpanel" aria-labelledby="tabNavigate" class="workspace-panel" hidden>
+        <div class="section-heading"><h2>Facility navigation</h2><p>Choose A and B for driving directions, road distance and travel time in Google Maps.</p></div>
+        <form id="navigationForm">
+          <div class="navigation-field">
+            <label for="navigationOrigin"><span class="navigation-letter">A</span> From facility</label>
+            <input id="navigationOrigin" type="search" role="combobox" autocomplete="off" placeholder="Search starting facility…" aria-expanded="false" aria-controls="navigationOriginResults" aria-autocomplete="list" aria-describedby="navigationOriginHint">
+            <ul id="navigationOriginResults" role="listbox" aria-label="Starting facilities" class="navigation-results" hidden></ul>
+            <small id="navigationOriginHint">Type at least two characters to search.</small>
+          </div>
+          <div class="navigation-between"><button type="button" id="navigationSwap" class="navigation-text-button">⇅ Swap A and B</button></div>
+          <div class="navigation-field">
+            <label for="navigationDestination"><span class="navigation-letter destination">B</span> To facility</label>
+            <input id="navigationDestination" type="search" role="combobox" autocomplete="off" placeholder="Search destination facility…" aria-expanded="false" aria-controls="navigationDestinationResults" aria-autocomplete="list" aria-describedby="navigationDestinationHint">
+            <ul id="navigationDestinationResults" role="listbox" aria-label="Destination facilities" class="navigation-results" hidden></ul>
+            <small id="navigationDestinationHint">Type at least two characters to search.</small>
+          </div>
+          <p id="navigationStatus" class="muted-note" role="status"></p>
+          <a id="navigationGoogle" class="navigation-primary" target="_blank" rel="noopener noreferrer" aria-disabled="true">Get driving directions ↗</a>
+          <button type="submit" id="navigationPreview" class="secondary-button" disabled>Preview A and B on the map</button>
+          <div class="navigation-between"><button type="button" id="navigationClear" class="navigation-text-button">Clear navigation</button></div>
+        </form>
+        <section id="navigationResult" class="navigation-preview" hidden>
+          <h3>Selected facilities</h3><p id="navigationPair"></p>
+          <details class="tool-disclosure"><summary>Straight-line reference</summary><p><b id="navigationDirect"></b> between coordinates. This is not a driving distance or route.</p></details>
+        </section>
+        <details class="settings-group"><summary>About navigation</summary><p class="muted-note">Google Maps opens in a new tab using the exact facility coordinates. It provides the road route, distance and travel-time estimate. No Google API key is needed for this link.</p><p class="muted-note">Check the facility entrance, road access and current restrictions before dispatch. Hazard areas on this map do not automatically reroute Google Maps directions. Driving directions are not a truck-clearance guarantee.</p></details>
+      </section>
       <section id="panelLayers" role="tabpanel" aria-labelledby="tabLayers" class="workspace-panel" hidden>
         <div class="section-heading"><h2>Map layers</h2><p>Keep the map focused on what you need.</p></div>
         <div class="settings-group"><h3>Facility display</h3><div class="seg" role="group" aria-label="Map style"><button id="mPoints" aria-pressed="true">Locations</button><button id="mHeat" aria-pressed="false">Density</button></div></div>
@@ -746,6 +804,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>__TURF__</script>
+<script>__NAVIGATION__</script>
 <script id="data" type="application/json">__DATA__</script>
 <!-- build_map.py replaces the contents of this tag with events.json so the
      page works when opened as a local file (fetch is blocked by CORS there). -->
@@ -1350,6 +1409,14 @@
       el.appendChild(netSection('Inbound from', conn.inb, '#ff9a1f'));
     }
     el.querySelector('code').textContent = co;
+    if(navigationController){
+      var actions=document.createElement('div');actions.className='navigation-popup-actions';
+      [['origin','Directions from here'],['destination','Directions to here']].forEach(function(item){
+        var action=document.createElement('button');action.type='button';action.textContent=item[1];
+        action.addEventListener('click',function(){navigationController.select(item[0],i);map.closePopup();});actions.appendChild(action);
+      });
+      el.appendChild(actions);
+    }
     var btn = el.querySelector('button');
     btn.addEventListener('click', function(){
       navigator.clipboard && navigator.clipboard.writeText(co).then(
@@ -2407,6 +2474,11 @@
   });
   document.getElementById('viewLabel').textContent=NET && NET.length?'SOC map':'General map';
   if(NET && NET.length)document.getElementById('facilityHelp').textContent='Select a facility to trace its network. Teal lines are outbound; dashed orange lines are inbound.';
+
+  var navigationController=SPXNavigation.create({stations:RAW,map:map,L:L,
+    activate:function(){switchSidebar('Navigate',false);},
+    onPreview:function(){clearEventSelection();renderList();setMode('points');}
+  });
 
   loadEvents();
   if (location.protocol.indexOf('http') === 0) setInterval(loadEvents, 5 * 60 * 1000);
