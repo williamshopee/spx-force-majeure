@@ -16,6 +16,8 @@ on:
       - weather_cap.py
       - source_freshness.py
       - build_map.py
+      - navigation.js
+      - test_navigation.cjs
       - turf.min.js
       - test_map_upgrades.py
       - requirements.txt
