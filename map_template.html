@@ -611,6 +611,13 @@
   .navigation-marker.destination{background:#bc6439}
   .navigation-popup-actions{display:flex;flex-wrap:wrap;gap:7px;border-top:1px solid var(--line);margin-top:12px;padding-top:10px}
   .navigation-popup-actions button{background:#1e3a50;border:1px solid #44637b;color:#d8e9f7;font:inherit;font-size:11px;border-radius:5px;padding:7px 9px;cursor:pointer}
+  .network-focus{position:absolute;right:14px;top:14px;z-index:650;max-width:255px;padding:12px;background:#102638f2;border:1px solid #416075;border-radius:9px;box-shadow:0 6px 22px #0005}
+  .network-focus strong{display:block;font-size:13px;font-weight:600;color:#e1edf5;line-height:1.4}
+  .network-focus p{font-size:11px;color:#aac1d2;line-height:1.5;margin:6px 0 10px}
+  .network-focus-actions{display:flex;gap:7px}
+  .network-focus button{font:inherit;font-size:11px;min-height:34px;border:1px solid #4a6b81;border-radius:5px;padding:6px 9px;color:#daecf8;background:#19384d;cursor:pointer}
+  .network-focus button:hover{background:#244e68}
+  @media(max-width:700px){.network-focus{right:9px;top:9px;max-width:215px;padding:9px}.network-focus p{margin:4px 0 7px}.network-focus button{padding:5px 7px}}
   @media(max-width:700px){
     #app{flex-direction:column}
     #side{width:100%;flex:0 0 54dvh;height:54dvh;border-right:0;border-bottom:1px solid var(--line);overflow:hidden}
@@ -790,7 +797,11 @@
     <div id="map"></div>
     <div class="inview" id="inview" hidden><b>0</b><span>in view</span></div>
     <div class="ramp" id="ramp"><i></i><div class="lab"><span>sparse</span><span>dense</span></div></div>
-    <div class="net-hint" id="netHint" hidden>Click a facility to trace its network</div>    
+    <div class="net-hint" id="netHint" hidden>Select a SOC to show its connected facilities</div>
+    <section class="network-focus" id="networkFocus" aria-label="Selected SOC network" hidden>
+      <strong id="networkFocusName"></strong><p id="networkFocusCount" role="status"></p>
+      <div class="network-focus-actions"><button type="button" id="networkFit">Fit network</button><button type="button" id="networkShowAll">Show all facilities</button></div>
+    </section>
     <div id="boot">
       <div class="boot-ring"></div>
       <h3>SPX Facility Distribution Map</h3>
@@ -928,6 +939,7 @@
   // Only present when build_map.py was run with --network. The General Map
   // build writes null here, so none of this does anything there.
   var NET = null, NET_OUT = null, NET_IN = null;
+  var NET_FOCUS = null, NET_VISIBLE = null, NET_DRAWN = null;
   try {
     var _ne = document.getElementById('network');
     if (_ne && _ne.textContent.trim().charAt(0) === '[') NET = JSON.parse(_ne.textContent);
@@ -990,12 +1002,38 @@
   }
 
   var netLayer = L.layerGroup();
-  
-  var netLayer = L.layerGroup();
 
-  function clearNetwork(){
+  function directNetworkNodes(i, outgoing, incoming){
+    return new Set([i].concat(outgoing || [], incoming || []));
+  }
+  function focusableNetwork(i){
+    if(!NET_OUT || typ[i]!==2)return null;
+    var nodes=directNetworkNodes(i,NET_OUT[i],NET_IN[i]);
+    return nodes.size>1?nodes:null;
+  }
+  function stationVisible(i){
+    return (!NET_VISIBLE || NET_VISIBLE.has(i)) && (on[typ[i]] || i===NET_FOCUS);
+  }
+  function clearNetworkLines(){
+    NET_DRAWN=null;
     netLayer.clearLayers();
     if (map.hasLayer(netLayer)) map.removeLayer(netLayer);
+  }
+  function updateNetworkFocus(){
+    var panel=document.getElementById('networkFocus');
+    panel.hidden=NET_FOCUS===null;
+    document.getElementById('netHint').hidden=!NET_OUT || NET_FOCUS!==null;
+    if(NET_FOCUS!==null){
+      document.getElementById('networkFocusName').textContent=nameOf[NET_FOCUS];
+      document.getElementById('networkFocusCount').textContent=(NET_VISIBLE.size-1)+
+        ' connected facilities · direct links only. '+(NET_OUT[NET_FOCUS]||[]).length+
+        ' outbound · '+(NET_IN[NET_FOCUS]||[]).length+' inbound.';
+    }
+    if(layer){layer.redraw();tallyView();}
+  }
+  function clearNetwork(){
+    NET_FOCUS=null;NET_VISIBLE=null;NET_DRAWN=null;
+    clearNetworkLines();updateNetworkFocus();
   }
 
   // Curved line, so two facilities with links in both directions do not
@@ -1013,13 +1051,14 @@
     return pts;
   }
 
-  function drawNetwork(i){
-    clearNetwork();
-    if (!NET_OUT) return {out: [], inb: []};
+  function drawNetworkLines(i){
+    clearNetworkLines();NET_DRAWN=i;
+    if (!NET_OUT) return;
     var outs = NET_OUT[i] || [], inbs = NET_IN[i] || [];
     var here = [lat[i], lng[i]];
 
     outs.forEach(function(j){
+      if(!stationVisible(j))return;
       L.polyline(arcTo(here, [lat[j], lng[j]], 0.14), {
         pane:'hazard', color:'#4ccfc4', weight:1.4, opacity:.75, interactive:false
       }).addTo(netLayer);
@@ -1030,6 +1069,7 @@
     });
 
     inbs.forEach(function(j){
+      if(!stationVisible(j))return;
       L.polyline(arcTo([lat[j], lng[j]], here, 0.14), {
         pane:'hazard', color:'#ff9a1f', weight:1.4, opacity:.6,
         dashArray:'4 3', interactive:false
@@ -1040,8 +1080,19 @@
       }).addTo(netLayer);
     });
 
+    if(NET_FOCUS===i)L.circleMarker(here,{pane:'crater',radius:8,color:'#fff1c4',weight:2.5,
+      fillColor:'#ffd166',fillOpacity:.9,interactive:false}).addTo(netLayer);
     if (outs.length || inbs.length) netLayer.addTo(map);
-    return {out: outs, inb: inbs};
+  }
+  function drawNetwork(i){
+    if(!NET_OUT)return {out:[],inb:[]};
+    var conn={out:NET_OUT[i]||[],inb:NET_IN[i]||[]};
+    if(typ[i]===2){
+      NET_VISIBLE=focusableNetwork(i);NET_FOCUS=NET_VISIBLE?i:null;
+      if(NET_VISIBLE && navigationController)navigationController.hidePreview();
+      drawNetworkLines(i);updateNetworkFocus();
+    }else if(NET_FOCUS===null){drawNetworkLines(i);}
+    return conn;
   }
 
   function netSection(title, ids, color){
@@ -1256,7 +1307,7 @@
       var b = m.getBounds().pad(0.22);
       var s = b.getSouth(), n = b.getNorth(), e = b.getEast(), wd = b.getWest();
       for (var i = 0; i < N; i++) {
-        if (!on[typ[i]]) continue;
+        if (!stationVisible(i)) continue;
         if (lat[i] < s || lat[i] > n || lng[i] < wd || lng[i] > e) continue;
         var p = m.latLngToLayerPoint([lat[i], lng[i]]);
         px.push(p.x - o.x); py.push(p.y - o.y); pi.push(i);
@@ -1371,15 +1422,17 @@
 
   /* ---------------- popup ---------------- */
   var pop = L.popup({closeButton:true, autoPan:true, maxWidth:300});
-  map.on('popupclose', clearNetwork);
+  map.on('popupclose',function(){if(NET_FOCUS===null)clearNetworkLines();});
   map.on('click', function(e){
     if (mode !== 'points') return;
     var i = layer.nearest(e.layerPoint);
-    if (i < 0) { map.closePopup(); clearNetwork(); return; }
+    if (i < 0) { map.closePopup(); if(NET_FOCUS===null)clearNetwork(); return; }
     openStation(i);
   });
 
   function openStation(i){
+    map.closePopup();
+    if(NET_VISIBLE && !NET_VISIBLE.has(i) && typ[i]!==2)clearNetwork();
     var t = TYPE[typ[i]], co = lat[i].toFixed(5) + ', ' + lng[i].toFixed(5);
     var el = document.createElement('div');
     el.innerHTML =
@@ -1449,6 +1502,7 @@
       on[idx] = this.checked;
       if (!on[0] && !on[1] && !on[2]) { this.checked = true; on[idx] = true; return; }
       layer.redraw(); tallyView();
+      if(NET_DRAWN!==null)drawNetworkLines(NET_DRAWN);
       if (IMP.on) { tallyImpact(); tallyAir(); }
     });
     ul.appendChild(li);
@@ -2473,11 +2527,17 @@
     if(event.key==='Escape' && filters.open){filters.open=false;filters.querySelector('summary').focus();}
   });
   document.getElementById('viewLabel').textContent=NET && NET.length?'SOC map':'General map';
-  if(NET && NET.length)document.getElementById('facilityHelp').textContent='Select a facility to trace its network. Teal lines are outbound; dashed orange lines are inbound.';
+  if(NET && NET.length)document.getElementById('facilityHelp').textContent='Select a SOC to show only that SOC and its directly connected facilities. Teal lines are outbound; dashed orange lines are inbound. Use Show all facilities to restore the full map.';
+  document.getElementById('networkShowAll').addEventListener('click',clearNetwork);
+  document.getElementById('networkFit').addEventListener('click',function(){
+    if(!NET_VISIBLE)return;
+    var points=Array.from(NET_VISIBLE).filter(stationVisible).map(function(i){return [lat[i],lng[i]];});
+    map.closePopup();map.fitBounds(L.latLngBounds(points).pad(.12),{maxZoom:12});
+  });
 
   var navigationController=SPXNavigation.create({stations:RAW,map:map,L:L,
     activate:function(){switchSidebar('Navigate',false);},
-    onPreview:function(){clearEventSelection();renderList();setMode('points');}
+    onPreview:function(){clearNetwork();clearEventSelection();renderList();setMode('points');}
   });
 
   loadEvents();
@@ -2488,12 +2548,12 @@
   function tallyView(){
     var b = map.getBounds(), s = b.getSouth(), n = b.getNorth(), e = b.getEast(), w = b.getWest(), c = 0;
     for (var i = 0; i < N; i++) {
-      if (!on[typ[i]]) continue;
+      if (!stationVisible(i)) continue;
       if (lat[i] >= s && lat[i] <= n && lng[i] >= w && lng[i] <= e) c++;
     }
     iv.hidden = false;
     iv.querySelector('b').textContent = fmt(c);
-    iv.querySelector('span').textContent = c === N ? 'the whole network' : 'stations in view';
+    iv.querySelector('span').textContent = NET_VISIBLE?'focused facilities in view':c === N ? 'the whole network' : 'stations in view';
   }
   map.on('moveend zoomend', tallyView);
 

@@ -1,5 +1,24 @@
 # SPX force-majeure watch
 
+## SOC connection focus
+
+In the SOC map, selecting a sorting center with recorded network links shows
+only that SOC and its directly connected inbound and outbound facilities.
+The node set is deduplicated; second-hop connections are not included. A
+floating card identifies the selected SOC and recorded connection counts.
+**Fit network** frames its visible facilities, and **Show all facilities**
+clears the filter while preserving facility-type selections.
+
+The focus persists when its popup closes or a connected hub is inspected.
+Selecting another SOC replaces the focus; a SOC with no recorded links restores
+the full map. Searching for an unrelated hub also exits the focus. Point and
+density rendering, map hit testing and the in-view counter use the same
+visibility filter. The selected SOC remains visible if its type is turned off.
+Navigation previews are hidden when SOC focus starts; previewing A/B exits the
+SOC focus. This is a visual facility filter and does not recalculate hazard
+exposure totals or SLA exports. General Map builds still contain no SOC network
+or profile data.
+
 ## Facility navigation
 
 Open **Navigate**, search for a start facility (A) and destination (B), and

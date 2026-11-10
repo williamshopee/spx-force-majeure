@@ -131,7 +131,8 @@
       announce('A and B are marked on the map. Open Google Maps to calculate the driving route.');
     }
     refresh();
-    return {select:function(kind,index){if(kind!=='origin'&&kind!=='destination')return;select(kind,index);options.activate();},showPreview:showPreview};
+    return {select:function(kind,index){if(kind!=='origin'&&kind!=='destination')return;select(kind,index);options.activate();},
+      showPreview:showPreview,hidePreview:function(){layers.clearLayers();result.hidden=true;}};
   }
   var api={validStation:validStation,googleDirections:googleDirections,directKm:directKm,searchStations:searchStations,create:create};
   if(typeof module!=='undefined'&&module.exports)module.exports=api;
