@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-10T08:28:28+00:00",
+ "generated_at": "2026-11-10T08:29:12+00:00",
  "facility_count": 8853,
  "event_count": 71,
  "verified_event_count": 28,
@@ -11,9 +11,9 @@
    "state": "ok",
    "events": 18,
    "warnings": [],
-   "seconds": 1.27,
-   "last_checked_at": "2026-11-10T08:28:27+00:00",
-   "last_success_at": "2026-11-10T08:28:27+00:00"
+   "seconds": 0.2,
+   "last_checked_at": "2026-11-10T08:29:11+00:00",
+   "last_success_at": "2026-11-10T08:29:11+00:00"
   },
   {
    "source": "bmkg_cap",
@@ -25,8 +25,8 @@
     "https://www.bmkg.go.id/alerts/nowcast/id/CSB20261110006_alert.xml: CAP polygon has fewer than three unique vertices",
     "https://www.bmkg.go.id/alerts/nowcast/id/CRU20261110003_alert.xml: CAP polygon has fewer than three unique vertices"
    ],
-   "seconds": 13.13,
-   "last_checked_at": "2026-11-10T08:28:27+00:00",
+   "seconds": 1.61,
+   "last_checked_at": "2026-11-10T08:29:11+00:00",
    "last_success_at": "2026-11-10T02:13:24+00:00"
   },
   {
@@ -34,35 +34,36 @@
    "state": "ok",
    "events": 4,
    "warnings": [],
-   "seconds": 2.18,
-   "last_checked_at": "2026-11-10T08:28:27+00:00",
-   "last_success_at": "2026-11-10T08:28:27+00:00"
+   "seconds": 1.51,
+   "last_checked_at": "2026-11-10T08:29:11+00:00",
+   "last_success_at": "2026-11-10T08:29:11+00:00"
   },
   {
    "source": "petabencana_flood",
    "state": "ok",
    "events": 1,
    "warnings": [],
-   "seconds": 0.72,
-   "last_checked_at": "2026-11-10T08:28:27+00:00",
-   "last_success_at": "2026-11-10T08:28:27+00:00"
+   "seconds": 0.87,
+   "last_checked_at": "2026-11-10T08:29:11+00:00",
+   "last_success_at": "2026-11-10T08:29:11+00:00"
   },
   {
    "source": "magma_volcano",
    "state": "ok",
    "events": 27,
    "warnings": [],
-   "seconds": 1.91,
-   "last_checked_at": "2026-11-10T08:28:27+00:00",
-   "last_success_at": "2026-11-10T08:28:27+00:00"
+   "seconds": 2.02,
+   "last_checked_at": "2026-11-10T08:29:11+00:00",
+   "last_success_at": "2026-11-10T08:29:11+00:00"
   },
   {
    "source": "bnpb_news",
-   "state": "ok",
-   "events": 8,
-   "warnings": [],
-   "seconds": 12.44,
-   "last_checked_at": "2026-11-10T08:28:27+00:00",
+   "state": "failed",
+   "events": 0,
+   "retained_news": 8,
+   "retained_warnings": 0,
+   "error": "GET https://www.bnpb.go.id/berita failed after 1 tries: HTTP Error 404: Not Found",
+   "last_checked_at": "2026-11-10T08:29:11+00:00",
    "last_success_at": "2026-11-10T08:28:27+00:00"
   },
   {
@@ -72,15 +73,15 @@
    "retained_news": 0,
    "retained_warnings": 0,
    "error": "4 GDELT queries failed: GET https://api.gdeltproject.org/api/v2/doc/doc?query=%28banjir+OR+%22jalan+tertutup%22+OR+%22akses+terputus%22%29+sourcecountry%3Aindonesia&mode=artlist&format=json&timespan=48h&maxrecords=60&sort=datedesc failed after 1 tries: <urlopen error _ssl.c",
-   "last_checked_at": "2026-11-10T08:28:27+00:00",
+   "last_checked_at": "2026-11-10T08:29:11+00:00",
    "last_success_at": null
   },
   {
    "source": "overrides",
    "state": "ok",
    "events": 0,
-   "last_checked_at": "2026-11-10T08:28:27+00:00",
-   "last_success_at": "2026-11-10T08:28:27+00:00"
+   "last_checked_at": "2026-11-10T08:29:11+00:00",
+   "last_success_at": "2026-11-10T08:29:11+00:00"
   }
  ],
  "attribution": [
@@ -4343,7 +4344,7 @@
    "issued_at": "2026-11-10T16:00:00+08:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 2
    },
@@ -5545,7 +5546,7 @@
    "issued_at": "2026-11-10T15:00:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 22
    },
@@ -19011,7 +19012,7 @@
    "issued_at": "2026-11-10T15:00:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 60
    },
@@ -20775,7 +20776,7 @@
    "issued_at": "2026-11-10T14:48:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 26
    },
@@ -24841,7 +24842,7 @@
    "issued_at": "2026-11-10T15:40:00+08:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 35
    },
@@ -28105,7 +28106,7 @@
    "issued_at": "2026-11-10T16:40:00+09:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 0
    },
@@ -29265,7 +29266,7 @@
    "issued_at": "2026-11-10T16:30:00+09:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 0
    },
@@ -31455,7 +31456,7 @@
    "issued_at": "2026-11-10T16:29:00+09:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 0
    },
@@ -43401,7 +43402,7 @@
    "issued_at": "2026-11-10T15:29:00+08:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 30
    },
@@ -43753,7 +43754,7 @@
    "issued_at": "2026-11-10T14:23:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 4
    },
@@ -47705,7 +47706,7 @@
    "issued_at": "2026-11-10T14:22:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 15
    },
@@ -59123,12 +59124,12 @@
    "issued_at": "2026-11-10T14:20:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 29
    },
    "first_seen": "2026-11-10T08:28:28.600406+00:00",
-   "age_hours": 1.1,
+   "age_hours": 1.2,
    "impact": {
     "model": "warning_area",
     "bands": [],
@@ -81403,12 +81404,12 @@
    "issued_at": "2026-11-10T14:20:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 178
    },
    "first_seen": "2026-11-10T08:28:28.600406+00:00",
-   "age_hours": 1.1,
+   "age_hours": 1.2,
    "impact": {
     "model": "warning_area",
     "bands": [],
@@ -81597,7 +81598,7 @@
    "issued_at": "2026-11-10T15:18:00+08:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 1
    },
@@ -84039,7 +84040,7 @@
    "issued_at": "2026-11-10T15:15:00+08:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 9
    },
@@ -86349,7 +86350,7 @@
    "issued_at": "2026-11-10T14:03:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 18
    },
@@ -90835,7 +90836,7 @@
    "issued_at": "2026-11-10T14:00:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 55
    },
@@ -95431,7 +95432,7 @@
    "issued_at": "2026-11-10T14:58:00+08:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 5
    },
@@ -106187,7 +106188,7 @@
    "issued_at": "2026-11-10T13:55:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 48
    },
@@ -111301,7 +111302,7 @@
    "issued_at": "2026-11-10T14:45:00+08:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 59
    },
@@ -113559,7 +113560,7 @@
    "issued_at": "2026-11-10T15:40:00+09:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 7
    },
@@ -115687,7 +115688,7 @@
    "issued_at": "2026-11-10T13:35:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 15
    },
@@ -118395,7 +118396,7 @@
    "issued_at": "2026-11-10T13:30:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 35
    },
@@ -120019,7 +120020,7 @@
    "issued_at": "2026-11-10T14:25:00+08:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 3
    },
@@ -121187,7 +121188,7 @@
    "issued_at": "2026-11-10T13:25:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 112
    },
@@ -121531,7 +121532,7 @@
    "issued_at": "2026-11-10T14:22:00+08:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 4
    },
@@ -123201,7 +123202,7 @@
    "issued_at": "2026-11-10T13:00:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 17
    },
@@ -127679,7 +127680,7 @@
    "issued_at": "2026-11-10T13:00:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 26
    },
@@ -146116,7 +146117,7 @@
     "facility_count": 1
    },
    "first_seen": "2026-11-10T06:27:17.927609+00:00",
-   "age_hours": 3.2,
+   "age_hours": 3.3,
    "cached": true,
    "impact": {
     "model": "warning_area",
@@ -146144,7 +146145,8 @@
    "attribution": "BNPB",
    "notes": [
     "Official BNPB bulletin. Publication time is not the incident start time.",
-    "Location and operational impact require review. No impact zone or SLA change is inferred from this report."
+    "Location and operational impact require review. No impact zone or SLA change is inferred from this report.",
+    "Cached report: the news source is temporarily unavailable. Publication time has not been refreshed."
    ],
    "polygons": [],
    "observed": [],
@@ -152709,6 +152711,8 @@
    },
    "first_seen": "2026-11-10T08:28:28.600406+00:00",
    "age_hours": 2.3,
+   "air": null,
+   "cached": true,
    "impact": {
     "model": "none",
     "bands": [],
@@ -152735,7 +152739,8 @@
    "attribution": "BNPB",
    "notes": [
     "Official BNPB bulletin. Publication time is not the incident start time.",
-    "Location and operational impact require review. No impact zone or SLA change is inferred from this report."
+    "Location and operational impact require review. No impact zone or SLA change is inferred from this report.",
+    "Cached report: the news source is temporarily unavailable. Publication time has not been refreshed."
    ],
    "polygons": [],
    "observed": [],
@@ -154972,6 +154977,8 @@
    },
    "first_seen": "2026-11-09T18:53:33.258541+00:00",
    "age_hours": 17.7,
+   "air": null,
+   "cached": true,
    "impact": {
     "model": "none",
     "bands": [],
@@ -154998,7 +155005,8 @@
    "attribution": "BNPB",
    "notes": [
     "Official BNPB bulletin. Publication time is not the incident start time.",
-    "Location and operational impact require review. No impact zone or SLA change is inferred from this report."
+    "Location and operational impact require review. No impact zone or SLA change is inferred from this report.",
+    "Cached report: the news source is temporarily unavailable. Publication time has not been refreshed."
    ],
    "polygons": [],
    "observed": [],
@@ -155042,6 +155050,8 @@
    },
    "first_seen": "2026-11-10T06:27:17.927609+00:00",
    "age_hours": 22.3,
+   "air": null,
+   "cached": true,
    "impact": {
     "model": "none",
     "bands": [],
@@ -155068,7 +155078,8 @@
    "attribution": "BNPB",
    "notes": [
     "Official BNPB bulletin. Publication time is not the incident start time.",
-    "Location and operational impact require review. No impact zone or SLA change is inferred from this report."
+    "Location and operational impact require review. No impact zone or SLA change is inferred from this report.",
+    "Cached report: the news source is temporarily unavailable. Publication time has not been refreshed."
    ],
    "polygons": [],
    "observed": [],
@@ -165420,6 +165431,8 @@
    },
    "first_seen": "2026-11-09T18:53:33.258541+00:00",
    "age_hours": 22.5,
+   "air": null,
+   "cached": true,
    "impact": {
     "model": "none",
     "bands": [],
@@ -165446,7 +165459,8 @@
    "attribution": "BNPB",
    "notes": [
     "Official BNPB bulletin. Publication time is not the incident start time.",
-    "Location and operational impact require review. No impact zone or SLA change is inferred from this report."
+    "Location and operational impact require review. No impact zone or SLA change is inferred from this report.",
+    "Cached report: the news source is temporarily unavailable. Publication time has not been refreshed."
    ],
    "polygons": [],
    "observed": [],
@@ -169793,6 +169807,8 @@
    },
    "first_seen": "2026-11-09T18:53:33.258541+00:00",
    "age_hours": 23.7,
+   "air": null,
+   "cached": true,
    "impact": {
     "model": "none",
     "bands": [],
@@ -169819,7 +169835,8 @@
    "attribution": "BNPB",
    "notes": [
     "Official BNPB bulletin. Publication time is not the incident start time.",
-    "Location and operational impact require review. No impact zone or SLA change is inferred from this report."
+    "Location and operational impact require review. No impact zone or SLA change is inferred from this report.",
+    "Cached report: the news source is temporarily unavailable. Publication time has not been refreshed."
    ],
    "polygons": [],
    "observed": [],
@@ -179425,6 +179442,8 @@
    },
    "first_seen": "2026-11-09T18:53:33.258541+00:00",
    "age_hours": 25.3,
+   "air": null,
+   "cached": true,
    "impact": {
     "model": "none",
     "bands": [],
@@ -179451,7 +179470,8 @@
    "attribution": "BNPB",
    "notes": [
     "Official BNPB bulletin. Publication time is not the incident start time.",
-    "Location and operational impact require review. No impact zone or SLA change is inferred from this report."
+    "Location and operational impact require review. No impact zone or SLA change is inferred from this report.",
+    "Cached report: the news source is temporarily unavailable. Publication time has not been refreshed."
    ],
    "polygons": [],
    "observed": [],
@@ -182471,6 +182491,8 @@
    },
    "first_seen": "2026-11-09T18:53:33.258541+00:00",
    "age_hours": 26.9,
+   "air": null,
+   "cached": true,
    "impact": {
     "model": "none",
     "bands": [],
@@ -182497,7 +182519,8 @@
    "attribution": "BNPB",
    "notes": [
     "Official BNPB bulletin. Publication time is not the incident start time.",
-    "Location and operational impact require review. No impact zone or SLA change is inferred from this report."
+    "Location and operational impact require review. No impact zone or SLA change is inferred from this report.",
+    "Cached report: the news source is temporarily unavailable. Publication time has not been refreshed."
    ],
    "polygons": [],
    "observed": [],
@@ -183096,6 +183119,8 @@
    },
    "first_seen": "2026-11-09T00:58:45.726420+00:00",
    "age_hours": 42.2,
+   "air": null,
+   "cached": true,
    "impact": {
     "model": "none",
     "bands": [],

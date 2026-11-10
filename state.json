@@ -39594,7 +39594,7 @@
    "issued_at": "2026-11-10T16:00:00+08:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 2
    },
@@ -40797,7 +40797,7 @@
    "issued_at": "2026-11-10T15:00:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 22
    },
@@ -54264,7 +54264,7 @@
    "issued_at": "2026-11-10T15:00:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 60
    },
@@ -56029,7 +56029,7 @@
    "issued_at": "2026-11-10T14:48:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 26
    },
@@ -60096,7 +60096,7 @@
    "issued_at": "2026-11-10T15:40:00+08:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 35
    },
@@ -63361,7 +63361,7 @@
    "issued_at": "2026-11-10T16:40:00+09:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 0
    },
@@ -64522,7 +64522,7 @@
    "issued_at": "2026-11-10T16:30:00+09:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 0
    },
@@ -66713,7 +66713,7 @@
    "issued_at": "2026-11-10T16:29:00+09:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 0
    },
@@ -78660,7 +78660,7 @@
    "issued_at": "2026-11-10T15:29:00+08:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 30
    },
@@ -79013,7 +79013,7 @@
    "issued_at": "2026-11-10T14:23:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 4
    },
@@ -82966,7 +82966,7 @@
    "issued_at": "2026-11-10T14:22:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 15
    },
@@ -94385,12 +94385,12 @@
    "issued_at": "2026-11-10T14:20:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 29
    },
    "first_seen": "2026-11-10T08:28:28.600406+00:00",
-   "age_hours": 1.1
+   "age_hours": 1.2
   },
   {
    "id": "bmkg-cap:2.49.0.1.360.0.2026.11.10.08.12.002",
@@ -116666,12 +116666,12 @@
    "issued_at": "2026-11-10T14:20:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 178
    },
    "first_seen": "2026-11-10T08:28:28.600406+00:00",
-   "age_hours": 1.1
+   "age_hours": 1.2
   },
   {
    "id": "bmkg-cap:2.49.0.1.360.0.2026.11.10.08.51.003",
@@ -116861,7 +116861,7 @@
    "issued_at": "2026-11-10T15:18:00+08:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 1
    },
@@ -119304,7 +119304,7 @@
    "issued_at": "2026-11-10T15:15:00+08:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 9
    },
@@ -121615,7 +121615,7 @@
    "issued_at": "2026-11-10T14:03:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 18
    },
@@ -126102,7 +126102,7 @@
    "issued_at": "2026-11-10T14:00:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 55
    },
@@ -130699,7 +130699,7 @@
    "issued_at": "2026-11-10T14:58:00+08:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 5
    },
@@ -141456,7 +141456,7 @@
    "issued_at": "2026-11-10T13:55:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 48
    },
@@ -146571,7 +146571,7 @@
    "issued_at": "2026-11-10T14:45:00+08:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 59
    },
@@ -148830,7 +148830,7 @@
    "issued_at": "2026-11-10T15:40:00+09:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 7
    },
@@ -150959,7 +150959,7 @@
    "issued_at": "2026-11-10T13:35:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 15
    },
@@ -153668,7 +153668,7 @@
    "issued_at": "2026-11-10T13:30:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 35
    },
@@ -155293,7 +155293,7 @@
    "issued_at": "2026-11-10T14:25:00+08:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 3
    },
@@ -156462,7 +156462,7 @@
    "issued_at": "2026-11-10T13:25:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 112
    },
@@ -156807,7 +156807,7 @@
    "issued_at": "2026-11-10T14:22:00+08:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 4
    },
@@ -158478,7 +158478,7 @@
    "issued_at": "2026-11-10T13:00:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 17
    },
@@ -162957,7 +162957,7 @@
    "issued_at": "2026-11-10T13:00:00+07:00",
    "certainty": "Observed",
    "urgency": "Immediate",
-   "fetched_at": "2026-11-10T08:27:50+00:00",
+   "fetched_at": "2026-11-10T08:28:45+00:00",
    "warning_exposure": {
     "facility_count": 26
    },
@@ -181401,49 +181401,49 @@
     "facility_count": 1
    },
    "first_seen": "2026-11-10T06:27:17.927609+00:00",
-   "age_hours": 3.2,
+   "age_hours": 3.3,
    "cached": true
   }
  ],
  "source_freshness": {
   "bmkg_quake": {
-   "last_checked_at": "2026-11-10T08:28:27+00:00",
-   "last_success_at": "2026-11-10T08:28:27+00:00",
+   "last_checked_at": "2026-11-10T08:29:11+00:00",
+   "last_success_at": "2026-11-10T08:29:11+00:00",
    "state": "ok"
   },
   "bmkg_cap": {
-   "last_checked_at": "2026-11-10T08:28:27+00:00",
+   "last_checked_at": "2026-11-10T08:29:11+00:00",
    "last_success_at": "2026-11-10T02:13:24+00:00",
    "state": "degraded"
   },
   "gdacs": {
-   "last_checked_at": "2026-11-10T08:28:27+00:00",
-   "last_success_at": "2026-11-10T08:28:27+00:00",
+   "last_checked_at": "2026-11-10T08:29:11+00:00",
+   "last_success_at": "2026-11-10T08:29:11+00:00",
    "state": "ok"
   },
   "petabencana_flood": {
-   "last_checked_at": "2026-11-10T08:28:27+00:00",
-   "last_success_at": "2026-11-10T08:28:27+00:00",
+   "last_checked_at": "2026-11-10T08:29:11+00:00",
+   "last_success_at": "2026-11-10T08:29:11+00:00",
    "state": "ok"
   },
   "magma_volcano": {
-   "last_checked_at": "2026-11-10T08:28:27+00:00",
-   "last_success_at": "2026-11-10T08:28:27+00:00",
+   "last_checked_at": "2026-11-10T08:29:11+00:00",
+   "last_success_at": "2026-11-10T08:29:11+00:00",
    "state": "ok"
   },
   "bnpb_news": {
-   "last_checked_at": "2026-11-10T08:28:27+00:00",
+   "last_checked_at": "2026-11-10T08:29:11+00:00",
    "last_success_at": "2026-11-10T08:28:27+00:00",
-   "state": "ok"
+   "state": "failed"
   },
   "gdelt_news": {
-   "last_checked_at": "2026-11-10T08:28:27+00:00",
+   "last_checked_at": "2026-11-10T08:29:11+00:00",
    "last_success_at": null,
    "state": "failed"
   },
   "overrides": {
-   "last_checked_at": "2026-11-10T08:28:27+00:00",
-   "last_success_at": "2026-11-10T08:28:27+00:00",
+   "last_checked_at": "2026-11-10T08:29:11+00:00",
+   "last_success_at": "2026-11-10T08:29:11+00:00",
    "state": "ok"
   }
  }
