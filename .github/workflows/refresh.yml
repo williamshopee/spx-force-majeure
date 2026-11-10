@@ -24,6 +24,10 @@ on:
       - config.yaml
       - map_template.html
       - streamlit_app.py
+      - stuck_tracker.py
+      - stuck_tracker.js
+      - test_stuck_tracker.py
+      - test_stuck_tracker.cjs
       - test_news.py
       - test_news_estimates.py
       - test_news_ui.cjs
@@ -59,7 +63,7 @@ jobs:
 
       - name: Check news ingestion and map controls
         run: |
-          python -m unittest test_news test_news_estimates test_map_upgrades -v
+          python -m unittest test_news test_news_estimates test_map_upgrades test_stuck_tracker -v
           node test_news_ui.cjs
 
       - name: Run ingest
