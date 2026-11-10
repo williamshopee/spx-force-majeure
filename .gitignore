@@ -1,0 +1,7 @@
+# Private local settings and generated app snapshots must never be published.
+.streamlit/secrets.toml
+*service-account*.json
+*credentials*.json
+__pycache__/
+map_soc.html
+preview_tracker/

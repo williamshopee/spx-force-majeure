@@ -611,6 +611,12 @@
   .navigation-marker.destination{background:#bc6439}
   .navigation-popup-actions{display:flex;flex-wrap:wrap;gap:7px;border-top:1px solid var(--line);margin-top:12px;padding-top:10px}
   .navigation-popup-actions button{background:#1e3a50;border:1px solid #44637b;color:#d8e9f7;font:inherit;font-size:11px;border-radius:5px;padding:7px 9px;cursor:pointer}
+  .stuck-sec{border-top:1px solid var(--line);margin-top:12px;padding-top:12px}
+  .stuck-sec h4{color:#4ccfc4;font-size:11px;text-transform:uppercase;margin:0 0 7px}
+  .stuck-sec p{font-size:10px;line-height:1.5;color:var(--muted);margin:6px 0}
+  .stuck-grid dd{overflow-wrap:anywhere;max-width:130px}
+  .stuck-sec a,#stuckSourceStatus a{color:#74d8cd;font-size:11px}
+  .stuck-warning{color:#ffd166!important;font-size:11px;line-height:1.5}
   .network-focus{position:absolute;right:14px;top:14px;z-index:650;max-width:255px;padding:12px;background:#102638f2;border:1px solid #416075;border-radius:9px;box-shadow:0 6px 22px #0005}
   .network-focus strong{display:block;font-size:13px;font-weight:600;color:#e1edf5;line-height:1.4}
   .network-focus p{font-size:11px;color:#aac1d2;line-height:1.5;margin:6px 0 10px}
@@ -788,6 +794,7 @@
           <p id="weatherStatus" class="muted-note"></p>
         </div>
         <div class="settings-group"><h3>Data &amp; sources</h3><details class="src" id="fmSources"></details></div>
+        <section class="settings-group" id="stuckSourceStatus" hidden aria-label="L&D Stuck tracker connection"></section>
         <details class="settings-group"><summary>Reading the map</summary><p class="muted-note">Amber areas are estimates from news. Blue polygons are official BMKG warnings. Neither confirms a delivery disruption or changes SLA automatically.</p><p class="muted-note">Facility colors: teal for last mile, orange for first mile, yellow for sorting centers. Use Facilities to filter these types.</p></details>
       </section>
     </div>
@@ -816,6 +823,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>__TURF__</script>
 <script>__NAVIGATION__</script>
+<script>__STUCK_UI__</script>
+<!-- Filled in memory after General login. Repository/static builds contain no tracker data. -->
+<script id="stuck-tracker" type="application/json">null</script>
 <script id="data" type="application/json">__DATA__</script>
 <!-- build_map.py replaces the contents of this tag with events.json so the
      page works when opened as a local file (fetch is blocked by CORS there). -->
@@ -957,6 +967,8 @@
   }
 
   // SOC capacity profile, present only on the SOC Map build.
+  var STUCK = JSON.parse(document.getElementById('stuck-tracker').textContent);
+  SPXStuck.renderStatus(STUCK,document.getElementById('stuckSourceStatus'));
   var PROF = null;
   try {
     var _pe = document.getElementById('profile');
@@ -1453,6 +1465,8 @@
       el.querySelector('.pop-t').insertAdjacentElement('afterend', d);
     }
 
+    var stuck = SPXStuck.createSection(STUCK,i,typ[i]);
+    if(stuck)el.appendChild(stuck);
     var prof = profSection(i);
     if (prof) el.appendChild(prof);
     

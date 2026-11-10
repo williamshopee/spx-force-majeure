@@ -11,6 +11,7 @@ and anything committed to the repo is readable without passing this screen.
 """
 
 import json
+import hashlib
 from html import escape
 import subprocess
 import sys
@@ -19,6 +20,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import streamlit as st
+from build_map import load_stations
+from stuck_tracker import SnapshotStore, embed_snapshot
 
 st.set_page_config(
     page_title="SPX BCP — Geospatial Analysis",
@@ -213,6 +216,38 @@ def cached_map(ts: int, view: str, revision: tuple) -> str:
     return build_map_html(view)
 
 
+@st.cache_resource
+def tracker_store():
+    return SnapshotStore()
+
+
+@st.cache_data(ttl=600, show_spinner=False)
+def cached_tracker(ts, settings, credential_revision, station_revision, _service_info):
+    stations = load_stations(HERE / "latlong.csv")
+    key = (settings["spreadsheet_id"], settings["worksheet_gid"], credential_revision, station_revision)
+    return tracker_store().refresh(key, settings, _service_info, stations)
+
+
+def load_tracker():
+    try:
+        settings = dict(st.secrets["stuck_tracker"])
+        if settings.get("service_account_json"):
+            service_info = json.loads(settings["service_account_json"])
+        else:
+            service_info = dict(st.secrets["gcp_service_account"])
+        if not isinstance(service_info, dict):
+            raise ValueError("Expected service account JSON")
+        settings = {"spreadsheet_id": str(settings["spreadsheet_id"]),
+                    "worksheet_gid": int(settings["worksheet_gid"])}
+    except (KeyError, FileNotFoundError, ValueError, TypeError):
+        return {"status": "unconfigured", "rows": {},
+                "message": "A read-only Google Sheets connection needs to be configured by the app owner. No tracker values have been loaded."}
+    # Cache identity changes on key rotation, without retaining a key in output.
+    revision = hashlib.sha256(json.dumps(service_info, sort_keys=True).encode()).hexdigest()
+    return cached_tracker(time_bucket(), settings, revision,
+                          (HERE / "latlong.csv").stat().st_mtime_ns, service_info)
+
+
 def time_bucket():
     return int(time.time()) // 600
 
@@ -240,6 +275,7 @@ ts = time_bucket()
 with st.spinner("Updating the map…"):
     report = cached_ingest(ts)
 events = load_events()
+tracker = load_tracker() if VIEW == "general" else None
 
 identity, account = st.columns([4, 1])
 identity.caption(f"{VIEW_NAME} · Indonesia")
@@ -248,6 +284,11 @@ with account.popover("Account"):
     st.caption(f"Signed in as {TEAM}")
     if events:
         st.caption("Snapshot: " + source_time(events.get("generated_at")))
+    if tracker:
+        if tracker.get("fetched_at"):
+            st.caption("L&D tracker read: " + source_time(tracker["fetched_at"]))
+        if tracker["status"] != "ok":
+            st.warning(tracker["message"])
     if st.button("Refresh data", use_container_width=True):
         st.cache_data.clear()
         st.rerun()
@@ -267,9 +308,9 @@ with account.popover("Account"):
         st.rerun()
 
 map_revision = tuple((name, (HERE / name).stat().st_mtime_ns)
-                     for name in ("events.json", "map_template.html", "build_map.py", "turf.min.js", "navigation.js")
+                     for name in ("events.json", "map_template.html", "build_map.py", "turf.min.js", "navigation.js", "stuck_tracker.js", "stuck_tracker.py", "latlong.csv")
                      if (HERE / name).exists())
-html = cached_map(ts, VIEW, map_revision)
+html = embed_snapshot(cached_map(ts, VIEW, map_revision), tracker, VIEW)
 if html:
     st.components.v1.html(html, height=880 if VIEW == "soc" else 920, scrolling=False)
 else:
@@ -284,7 +325,7 @@ st.session_state["map_refresh_checkpoint"] = (ts, map_revision)
 @st.fragment(run_every="60s")
 def watch_snapshot():
     revision = tuple((name, (HERE / name).stat().st_mtime_ns)
-                     for name in ("events.json", "map_template.html", "build_map.py", "turf.min.js", "navigation.js")
+                     for name in ("events.json", "map_template.html", "build_map.py", "turf.min.js", "navigation.js", "stuck_tracker.js", "stuck_tracker.py", "latlong.csv")
                      if (HERE / name).exists())
     if (time_bucket(), revision) != st.session_state.get("map_refresh_checkpoint"):
         st.rerun()

@@ -90,6 +90,7 @@ assert.equal(context.listEl.children.length,9);
 assert.equal(els.updatesMore.hidden,true,'pagination ends at the available data');
 console.log('News UI: date sorting, filters, WIB labels, source links and unsafe URL rejection passed.');
 require('./test_navigation.cjs');
+require('./test_stuck_tracker.cjs');
 // Use the actual SOC visibility functions, including facility index zero.
 const focusContext={Set,NET_OUT:{0:[1,2,2],2:[3]},NET_IN:{0:[2,4]},
   NET_FOCUS:null,NET_VISIBLE:null,on:[true,true,true],typ:[2,0,2,0,1,2]};

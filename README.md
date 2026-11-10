@@ -1,5 +1,34 @@
 # SPX force-majeure watch
 
+## General account: private L&D Stuck tracker
+
+The General account can read a private Google Sheet at runtime using a Google service account with Viewer access. In the selected tab, the summary must have the following seven columns in A:G (the header may follow title rows): `SOC`, `# absolute`, `% of inbound`, `%_stuck_still_alive`, `Stuck Aging < 16 Days`, `Most Last Status`, `% of Last Status`. The app resolves the tab by its configured numeric `gid`, so renaming the tab is safe. It reads only A1:G1000; it does not request employee contacts, parcel-level tabs, or the second summary table.
+
+Matching SOC popups show **L&D Stuck** with all six metrics, the app's fetch time in WIB, and an authenticated source link. Matching ignores case and extra whitespace only. Ambiguous/duplicate names are skipped; no fuzzy matching or inferred zeros. Source formula errors and blanks show **Not available**. Name-only rows and Nationwide totals are excluded. LM/FM popups and the SOC account receive no tracker data. Hazard exposure and SLA calculations do not use these metrics.
+
+One-time setup by the app owner:
+
+1. In a Google Cloud project, enable **Google Sheets API**. Create a service account with no project IAM role, then create its JSON key. Use an organization-approved account/project if required.
+2. Share only the intended source spreadsheet with that service account's `client_email` as **Viewer**. Keep the spreadsheet private.
+3. In **Streamlit Community Cloud → app Settings → Secrets**, append the configuration below, keeping existing password settings. Replace the placeholders. Paste the complete downloaded JSON between the triple single quotes. Do not put it in GitHub, a browser page script, or chat.
+
+```toml
+[stuck_tracker]
+spreadsheet_id = "YOUR_SPREADSHEET_ID"
+worksheet_gid = 123456789
+service_account_json = '''
+PASTE_COMPLETE_SERVICE_ACCOUNT_JSON_HERE
+'''
+```
+
+An existing `[gcp_service_account]` TOML table is also supported if `service_account_json` is omitted. The connection requests only `spreadsheets.readonly`. The service account should be shared only into the intended file; Google OAuth scopes cover files rather than individual tabs. The app itself requests only the bounded summary range.
+
+After saving Secrets, sign in as General and open **Layers → L&D Stuck · SOC** to verify the connection and match count. **Account → Refresh data** forces a new check. Active sessions check Sheets once per shared 10-minute cache bucket; the existing 60-second watcher starts the next bucket. A closed app does not run tracker fetches. This refreshes formulas' current displayed values; it cannot guarantee that the tracker owner's upstream daily refresh has completed. Fetch time is not a business-data date.
+
+Tracker values are injected into General's HTML in server memory after login. They are never written to generated HTML on disk, events/state files, CSV exports, or GitHub. Scheduled public GitHub workflows do not fetch this private source. A failed refresh preserves the last good process-memory snapshot, labels it cached, and keeps its original fetch timestamp. After a server restart, unavailable data stays unavailable until a successful connection. Credentials and raw API responses are not logged. The app's existing shared team password remains the access mechanism; this feature does not add individual identity controls.
+
+Validation: `python -m unittest test_stuck_tracker -v` and `node test_news_ui.cjs` cover SOC-only scope, exact/ambiguous names, errors versus zeros, cached failures, range/scope restrictions, and safe embedding/rendering.
+
 ## SOC connection focus
 
 In the SOC map, selecting a sorting center with recorded network links shows
