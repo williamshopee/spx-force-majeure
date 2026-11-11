@@ -10,7 +10,11 @@
     return new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Jakarta',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(date)+' WIB';
   }
   function old(snapshot){
-    return snapshot.status!=='ok' || !snapshot.fetched_at || Date.now()-Date.parse(snapshot.fetched_at)>20*60*1000;
+    return snapshot.status!=='ok' || !snapshot.fetched_at || !Number.isFinite(Date.parse(snapshot.fetched_at)) || Date.now()-Date.parse(snapshot.fetched_at)>21*60*60*1000;
+  }
+  function notice(snapshot){
+    if(snapshot.status==='ok' && old(snapshot))return 'This snapshot is older than 21 hours. Refresh the app to check Sheets.';
+    return snapshot.message||'Checks every 20 hours while this app is open.';
   }
   function value(raw, pct){
     return typeof raw==='number' && Number.isFinite(raw)?(pct?raw.toFixed(2)+'%':raw.toLocaleString('en-US')):'Not available';
@@ -32,7 +36,7 @@
      });
     sec.appendChild(dl);
     sec.appendChild(node('p','stuck-note','Tracker values as reported. Unavailable cells are not treated as zero.'));
-    if(old(snapshot))sec.appendChild(node('p','stuck-warning',snapshot.message||'This snapshot is older than 20 minutes. Refresh the app to check Sheets.'));
+    if(old(snapshot))sec.appendChild(node('p','stuck-warning',notice(snapshot)));
     var link=sourceLink(snapshot);if(link)sec.appendChild(link);
     return sec;
   }
@@ -46,7 +50,8 @@
       host.appendChild(node('p','muted-note',(snapshot.matched||0)+' SOCs matched · '+(snapshot.unmatched||0)+' names unmatched · '+(snapshot.ambiguous||0)+' ambiguous names skipped'));
     }
     if(snapshot.checked_at)host.appendChild(node('p','muted-note','Last check: '+stamp(snapshot.checked_at)));
-    host.appendChild(node('p',old(snapshot)?'stuck-warning':'muted-note',snapshot.message||'Checks every 10 minutes while this app is open.'));
+    host.appendChild(node('p',old(snapshot)?'stuck-warning':'muted-note',notice(snapshot)));
+    host.appendChild(node('p','muted-note','Auto-check: every 20 hours while the app is open. Refresh data checks immediately.'));
     host.appendChild(node('p','muted-note','Fetch time is when the app read Sheets; it does not verify when the tracker owner updated the source.'));
     var link=sourceLink(snapshot);if(link)host.appendChild(link);
   }

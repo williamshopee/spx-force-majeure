@@ -1,10 +1,10 @@
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import unittest
 from unittest.mock import patch, MagicMock
 
 from stuck_tracker import (HEADERS, PAYLOAD_TAG, SnapshotStore, TrackerError,
-                           embed_snapshot, fetch_snapshot, number, parse_rows, read_sheet)
+                           embed_snapshot, fetch_snapshot, number, parse_rows, read_sheet, refresh_due)
 
 STATIONS = [["Example DC", -6, 110, 2, 1], ["Other DC", -7, 110, 2, 1],
             ["Example Hub", -6, 110, 0, 1], ["Example First Mile Hub", -6, 110, 1, 1]]
@@ -16,6 +16,17 @@ ROWS = [["All Parcels"], HEADERS, ["Nationwide", "999"],
 
 
 class TrackerTests(unittest.TestCase):
+    def test_refresh_due_is_independent_of_frequent_map_refreshes(self):
+        checked = datetime(2026, 11, 11, 14, 59, tzinfo=timezone.utc)
+        snapshot = {"status": "ok", "checked_at": checked.isoformat()}
+        for minutes in (10, 60, 600, 1199):
+            self.assertFalse(refresh_due(snapshot, checked + timedelta(minutes=minutes)))
+        self.assertTrue(refresh_due(snapshot, checked + timedelta(hours=20)))
+        self.assertTrue(refresh_due(snapshot, checked + timedelta(days=2)))
+        self.assertFalse(refresh_due({"status": "unconfigured"}, checked))
+        self.assertFalse(refresh_due(None, checked))
+        self.assertTrue(refresh_due({"status": "error", "checked_at": "invalid"}, checked))
+
     def test_parse_scope_and_missing_values(self):
         result = parse_rows(ROWS, STATIONS)
         self.assertEqual(result["matched"], 2)

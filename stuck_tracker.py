@@ -11,7 +11,21 @@ from urllib.parse import quote
 
 HEADERS = ["SOC", "# absolute", "% of inbound", "%_stuck_still_alive",
            "Stuck Aging < 16 Days", "Most Last Status", "% of Last Status"]
+REFRESH_SECONDS = 20 * 60 * 60
 PAYLOAD_TAG = '<script id="stuck-tracker" type="application/json">null</script>'
+
+
+def refresh_due(snapshot, now=None):
+    """Wake an active app when its independent 20-hour tracker cache is due."""
+    if not snapshot or snapshot.get("status") == "unconfigured":
+        return False
+    try:
+        checked = datetime.fromisoformat(snapshot["checked_at"].replace("Z", "+00:00"))
+        if checked.tzinfo is None:
+            return True
+        return ((now or datetime.now(timezone.utc)) - checked).total_seconds() >= REFRESH_SECONDS
+    except (KeyError, ValueError, TypeError, AttributeError):
+        return True
 
 
 class TrackerError(Exception):

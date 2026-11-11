@@ -21,7 +21,7 @@ from pathlib import Path
 
 import streamlit as st
 from build_map import load_stations
-from stuck_tracker import SnapshotStore, embed_snapshot
+from stuck_tracker import REFRESH_SECONDS, SnapshotStore, embed_snapshot, refresh_due
 
 st.set_page_config(
     page_title="SPX BCP — Geospatial Analysis",
@@ -221,8 +221,8 @@ def tracker_store():
     return SnapshotStore()
 
 
-@st.cache_data(ttl=600, show_spinner=False)
-def cached_tracker(ts, settings, credential_revision, station_revision, _service_info):
+@st.cache_data(ttl=REFRESH_SECONDS, show_spinner=False)
+def cached_tracker(settings, credential_revision, station_revision, _service_info):
     stations = load_stations(HERE / "latlong.csv")
     key = (settings["spreadsheet_id"], settings["worksheet_gid"], credential_revision, station_revision)
     return tracker_store().refresh(key, settings, _service_info, stations)
@@ -244,7 +244,7 @@ def load_tracker():
                 "message": "A read-only Google Sheets connection needs to be configured by the app owner. No tracker values have been loaded."}
     # Cache identity changes on key rotation, without retaining a key in output.
     revision = hashlib.sha256(json.dumps(service_info, sort_keys=True).encode()).hexdigest()
-    return cached_tracker(time_bucket(), settings, revision,
+    return cached_tracker(settings, revision,
                           (HERE / "latlong.csv").stat().st_mtime_ns, service_info)
 
 
@@ -328,6 +328,8 @@ def watch_snapshot():
                      for name in ("events.json", "map_template.html", "build_map.py", "turf.min.js", "navigation.js", "stuck_tracker.js", "stuck_tracker.py", "latlong.csv")
                      if (HERE / name).exists())
     if (time_bucket(), revision) != st.session_state.get("map_refresh_checkpoint"):
+        st.rerun()
+    if VIEW == "general" and refresh_due(tracker):
         st.rerun()
 
 
