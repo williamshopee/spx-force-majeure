@@ -95,10 +95,16 @@ def parse_rows(values, stations):
         raise TrackerError("Tracker has no populated SOC summary rows. Previous data is retained if available.")
     counts = Counter(key for key, _ in candidates)
     result, unmatched, ambiguous, invalid = {}, 0, set(), 0
+    ranking = []
+    non_soc_names = {normalize_name(s[0]) for s in stations if s[3] != 2}
     for key, row in candidates:
         if counts[key] > 1 or len(names.get(key, [])) > 1:
             ambiguous.add(key)
             continue
+        absolute_count = number(row[1])
+        if absolute_count is not None and (key in names or key not in non_soc_names):
+            ranking.append({"name": " ".join(str(row[0]).split()), "absolute": absolute_count,
+                            "station_index": names[key][0] if key in names else None})
         if key not in names:
             unmatched += 1
             continue
@@ -113,7 +119,9 @@ def parse_rows(values, stations):
             invalid += 1
             continue
         result[str(names[key][0])] = metrics
-    return {"rows": result, "matched": len(result), "unmatched": unmatched,
+    ranking.sort(key=lambda item: (-item["absolute"], normalize_name(item["name"])))
+    return {"rows": result, "top_stuck": ranking[:10], "ranked_socs": len(ranking),
+            "matched": len(result), "unmatched": unmatched,
             "ambiguous": len(ambiguous), "invalid": invalid, "source_rows": len(candidates)}
 
 

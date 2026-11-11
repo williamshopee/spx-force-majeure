@@ -26,6 +26,25 @@ def threshold_fixture(items):
 
 
 class TrackerTests(unittest.TestCase):
+    def test_top_stuck_ranks_full_summary_including_unmapped_socs(self):
+        rows = [["All Parcels"], HEADERS, ["Nationwide", "999999"],
+                ["Example DC", "1,500"], ["Unknown DC", "3000"],
+                ["Bad DC", "#DIV/0!"], ["Blank DC"], ["Example Hub", "9999"],
+                ["Duplicate DC", "7000"], ["DUPLICATE DC", "7001"]]
+        rows += [[f"SOC {i:02} DC", str(1000 - i)] for i in range(12)]
+        result = parse_rows(rows, STATIONS)
+        top = result["top_stuck"]
+        self.assertEqual(len(top), 10)
+        self.assertEqual(top[0], {"name": "Unknown DC", "absolute": 3000, "station_index": None})
+        self.assertEqual(top[1], {"name": "Example DC", "absolute": 1500, "station_index": 0})
+        self.assertEqual(result["ranked_socs"], 14)
+        self.assertTrue(all(top[i]["absolute"] >= top[i+1]["absolute"] for i in range(9)))
+
+    def test_top_stuck_preserves_zero_and_orders_ties(self):
+        result = parse_rows([HEADERS, ["Zed DC", "0"], ["Alpha DC", "0"],
+                             ["Invalid DC", "-1"], ["Fraction DC", "1.5"]], STATIONS)
+        self.assertEqual([r["name"] for r in result["top_stuck"]], ["Alpha DC", "Zed DC"])
+
     def test_threshold_membership_is_not_recomputed(self):
         rows = threshold_fixture([["Example DC", "1", "Region 1", "0", "0.00%", "No Data", "0.00%", "0.00%"],
                                   ["Other DC"], ["Example Hub", "999"], ["Missing DC", "1000"]])
@@ -117,6 +136,7 @@ class TrackerTests(unittest.TestCase):
         self.assertEqual(cached["fetched_at"], good["fetched_at"])
         self.assertNotEqual(cached["checked_at"], good["checked_at"])
         self.assertEqual(cached["rows"], good["rows"])
+        self.assertEqual(cached["top_stuck"], good["top_stuck"])
         first = fetch_snapshot(SETTINGS, {}, STATIONS, reader=failed)
         self.assertEqual(first["status"], "error")
         self.assertEqual(first["rows"], {})

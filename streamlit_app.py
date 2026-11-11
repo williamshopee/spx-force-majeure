@@ -217,7 +217,7 @@ def cached_map(ts: int, view: str, revision: tuple) -> str:
 
 
 @st.cache_resource
-def tracker_store():
+def tracker_store(parser_revision):
     return SnapshotStore()
 
 
@@ -225,7 +225,7 @@ def tracker_store():
 def cached_tracker(settings, credential_revision, station_revision, parser_revision, _service_info):
     stations = load_stations(HERE / "latlong.csv")
     key = (settings["spreadsheet_id"], settings["worksheet_gid"], credential_revision, station_revision)
-    return tracker_store().refresh(key, settings, _service_info, stations)
+    return tracker_store(parser_revision).refresh(key, settings, _service_info, stations)
 
 
 def load_tracker():

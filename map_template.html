@@ -557,6 +557,17 @@
   .settings-group h3{font-size:12px;font-weight:500;color:#c3d2df;margin:0 0 12px}
   .settings-group>summary{font-size:13px;color:#d9e5ee;cursor:pointer;margin-bottom:12px}
   .settings-group p{margin:12px 0}
+  .stuck-ranking-list{list-style:none;margin:12px 0;padding:0}
+  .stuck-ranking-list li{border-bottom:1px solid var(--line)}
+  .stuck-ranking-row{display:grid;grid-template-columns:20px minmax(0,1fr) auto;align-items:center;gap:8px;width:100%;padding:10px 3px;text-align:left;color:var(--text);font:inherit;border:0;background:transparent;border-radius:4px}
+  button.stuck-ranking-row{cursor:pointer}
+  button.stuck-ranking-row:hover,button.stuck-ranking-row:focus-visible{background:#203548}
+  .stuck-ranking-rank{font-size:11px;color:var(--muted)}
+  .stuck-ranking-label{font-size:12px;line-height:1.4;overflow-wrap:anywhere}
+  .stuck-ranking-label small{display:block;font-size:10px;color:var(--muted);margin-top:2px}
+  .stuck-ranking-count{font-size:13px;font-variant-numeric:tabular-nums;color:#ffd08c;white-space:nowrap}
+  #stuckTopTen .stuck-ranking-stamp{font-size:11px;color:var(--muted);margin:6px 0}
+  #stuckTopTen>a{font-size:11px;color:#b3cbdc}
   #q{border-radius:7px;padding:12px;font-size:13px;min-height:44px}
   .types label{padding:10px 3px;grid-template-columns:11px minmax(0,1fr) auto}
   .region-disclosure .isl button{padding:11px 3px}
@@ -763,6 +774,7 @@
           <input id="q" type="search" autocomplete="off" placeholder="Search a facility…" aria-label="Search stations by name" aria-expanded="false" aria-controls="hits" role="combobox">
           <ul id="hits" role="listbox" aria-label="Matching stations"></ul>
         </div>
+        <details id="stuckTopTen" class="settings-group" aria-label="Top 10 stuck SOCs" hidden open></details>
         <div class="settings-group"><h3>Facility types</h3><ul class="types" id="types"></ul></div>
         <details class="settings-group region-disclosure" open><summary>Explore by island</summary><ul class="isl" id="islands"></ul><p class="muted-note">Island groups follow facility coordinates.</p></details>
         <p class="muted-note" id="facilityHelp">Select a facility on the map to see its details.</p>
@@ -2620,6 +2632,11 @@
   map.on('moveend zoomend', tallyView);
 
   /* ---------------- search ---------------- */
+  if(GENERAL_VIEW)SPXStuck.renderTopStuck(STUCK,document.getElementById('stuckTopTen'),RAW,function(i){
+    on[typ[i]]=true;ul.querySelectorAll('input')[typ[i]].checked=true;
+    clearEventSelection();setMode('points');
+    map.setView([lat[i],lng[i]],14,{animate:false});layer.redraw();openStation(i);
+  });
   var q = document.getElementById('q'), hits = document.getElementById('hits');
   function closeHits(){ hits.classList.remove('on'); hits.innerHTML = ''; q.setAttribute('aria-expanded', 'false'); }
   q.addEventListener('input', function(){

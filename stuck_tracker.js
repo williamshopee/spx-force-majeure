@@ -75,5 +75,34 @@
     host.appendChild(node('p','muted-note','Fetch time is when the app read Sheets; it does not verify when the tracker owner updated the source.'));
     var link=sourceLink(snapshot);if(link)host.appendChild(link);
   }
-  root.SPXStuck={createSection:createSection,renderStatus:renderStatus,stamp:stamp,thresholdIndices:thresholdIndices,thresholdSummary:thresholdSummary};
+  function renderTopStuck(snapshot,host,stations,onSelect){
+    if(!snapshot || !host)return;
+    host.hidden=false;host.replaceChildren();
+    host.appendChild(node('summary',null,'Top 10 stuck SOCs'));
+    host.appendChild(node('p','muted-note','By total stuck parcels (# absolute) · all SOC summary rows.'));
+    if(snapshot.fetched_at)host.appendChild(node('p','stuck-ranking-stamp',(old(snapshot)?'Cached · ':'Fetched · ')+stamp(snapshot.fetched_at)));
+    if(old(snapshot))host.appendChild(node('p','stuck-warning',notice(snapshot)));
+    if(!Array.isArray(snapshot.top_stuck)){
+      host.appendChild(node('p','muted-note','Ranking is unavailable. Use Account → Refresh data to check Sheets.'));
+    }else{
+      var rows=snapshot.top_stuck.filter(function(row){return row && typeof row.name==='string' && Number.isInteger(row.absolute) && row.absolute>=0;}).slice(0,10);
+      if(!rows.length)host.appendChild(node('p','muted-note','No SOCs with valid stuck-parcel counts are available.'));
+      var list=node('ol','stuck-ranking-list');
+      rows.forEach(function(row,rank){
+        var index=row.station_index;
+        var mapped=Number.isInteger(index) && index>=0 && stations[index] && stations[index][3]===2 &&
+          stations[index][0].trim().replace(/\s+/g,' ').toLowerCase()===row.name.trim().replace(/\s+/g,' ').toLowerCase();
+        var item=node('li'),content=node(mapped?'button':'div','stuck-ranking-row');
+        if(mapped){content.type='button';content.title='Show '+row.name+' on map';content.addEventListener('click',function(){onSelect(index);});}
+        content.appendChild(node('span','stuck-ranking-rank',String(rank+1)));
+        var label=node('span','stuck-ranking-label');label.appendChild(node('span',null,row.name));
+        label.appendChild(node('small',null,mapped?'View on map':'No map location'));
+        content.appendChild(label);content.appendChild(node('strong','stuck-ranking-count',value(row.absolute)));
+        item.appendChild(content);list.appendChild(item);
+      });
+      host.appendChild(list);
+    }
+    var link=sourceLink(snapshot);if(link)host.appendChild(link);
+  }
+  root.SPXStuck={createSection:createSection,renderStatus:renderStatus,renderTopStuck:renderTopStuck,stamp:stamp,thresholdIndices:thresholdIndices,thresholdSummary:thresholdSummary};
 })(typeof window!=='undefined'?window:globalThis);

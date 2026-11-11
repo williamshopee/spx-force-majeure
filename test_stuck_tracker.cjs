@@ -5,6 +5,7 @@ class Element{
   constructor(tag){this.tag=tag;this.children=[];this.textContent='';}
   appendChild(el){this.children.push(el);return el;}
   replaceChildren(){this.children=[];}
+  addEventListener(event,fn){this[event]=fn;}
 }
 const context={document:{createElement:tag=>new Element(tag)},Date,Intl};
 vm.createContext(context);
@@ -53,4 +54,28 @@ assert.equal(api.thresholdIndices(snapshot,[['Example DC',0,100,2]]).size,0,'hea
 assert.equal(api.thresholdIndices(null,[]).size,0,'unconfigured data never creates a fallback layer');
 snapshot.threshold.status='cached';snapshot.threshold.message='Table changed';
 assert.match(api.thresholdSummary(snapshot),/Cached/);
-console.log('L&D tracker UI: SOC-only rows, zeros, unavailable cells, safe text/links, timestamps and setup status passed.');
+const rankHost=new Element('details'), stations=[['Example DC',-6,100,2],['Example Hub',-6,100,0]];
+let selected=null;
+const rankSnapshot={status:'ok',fetched_at:new Date().toISOString(),source_url:'https://docs.google.com/spreadsheets/d/example/edit#gid=1',
+ top_stuck:[{name:'<img onerror=alert(1)> DC',absolute:999,station_index:null},{name:'Example DC',absolute:0,station_index:0},
+ {name:'Wrong DC',absolute:1,station_index:0},{name:'Example Hub',absolute:9,station_index:1}]};
+api.renderTopStuck(rankSnapshot,rankHost,stations,i=>{selected=i;});
+const rankedList=rankHost.children.find(el=>el.tag==='ol');
+assert.equal(rankedList.children.length,4);
+assert.equal(rankedList.children[0].children[0].tag,'div','unmapped stays in the ranking without a map action');
+assert.equal(rankedList.children[0].children[0].children[1].children[0].textContent,'<img onerror=alert(1)> DC','source names are plain text');
+const mappedButton=rankedList.children[1].children[0];
+assert.equal(mappedButton.tag,'button');mappedButton.click();assert.equal(selected,0);
+assert.equal(mappedButton.children[2].textContent,'0','real zero is preserved');
+assert.equal(rankedList.children[2].children[0].tag,'div','stale index must match source name');
+assert.equal(rankedList.children[3].children[0].tag,'div','non-SOC index cannot navigate');
+rankSnapshot.status='cached';rankSnapshot.message='Refresh failed';
+api.renderTopStuck(rankSnapshot,rankHost,stations,()=>{});
+assert.ok(rankHost.children.some(el=>/Cached/.test(el.textContent)));
+api.renderTopStuck({status:'ok',top_stuck:[]},rankHost,stations,()=>{});
+assert.ok(rankHost.children.some(el=>/No SOCs/.test(el.textContent)));
+api.renderTopStuck({status:'unconfigured'},rankHost,stations,()=>{});
+assert.ok(rankHost.children.some(el=>/Ranking is unavailable/.test(el.textContent)));
+const hiddenHost=new Element('details');hiddenHost.hidden=true;
+api.renderTopStuck(null,hiddenHost,stations,()=>{});assert.equal(hiddenHost.hidden,true);
+console.log('L&D tracker UI: SOC scope, safe ranking, unmapped entries, click actions, timestamps and cached states passed.');
