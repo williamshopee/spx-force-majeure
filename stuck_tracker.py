@@ -11,6 +11,8 @@ from urllib.parse import quote
 
 HEADERS = ["SOC", "# absolute", "% of inbound", "%_stuck_still_alive",
            "Stuck Aging < 16 Days", "Most Last Status", "% of Last Status"]
+THRESHOLD_HEADERS = ["SOC", "Stuck Aging < 16 Days", "Region", "# absolute",
+                     "%_stuck_still_alive", "Most Last Status", "% of Last Status", "% of inbound"]
 REFRESH_SECONDS = 20 * 60 * 60
 PAYLOAD_TAG = '<script id="stuck-tracker" type="application/json">null</script>'
 
@@ -115,8 +117,50 @@ def parse_rows(values, stations):
             "ambiguous": len(ambiguous), "invalid": invalid, "source_rows": len(candidates)}
 
 
+def parse_threshold_rows(values, stations):
+    """Membership in the sheet's I:P table is authoritative; do not refilter it.
+
+    Q contains facility-lead contacts and is intentionally not requested or embedded.
+    """
+    table = [list(row[8:16]) for row in values]
+    header = next((i for i, row in enumerate(table[:20])
+                   if [str(v or "").strip() for v in row] == THRESHOLD_HEADERS), None)
+    if header is None:
+        raise TrackerError("Threshold-list columns changed. Expected the prefiltered SOC table in I:P.")
+    names = defaultdict(list)
+    for i, station in enumerate(stations):
+        if station[3] == 2:
+            names[normalize_name(station[0])].append(i)
+    candidates = []
+    for row in table[header + 1:]:
+        row += [""] * (8 - len(row))
+        key = normalize_name(row[0])
+        if key.startswith("#"):
+            raise TrackerError("The threshold list contains a sheet formula error. Previous list retained if available.")
+        if key and key not in {"nationwide", "total", "grand total"}:
+            candidates.append((key, row))
+    duplicates = Counter(key for key, _ in candidates)
+    rows, unmatched, ambiguous = {}, 0, set()
+    for key, row in candidates:
+        if duplicates[key] > 1 or len(names.get(key, [])) > 1:
+            ambiguous.add(key)
+            continue
+        if key not in names:
+            unmatched += 1
+            continue
+        name, aging, region, absolute, alive, status, share, inbound = row
+        rows[str(names[key][0])] = {
+            "absolute": number(absolute), "aging_lt16": number(aging),
+            "inbound_pct": number(inbound, True), "alive_pct": number(alive, True),
+            "last_status": None if str(status).startswith("#") else str(status or "").strip() or None,
+            "last_status_pct": number(share, True), "region": str(region or "").strip() or None,
+        }
+    return {"rows": rows, "matched": len(rows), "unmatched": unmatched,
+            "ambiguous": len(ambiguous), "source_rows": len(candidates)}
+
+
 def read_sheet(settings, service_info):
-    """Read only A:G from the configured tab; no parcel IDs or employee columns."""
+    """Read summary columns A:P; Q's employee contacts and parcel tabs stay private."""
     from google.oauth2.service_account import Credentials
     from google.auth.transport.requests import AuthorizedSession
 
@@ -150,7 +194,7 @@ def read_sheet(settings, service_info):
                           if s["properties"]["sheetId"] == gid), None)
             if title is None:
                 raise TrackerError("The configured tracker tab was not found.")
-            cell_range = "'" + title.replace("'", "''") + "'!A1:G1000"
+            cell_range = "'" + title.replace("'", "''") + "'!A1:P1000"
             data = get(base + "/values/" + quote(cell_range, safe=""),
                        {"valueRenderOption": "FORMATTED_VALUE"})
             values = data.get("values", [])
@@ -169,12 +213,25 @@ def fetch_snapshot(settings, service_info, stations, previous=None, reader=read_
     try:
         values, title = reader(settings, service_info)
         parsed = parse_rows(values, stations)
+        try:
+            threshold = {**parse_threshold_rows(values, stations), "status": "ok",
+                         "checked_at": stamp, "fetched_at": stamp,
+                         "message": "Uses the sheet's prefiltered SOC list; no additional threshold is applied."}
+        except TrackerError as error:
+            old_threshold = dict((previous or {}).get("threshold") or {})
+            threshold = {**old_threshold, "rows": old_threshold.get("rows", {}),
+                         "status": "cached" if old_threshold.get("fetched_at") else "error",
+                         "checked_at": stamp, "message": str(error)}
         return {**parsed, "status": "ok", "checked_at": stamp, "fetched_at": stamp,
+                "threshold": threshold,
                 "sheet_title": title, "source_url": "https://docs.google.com/spreadsheets/d/" +
                 settings["spreadsheet_id"] + "/edit#gid=" + str(settings["worksheet_gid"]),
                 "message": "Google Sheets checked successfully."}
     except TrackerError as error:
         old = dict(previous or {})
+        if old.get("threshold"):
+            old["threshold"] = {**old["threshold"], "status": "cached" if old["threshold"].get("fetched_at") else "error",
+                                "checked_at": stamp, "message": str(error)}
         return {**old, "rows": old.get("rows", {}), "status": "cached" if old.get("fetched_at") else "error",
                 "checked_at": stamp, "message": str(error)}
 

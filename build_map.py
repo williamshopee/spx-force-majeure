@@ -204,6 +204,7 @@ def main(argv=None) -> int:
     html = html.replace("__TURF__", turf_js.replace("</", "<\\/"))
     html = html.replace("__NAVIGATION__", (HERE / "navigation.js").read_text(encoding="utf-8").replace("</", "<\\/"))
     html = html.replace("__STUCK_UI__", (HERE / "stuck_tracker.js").read_text(encoding="utf-8").replace("</", "<\\/"))
+    html = html.replace("__FACILITY_INSIGHTS__", (HERE / "facility_insights.js").read_text(encoding="utf-8").replace("</", "<\\/"))
     stations = load_stations(a.stations)
     if not stations:
         print(f"no usable rows in {a.stations}", file=sys.stderr)

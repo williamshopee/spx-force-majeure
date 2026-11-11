@@ -617,6 +617,16 @@
   .stuck-grid dd{overflow-wrap:anywhere;max-width:130px}
   .stuck-sec a,#stuckSourceStatus a{color:#74d8cd;font-size:11px}
   .stuck-warning{color:#ffd166!important;font-size:11px;line-height:1.5}
+  .stuck-sec .stuck-listed{color:#ffd166}
+  .nearest-sec{border-top:1px solid var(--line);margin-top:12px;padding-top:12px}
+  .nearest-sec h4{font-size:11px;text-transform:uppercase;color:#ffd166;margin:0 0 8px}
+  .nearest-sec p{font-size:10px;line-height:1.5;color:var(--muted);margin:6px 0}
+  .nearest-name{display:block;font-size:12px;line-height:1.45;color:#dce8f1}
+  .nearest-sec .nearest-distance{color:#dce8f1;font-size:12px}
+  .nearest-sec a{color:#74d8cd;font-size:11px}
+  .nearest-action,#stuckDensityFit{display:block;font:inherit;font-size:11px;margin-top:9px;min-height:32px;padding:6px 10px;border:1px solid #44637b;border-radius:5px;background:#1e3a50;color:#d8e9f7;cursor:pointer}
+  #stuckDensityFit:disabled{opacity:.5;cursor:default}
+  #stuckDensitySummary{line-height:1.55}
   .network-focus{position:absolute;right:14px;top:14px;z-index:650;max-width:255px;padding:12px;background:#102638f2;border:1px solid #416075;border-radius:9px;box-shadow:0 6px 22px #0005}
   .network-focus strong{display:block;font-size:13px;font-weight:600;color:#e1edf5;line-height:1.4}
   .network-focus p{font-size:11px;color:#aac1d2;line-height:1.5;margin:6px 0 10px}
@@ -786,7 +796,9 @@
       </section>
       <section id="panelLayers" role="tabpanel" aria-labelledby="tabLayers" class="workspace-panel" hidden>
         <div class="section-heading"><h2>Map layers</h2><p>Keep the map focused on what you need.</p></div>
-        <div class="settings-group"><h3>Facility display</h3><div class="seg" role="group" aria-label="Map style"><button id="mPoints" aria-pressed="true">Locations</button><button id="mHeat" aria-pressed="false">Density</button></div></div>
+        <div class="settings-group"><h3>Facility display</h3><div class="seg" role="group" aria-label="Map style"><button id="mPoints" aria-pressed="true">Locations</button><button id="mHeat" aria-pressed="false">Density</button></div>
+          <div id="stuckDensityControls" hidden><p class="muted-note" id="stuckDensitySummary" role="status"></p><p class="muted-note">Density shows concentration of SOCs in the sheet's prefiltered list, with one equal-weight point per SOC.</p><button type="button" id="stuckDensityFit">Fit threshold SOCs</button></div>
+        </div>
         <div class="settings-group"><h3>Area overlays</h3>
           <label class="layer-toggle"><span><b>News screening areas</b><small>All estimated areas · amber</small></span><input type="checkbox" id="newsZonesOn"></label>
           <label class="layer-toggle"><span><b>BMKG weather warnings</b><small>All valid warning areas · blue</small></span><input type="checkbox" id="bmkgWarningsOn"></label>
@@ -824,6 +836,7 @@
 <script>__TURF__</script>
 <script>__NAVIGATION__</script>
 <script>__STUCK_UI__</script>
+<script>__FACILITY_INSIGHTS__</script>
 <!-- Filled in memory after General login. Repository/static builds contain no tracker data. -->
 <script id="stuck-tracker" type="application/json">null</script>
 <script id="data" type="application/json">__DATA__</script>
@@ -968,6 +981,8 @@
 
   // SOC capacity profile, present only on the SOC Map build.
   var STUCK = JSON.parse(document.getElementById('stuck-tracker').textContent);
+  var GENERAL_VIEW = !NET;
+  var THRESHOLD_INDICES = SPXStuck.thresholdIndices(STUCK,RAW);
   SPXStuck.renderStatus(STUCK,document.getElementById('stuckSourceStatus'));
   var PROF = null;
   try {
@@ -1025,6 +1040,10 @@
   }
   function stationVisible(i){
     return (!NET_VISIBLE || NET_VISIBLE.has(i)) && (on[typ[i]] || i===NET_FOCUS);
+  }
+  function thresholdDensityActive(){return GENERAL_VIEW && mode==='heat';}
+  function renderedStationVisible(i){
+    return stationVisible(i) && (!thresholdDensityActive() || THRESHOLD_INDICES.has(i));
   }
   function clearNetworkLines(){
     NET_DRAWN=null;
@@ -1319,7 +1338,7 @@
       var b = m.getBounds().pad(0.22);
       var s = b.getSouth(), n = b.getNorth(), e = b.getEast(), wd = b.getWest();
       for (var i = 0; i < N; i++) {
-        if (!stationVisible(i)) continue;
+        if (!renderedStationVisible(i)) continue;
         if (lat[i] < s || lat[i] > n || lng[i] < wd || lng[i] > e) continue;
         var p = m.latLngToLayerPoint([lat[i], lng[i]]);
         px.push(p.x - o.x); py.push(p.y - o.y); pi.push(i);
@@ -1390,6 +1409,10 @@
         d[i + 3] = 58 + ((t * 197) >> 8);
       }
       ctx.putImageData(img, 0, 0);
+      if(thresholdDensityActive()){
+        ctx.fillStyle='#fff3df';ctx.strokeStyle='#543e27';ctx.lineWidth=1;
+        for(var k=0;k<px.length;k++){ctx.beginPath();ctx.arc(px[k],py[k],3,0,Math.PI*2);ctx.fill();ctx.stroke();}
+      }
     },
     _lut: function(){
       if (this._lt) return this._lt;
@@ -1436,7 +1459,7 @@
   var pop = L.popup({closeButton:true, autoPan:true, maxWidth:300});
   map.on('popupclose',function(){if(NET_FOCUS===null)clearNetworkLines();});
   map.on('click', function(e){
-    if (mode !== 'points') return;
+    if (mode !== 'points' && !thresholdDensityActive()) return;
     var i = layer.nearest(e.layerPoint);
     if (i < 0) { map.closePopup(); if(NET_FOCUS===null)clearNetwork(); return; }
     openStation(i);
@@ -1465,6 +1488,13 @@
       el.querySelector('.pop-t').insertAdjacentElement('afterend', d);
     }
 
+    if(GENERAL_VIEW)el.appendChild(SPXFacilityInsights.nearestSection({events:EVENTS,lat:lat[i],lng:lng[i],airports:AIR,
+      loading:!bootDone.events,snapshotGeneratedAt:lastGood && lastGood.generated_at,
+      onSelect:function(event){
+        var ix=EVENTS.findIndex(function(item){return event.id?item.id===event.id:item===event;});
+        if(ix<0)return;
+        clearEventSelection();setMode('points');selectEvent(ix);
+      }}));
     var stuck = SPXStuck.createSection(STUCK,i,typ[i]);
     if(stuck)el.appendChild(stuck);
     var prof = profSection(i);
@@ -1554,16 +1584,34 @@
   /* ---------------- view mode ---------------- */
   var bP = document.getElementById('mPoints'), bH = document.getElementById('mHeat'),
       ramp = document.getElementById('ramp');
+  if(GENERAL_VIEW){
+    bH.textContent='Threshold density';
+    bH.title='SOCs already filtered in tracker columns I–Q; no extra threshold is applied.';
+    bH.disabled=!(STUCK && STUCK.threshold && STUCK.threshold.fetched_at);
+    document.getElementById('stuckDensityControls').hidden=false;
+    document.getElementById('stuckDensitySummary').textContent=SPXStuck.thresholdSummary(STUCK);
+    document.getElementById('stuckDensityFit').disabled=!THRESHOLD_INDICES.size;
+    ramp.querySelector('.lab span:first-child').textContent='fewer SOCs';
+    ramp.querySelector('.lab span:last-child').textContent='more SOCs';
+  }
   function setMode(m){
+    if(m==='heat' && GENERAL_VIEW && bH.disabled)return;
     mode = m;
+    if(thresholdDensityActive()){on[2]=true;ul.querySelectorAll('input')[2].checked=true;}
     bP.setAttribute('aria-pressed', m === 'points');
     bH.setAttribute('aria-pressed', m === 'heat');
     ramp.classList.toggle('on', m === 'heat');
     if (m === 'heat') map.closePopup();
-    layer.redraw();
+    layer.redraw();tallyView();
   }
   bP.addEventListener('click', function(){ setMode('points'); });
   bH.addEventListener('click', function(){ setMode('heat'); });
+  document.getElementById('stuckDensityFit').addEventListener('click',function(){
+    if(!THRESHOLD_INDICES.size)return;
+    setMode('heat');
+    var points=Array.from(THRESHOLD_INDICES).filter(renderedStationVisible).map(function(i){return [lat[i],lng[i]];});
+    if(points.length)map.fitBounds(L.latLngBounds(points).pad(.14),{maxZoom:10});
+  });
 
   /* ---------------- hazard geometry ---------------- */
   var hz = L.layerGroup();
@@ -2562,12 +2610,12 @@
   function tallyView(){
     var b = map.getBounds(), s = b.getSouth(), n = b.getNorth(), e = b.getEast(), w = b.getWest(), c = 0;
     for (var i = 0; i < N; i++) {
-      if (!stationVisible(i)) continue;
+      if (!renderedStationVisible(i)) continue;
       if (lat[i] >= s && lat[i] <= n && lng[i] >= w && lng[i] <= e) c++;
     }
     iv.hidden = false;
     iv.querySelector('b').textContent = fmt(c);
-    iv.querySelector('span').textContent = NET_VISIBLE?'focused facilities in view':c === N ? 'the whole network' : 'stations in view';
+    iv.querySelector('span').textContent = thresholdDensityActive()?'listed SOCs in view':NET_VISIBLE?'focused facilities in view':c === N ? 'the whole network' : 'stations in view';
   }
   map.on('moveend zoomend', tallyView);
 

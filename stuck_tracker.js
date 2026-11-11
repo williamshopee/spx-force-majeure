@@ -24,10 +24,14 @@
     var a=node('a',null,'Open tracker');a.href=snapshot.source_url;a.target='_blank';a.rel='noopener noreferrer';return a;
   }
   function createSection(snapshot, index, type){
-    if(!snapshot || type!==2 || !snapshot.rows || !snapshot.rows[index])return null;
-    var row=snapshot.rows[index], sec=node('section','stuck-sec');
+    if(!snapshot || type!==2)return null;
+    var threshold=snapshot.threshold||{}, listed=threshold.rows && threshold.rows[index];
+    var primary=(snapshot.rows||{})[index], row=primary||listed, rowSource=primary?snapshot:threshold;
+    if(!row)return null;
+    var sec=node('section','stuck-sec');
     sec.appendChild(node('h4',null,'L&D Stuck'));
-    sec.appendChild(node('p','stuck-stamp',(old(snapshot)?'Cached data · ':'Fetched · ')+stamp(snapshot.fetched_at)));
+    sec.appendChild(node('p','stuck-stamp',(old(rowSource)?'Cached data · ':'Fetched · ')+stamp(rowSource.fetched_at)));
+    if(listed)sec.appendChild(node('p','stuck-listed',(old(threshold)?'Cached threshold list · ':'')+'Listed above threshold in the tracker'));
     var dl=node('dl','prof-grid stuck-grid');
     [['Stuck parcels',value(row.absolute)],['% of inbound',value(row.inbound_pct,true)],
      ['Still alive',value(row.alive_pct,true)],['Stuck aging < 16 days',value(row.aging_lt16)],
@@ -36,9 +40,24 @@
      });
     sec.appendChild(dl);
     sec.appendChild(node('p','stuck-note','Tracker values as reported. Unavailable cells are not treated as zero.'));
-    if(old(snapshot))sec.appendChild(node('p','stuck-warning',notice(snapshot)));
+    if(old(rowSource))sec.appendChild(node('p','stuck-warning',notice(rowSource)));
     var link=sourceLink(snapshot);if(link)sec.appendChild(link);
     return sec;
+  }
+  function thresholdIndices(snapshot,stations){
+    var rows=((snapshot||{}).threshold||{}).rows||{};
+    return new Set(Object.keys(rows).filter(function(key){
+      var index=Number(key);return Number.isInteger(index) && index>=0 && stations[index] && stations[index][3]===2;
+    }).map(Number));
+  }
+  function thresholdSummary(snapshot){
+    var threshold=(snapshot||{}).threshold;
+    if(!threshold)return 'Threshold list is unavailable. Refresh data after connecting the tracker.';
+    if(!threshold.fetched_at)return threshold.message||'Threshold list is unavailable.';
+    var text=(threshold.matched||0)+' mapped SOCs from the prefiltered list · '+(threshold.unmatched||0)+' unmatched · '+(threshold.ambiguous||0)+' ambiguous';
+    text+=' · '+(old(threshold)?'Cached · ':'Fetched · ')+stamp(threshold.fetched_at);
+    if(old(threshold))text+=' · '+notice(threshold);
+    return text;
   }
   function renderStatus(snapshot, host){
     if(!snapshot || !host)return;
@@ -50,10 +69,11 @@
       host.appendChild(node('p','muted-note',(snapshot.matched||0)+' SOCs matched · '+(snapshot.unmatched||0)+' names unmatched · '+(snapshot.ambiguous||0)+' ambiguous names skipped'));
     }
     if(snapshot.checked_at)host.appendChild(node('p','muted-note','Last check: '+stamp(snapshot.checked_at)));
+    if(snapshot.threshold)host.appendChild(node('p','muted-note','Threshold list: '+thresholdSummary(snapshot)));
     host.appendChild(node('p',old(snapshot)?'stuck-warning':'muted-note',notice(snapshot)));
     host.appendChild(node('p','muted-note','Auto-check: every 20 hours while the app is open. Refresh data checks immediately.'));
     host.appendChild(node('p','muted-note','Fetch time is when the app read Sheets; it does not verify when the tracker owner updated the source.'));
     var link=sourceLink(snapshot);if(link)host.appendChild(link);
   }
-  root.SPXStuck={createSection:createSection,renderStatus:renderStatus,stamp:stamp};
+  root.SPXStuck={createSection:createSection,renderStatus:renderStatus,stamp:stamp,thresholdIndices:thresholdIndices,thresholdSummary:thresholdSummary};
 })(typeof window!=='undefined'?window:globalThis);

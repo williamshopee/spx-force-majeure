@@ -3,8 +3,8 @@ from datetime import datetime, timedelta, timezone
 import unittest
 from unittest.mock import patch, MagicMock
 
-from stuck_tracker import (HEADERS, PAYLOAD_TAG, SnapshotStore, TrackerError,
-                           embed_snapshot, fetch_snapshot, number, parse_rows, read_sheet, refresh_due)
+from stuck_tracker import (HEADERS, THRESHOLD_HEADERS, PAYLOAD_TAG, SnapshotStore, TrackerError,
+                           embed_snapshot, fetch_snapshot, number, parse_rows, parse_threshold_rows, read_sheet, refresh_due)
 
 STATIONS = [["Example DC", -6, 110, 2, 1], ["Other DC", -7, 110, 2, 1],
             ["Example Hub", -6, 110, 0, 1], ["Example First Mile Hub", -6, 110, 1, 1]]
@@ -15,7 +15,55 @@ ROWS = [["All Parcels"], HEADERS, ["Nationwide", "999"],
         ["Example Hub", "5", "1%"], ["Example First Mile Hub", "2"], ["No Values DC"]]
 
 
+def threshold_fixture(items):
+    rows = [list(row) + [""] * (8 - len(row)) for row in ROWS]
+    rows[1] += THRESHOLD_HEADERS
+    for index, item in enumerate(items, 2):
+        while len(rows) <= index:
+            rows.append([""] * 8)
+        rows[index] += list(item)
+    return rows
+
+
 class TrackerTests(unittest.TestCase):
+    def test_threshold_membership_is_not_recomputed(self):
+        rows = threshold_fixture([["Example DC", "1", "Region 1", "0", "0.00%", "No Data", "0.00%", "0.00%"],
+                                  ["Other DC"], ["Example Hub", "999"], ["Missing DC", "1000"]])
+        result = parse_threshold_rows(rows, STATIONS)
+        self.assertEqual(set(result["rows"]), {"0", "1"})
+        self.assertEqual(result["rows"]["0"]["absolute"], 0, "source membership remains authoritative even for zero metrics")
+        self.assertIsNone(result["rows"]["1"]["absolute"], "name-only listed SOC is not invented as zero")
+        self.assertEqual(result["unmatched"], 2)
+        self.assertEqual(result["rows"]["0"]["region"], "Region 1")
+
+    def test_threshold_empty_list_clears_and_duplicates_do_not_overwrite(self):
+        self.assertEqual(parse_threshold_rows(threshold_fixture([]), STATIONS)["rows"], {})
+        result = parse_threshold_rows(threshold_fixture([["Example DC"], ["EXAMPLE DC"]]), STATIONS)
+        self.assertEqual(result["ambiguous"], 1)
+        self.assertEqual(result["rows"], {})
+        with self.assertRaises(TrackerError):
+            parse_threshold_rows(threshold_fixture([["#REF!"]]), STATIONS)
+
+    def test_threshold_failure_retains_its_own_original_timestamp(self):
+        rows = threshold_fixture([["Example DC", "10"]])
+        good = fetch_snapshot(SETTINGS, {}, STATIONS, reader=lambda *_: (rows, "Summary"),
+                              now=datetime(2026, 11, 11, tzinfo=timezone.utc))
+        partial = fetch_snapshot(SETTINGS, {}, STATIONS, previous=good,
+                                 reader=lambda *_: (ROWS, "Summary"),
+                                 now=datetime(2026, 11, 12, tzinfo=timezone.utc))
+        self.assertEqual(partial["status"], "ok", "main summary can succeed independently")
+        self.assertEqual(partial["threshold"]["status"], "cached")
+        self.assertEqual(partial["threshold"]["fetched_at"], good["threshold"]["fetched_at"])
+        self.assertNotEqual(partial["fetched_at"], partial["threshold"]["fetched_at"])
+        empty = fetch_snapshot(SETTINGS, {}, STATIONS, previous=good,
+                               reader=lambda *_: (threshold_fixture([]), "Summary"))
+        self.assertEqual(empty["threshold"]["status"], "ok")
+        self.assertEqual(empty["threshold"]["rows"], {})
+        def failed(*_):
+            raise TrackerError("Unavailable")
+        cached = fetch_snapshot(SETTINGS, {}, STATIONS, previous=good, reader=failed)
+        self.assertEqual(cached["threshold"]["status"], "cached")
+
     def test_refresh_due_is_independent_of_frequent_map_refreshes(self):
         checked = datetime(2026, 11, 11, 14, 59, tzinfo=timezone.utc)
         snapshot = {"status": "ok", "checked_at": checked.isoformat()}
@@ -111,7 +159,7 @@ class TrackerTests(unittest.TestCase):
             self.assertEqual(creds.from_service_account_info.call_args.args[0]["token_uri"],
                              "https://oauth2.googleapis.com/token")
             url = session.get.call_args_list[1].args[0]
-            self.assertTrue(url.endswith("%27Summary%27%27s%20Tab%27%21A1%3AG1000"))
+            self.assertTrue(url.endswith("%27Summary%27%27s%20Tab%27%21A1%3AP1000"), "the bounded read stops before employee contact column Q")
             self.assertEqual(session.get.call_args.kwargs["params"]["valueRenderOption"], "FORMATTED_VALUE")
             session.get.side_effect = [MagicMock(status_code=403)]
             with self.assertRaisesRegex(TrackerError, "denied access"):

@@ -222,7 +222,7 @@ def tracker_store():
 
 
 @st.cache_data(ttl=REFRESH_SECONDS, show_spinner=False)
-def cached_tracker(settings, credential_revision, station_revision, _service_info):
+def cached_tracker(settings, credential_revision, station_revision, parser_revision, _service_info):
     stations = load_stations(HERE / "latlong.csv")
     key = (settings["spreadsheet_id"], settings["worksheet_gid"], credential_revision, station_revision)
     return tracker_store().refresh(key, settings, _service_info, stations)
@@ -245,7 +245,8 @@ def load_tracker():
     # Cache identity changes on key rotation, without retaining a key in output.
     revision = hashlib.sha256(json.dumps(service_info, sort_keys=True).encode()).hexdigest()
     return cached_tracker(settings, revision,
-                          (HERE / "latlong.csv").stat().st_mtime_ns, service_info)
+                          (HERE / "latlong.csv").stat().st_mtime_ns,
+                          (HERE / "stuck_tracker.py").stat().st_mtime_ns, service_info)
 
 
 def time_bucket():
@@ -308,7 +309,7 @@ with account.popover("Account"):
         st.rerun()
 
 map_revision = tuple((name, (HERE / name).stat().st_mtime_ns)
-                     for name in ("events.json", "map_template.html", "build_map.py", "turf.min.js", "navigation.js", "stuck_tracker.js", "stuck_tracker.py", "latlong.csv")
+                     for name in ("events.json", "map_template.html", "build_map.py", "turf.min.js", "navigation.js", "facility_insights.js", "stuck_tracker.js", "stuck_tracker.py", "latlong.csv")
                      if (HERE / name).exists())
 html = embed_snapshot(cached_map(ts, VIEW, map_revision), tracker, VIEW)
 if html:
@@ -325,7 +326,7 @@ st.session_state["map_refresh_checkpoint"] = (ts, map_revision)
 @st.fragment(run_every="60s")
 def watch_snapshot():
     revision = tuple((name, (HERE / name).stat().st_mtime_ns)
-                     for name in ("events.json", "map_template.html", "build_map.py", "turf.min.js", "navigation.js", "stuck_tracker.js", "stuck_tracker.py", "latlong.csv")
+                     for name in ("events.json", "map_template.html", "build_map.py", "turf.min.js", "navigation.js", "facility_insights.js", "stuck_tracker.js", "stuck_tracker.py", "latlong.csv")
                      if (HERE / name).exists())
     if (time_bucket(), revision) != st.session_state.get("map_refresh_checkpoint"):
         st.rerun()

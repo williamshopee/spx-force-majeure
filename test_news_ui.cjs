@@ -91,6 +91,7 @@ assert.equal(els.updatesMore.hidden,true,'pagination ends at the available data'
 console.log('News UI: date sorting, filters, WIB labels, source links and unsafe URL rejection passed.');
 require('./test_navigation.cjs');
 require('./test_stuck_tracker.cjs');
+require('./test_facility_insights.cjs');
 // Use the actual SOC visibility functions, including facility index zero.
 const focusContext={Set,NET_OUT:{0:[1,2,2],2:[3]},NET_IN:{0:[2,4]},
   NET_FOCUS:null,NET_VISIBLE:null,on:[true,true,true],typ:[2,0,2,0,1,2]};
@@ -111,3 +112,13 @@ assert.equal(focusContext.stationVisible(3),true,'clearing focus restores unrela
 focusContext.NET_OUT=null;
 assert.equal(focusContext.focusableNetwork(0),null,'General map has no network focus');
 console.log('SOC focus: direct-neighbor scope, deduplication, type filters, selected SOC and restoration passed.');
+focusContext.GENERAL_VIEW=true;focusContext.mode='heat';focusContext.THRESHOLD_INDICES=new Set([0,2]);
+assert.equal(focusContext.renderedStationVisible(0),true);
+assert.equal(focusContext.renderedStationVisible(1),false,'General density excludes non-listed facilities');
+assert.equal(focusContext.renderedStationVisible(3),false);
+focusContext.THRESHOLD_INDICES.clear();
+assert.equal(focusContext.renderedStationVisible(0),false,'empty threshold list must never fall back to all facilities');
+focusContext.mode='points';assert.equal(focusContext.renderedStationVisible(1),true,'Locations restores the full facility scope');
+focusContext.mode='heat';focusContext.GENERAL_VIEW=false;
+assert.equal(focusContext.renderedStationVisible(1),true,'SOC account keeps its existing facility density');
+console.log('Threshold density: authoritative list membership, empty list and General/SOC mode separation passed.');
