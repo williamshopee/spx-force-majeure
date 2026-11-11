@@ -17,6 +17,8 @@ on:
       - source_freshness.py
       - build_map.py
       - navigation.js
+      - facility_insights.js
+      - test_facility_insights.cjs
       - test_navigation.cjs
       - turf.min.js
       - test_map_upgrades.py
