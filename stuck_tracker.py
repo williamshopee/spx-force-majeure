@@ -14,18 +14,21 @@ HEADERS = ["SOC", "# absolute", "% of inbound", "%_stuck_still_alive",
 THRESHOLD_HEADERS = ["SOC", "Stuck Aging < 16 Days", "Region", "# absolute",
                      "%_stuck_still_alive", "Most Last Status", "% of Last Status", "% of inbound"]
 REFRESH_SECONDS = 20 * 60 * 60
+RETRY_SECONDS = 5 * 60
 PAYLOAD_TAG = '<script id="stuck-tracker" type="application/json">null</script>'
 
 
 def refresh_due(snapshot, now=None):
-    """Wake an active app when its independent 20-hour tracker cache is due."""
+    """Healthy reads last 20 hours; failed checks can recover after five minutes."""
     if not snapshot or snapshot.get("status") == "unconfigured":
         return False
     try:
         checked = datetime.fromisoformat(snapshot["checked_at"].replace("Z", "+00:00"))
         if checked.tzinfo is None:
             return True
-        return ((now or datetime.now(timezone.utc)) - checked).total_seconds() >= REFRESH_SECONDS
+        failed = snapshot.get("status") != "ok" or (snapshot.get("threshold") or {}).get("status") in {"cached", "error"}
+        interval = RETRY_SECONDS if failed else REFRESH_SECONDS
+        return ((now or datetime.now(timezone.utc)) - checked).total_seconds() >= interval
     except (KeyError, ValueError, TypeError, AttributeError):
         return True
 
@@ -40,12 +43,15 @@ class SnapshotStore:
         self.lock = Lock()
         self.snapshots = {}
 
-    def refresh(self, key, settings, service_info, stations, reader=None):
+    def refresh(self, key, settings, service_info, stations, reader=None, *, force=True, now=None):
         with self.lock:
+            previous = self.snapshots.get(key)
+            if not force and previous and not refresh_due(previous, now):
+                return previous
             snapshot = fetch_snapshot(settings, service_info, stations,
-                                      previous=self.snapshots.get(key), reader=reader or read_sheet)
-            if snapshot["status"] == "ok":
-                self.snapshots[key] = snapshot
+                                      previous=previous, reader=reader or read_sheet, now=now)
+            # Failed attempts retain last-good rows while recording a short retry delay.
+            self.snapshots[key] = snapshot
             return snapshot
 
 
@@ -171,6 +177,8 @@ def read_sheet(settings, service_info):
     """Read summary columns A:P; Q's employee contacts and parcel tabs stay private."""
     from google.oauth2.service_account import Credentials
     from google.auth.transport.requests import AuthorizedSession
+    from google.auth.exceptions import RefreshError, TransportError
+    from requests.exceptions import RequestException
 
     sheet_id = str(settings.get("spreadsheet_id", ""))
     if not re.fullmatch(r"[A-Za-z0-9_-]{20,100}", sheet_id):
@@ -182,8 +190,11 @@ def read_sheet(settings, service_info):
     info = dict(service_info)
     info["token_uri"] = "https://oauth2.googleapis.com/token"
     try:
-        credentials = Credentials.from_service_account_info(
-            info, scopes=["https://www.googleapis.com/auth/spreadsheets.readonly"])
+        try:
+            credentials = Credentials.from_service_account_info(
+                info, scopes=["https://www.googleapis.com/auth/spreadsheets.readonly"])
+        except (ValueError, KeyError, TypeError):
+            raise TrackerError("The saved service-account configuration is invalid. Check Streamlit Secrets without sharing the private key.") from None
         with AuthorizedSession(credentials, refresh_timeout=20) as session:
             base = "https://sheets.googleapis.com/v4/spreadsheets/" + sheet_id
 
@@ -211,9 +222,15 @@ def read_sheet(settings, service_info):
             return values, title
     except TrackerError:
         raise
+    except RefreshError as error:
+        if getattr(error, "retryable", False):
+            raise TrackerError("Google authentication is temporarily unavailable. The app will retry automatically.") from None
+        raise TrackerError("Google rejected service-account authentication. Check that the configured key and account are active.") from None
+    except (TransportError, RequestException, TimeoutError, ConnectionError):
+        raise TrackerError("A temporary network error prevented the Google Sheets check. The app will retry automatically.") from None
     except Exception:
         # Never print auth exceptions, tokens, private keys or raw API responses.
-        raise TrackerError("Could not authenticate or read Google Sheets. Check the private service-account configuration.") from None
+        raise TrackerError("The Google Sheets connection could not finish. The app will retry automatically; use Account → Refresh data to retry now.") from None
 
 
 def fetch_snapshot(settings, service_info, stations, previous=None, reader=read_sheet, now=None):

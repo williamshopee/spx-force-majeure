@@ -9,6 +9,16 @@ from stuck_tracker import (HEADERS, THRESHOLD_HEADERS, PAYLOAD_TAG, SnapshotStor
 STATIONS = [["Example DC", -6, 110, 2, 1], ["Other DC", -7, 110, 2, 1],
             ["Example Hub", -6, 110, 0, 1], ["Example First Mile Hub", -6, 110, 1, 1]]
 SETTINGS = {"spreadsheet_id": "example_sheet_identifier_123456", "worksheet_gid": 123}
+class FakeRefreshError(Exception):
+    def __init__(self, message, retryable=False):
+        super().__init__(message)
+        self.retryable = retryable
+
+class FakeTransportError(Exception):
+    pass
+
+class FakeRequestError(Exception):
+    pass
 ROWS = [["All Parcels"], HEADERS, ["Nationwide", "999"],
         [" Example   DC ", "543", "146.41%", "80.85%", "439", "SOC_Packed", "69.80%"],
         ["Other DC", "0", "0.00%", "#DIV/0!", "#DIV/0!", "No Data", "0.00%"],
@@ -26,6 +36,44 @@ def threshold_fixture(items):
 
 
 class TrackerTests(unittest.TestCase):
+    def test_store_uses_twenty_hours_for_success_and_five_minutes_after_failure(self):
+        store = SnapshotStore()
+        now = datetime(2026, 11, 12, tzinfo=timezone.utc)
+        reader = MagicMock(return_value=(threshold_fixture([["Example DC", "10"]]), "Summary"))
+        def check(at, force=False):
+            return store.refresh("source", SETTINGS, {}, STATIONS, reader=reader, force=force, now=at)
+        good = check(now)
+        self.assertEqual(good["status"], "ok")
+        check(now + timedelta(hours=19))
+        self.assertEqual(reader.call_count, 1, "normal reruns do not make extra reads")
+        reader.side_effect = TrackerError("Temporary network error")
+        failed = check(now + timedelta(hours=20))
+        self.assertEqual(failed["status"], "cached")
+        self.assertEqual(failed["top_stuck"], good["top_stuck"])
+        self.assertEqual(failed["fetched_at"], good["fetched_at"])
+        check(now + timedelta(hours=20, minutes=4))
+        self.assertEqual(reader.call_count, 2, "failed attempts have a shared retry delay")
+        reader.side_effect = None
+        recovered = check(now + timedelta(hours=20, minutes=5))
+        self.assertEqual(recovered["status"], "ok")
+        check(now + timedelta(hours=21))
+        self.assertEqual(reader.call_count, 3, "successful recovery resets the 20-hour interval")
+        check(now + timedelta(hours=21), force=True)
+        self.assertEqual(reader.call_count, 4, "manual refresh bypasses the normal interval")
+
+    def test_first_failure_and_partial_table_failure_retry_without_fake_data(self):
+        now = datetime(2026, 11, 12, tzinfo=timezone.utc)
+        store = SnapshotStore()
+        reader = MagicMock(side_effect=TrackerError("Unavailable"))
+        failed = store.refresh("source", SETTINGS, {}, STATIONS, reader=reader, now=now, force=False)
+        self.assertEqual(failed["rows"], {})
+        self.assertNotIn("top_stuck", failed)
+        self.assertFalse(refresh_due(failed, now + timedelta(minutes=4)))
+        self.assertTrue(refresh_due(failed, now + timedelta(minutes=5)))
+        partial = fetch_snapshot(SETTINGS, {}, STATIONS, reader=lambda *_:(ROWS,"Summary"), now=now)
+        self.assertEqual(partial["status"], "ok")
+        self.assertTrue(refresh_due(partial, now + timedelta(minutes=5)))
+
     def test_top_stuck_ranks_full_summary_including_unmapped_socs(self):
         rows = [["All Parcels"], HEADERS, ["Nationwide", "999999"],
                 ["Example DC", "1,500"], ["Unknown DC", "3000"],
@@ -169,6 +217,8 @@ class TrackerTests(unittest.TestCase):
         modules = {"google": MagicMock(), "google.oauth2": MagicMock(),
                    "google.oauth2.service_account": MagicMock(Credentials=creds),
                    "google.auth": MagicMock(), "google.auth.transport": MagicMock(),
+                   "google.auth.exceptions": MagicMock(RefreshError=FakeRefreshError, TransportError=FakeTransportError),
+                   "requests": MagicMock(), "requests.exceptions": MagicMock(RequestException=FakeRequestError),
                    "google.auth.transport.requests": MagicMock(AuthorizedSession=session_class)}
         with patch.dict("sys.modules", modules):
             values, title = read_sheet(SETTINGS, {"token_uri": "https://untrusted.invalid"})
@@ -184,6 +234,19 @@ class TrackerTests(unittest.TestCase):
             session.get.side_effect = [MagicMock(status_code=403)]
             with self.assertRaisesRegex(TrackerError, "denied access"):
                 read_sheet(SETTINGS, {})
+            for error, message in [(FakeRefreshError("PRIVATE TOKEN"), "rejected service-account"),
+                                   (FakeRefreshError("PRIVATE TOKEN", retryable=True), "temporarily unavailable"),
+                                   (FakeTransportError("PRIVATE KEY"), "temporary network"),
+                                   (FakeRequestError("PRIVATE HTTP DATA"), "temporary network"),
+                                   (RuntimeError("PRIVATE RESPONSE"), "could not finish")]:
+                session.get.side_effect = error
+                with self.assertRaisesRegex(TrackerError, message) as caught:
+                    read_sheet(SETTINGS, {})
+                self.assertNotIn("PRIVATE", str(caught.exception))
+            creds.from_service_account_info.side_effect = ValueError("PRIVATE KEY")
+            with self.assertRaisesRegex(TrackerError, "configuration is invalid") as caught:
+                read_sheet(SETTINGS, {})
+            self.assertNotIn("PRIVATE", str(caught.exception))
 
 
 if __name__ == "__main__":

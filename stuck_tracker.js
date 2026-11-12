@@ -40,7 +40,7 @@
      });
     sec.appendChild(dl);
     sec.appendChild(node('p','stuck-note','Tracker values as reported. Unavailable cells are not treated as zero.'));
-    if(old(rowSource))sec.appendChild(node('p','stuck-warning',notice(rowSource)));
+    if(old(rowSource))sec.appendChild(node('p','stuck-warning',notice(rowSource)+' Failed checks retry after 5 minutes while the app is open.'));
     var link=sourceLink(snapshot);if(link)sec.appendChild(link);
     return sec;
   }
@@ -71,7 +71,7 @@
     if(snapshot.checked_at)host.appendChild(node('p','muted-note','Last check: '+stamp(snapshot.checked_at)));
     if(snapshot.threshold)host.appendChild(node('p','muted-note','Threshold list: '+thresholdSummary(snapshot)));
     host.appendChild(node('p',old(snapshot)?'stuck-warning':'muted-note',notice(snapshot)));
-    host.appendChild(node('p','muted-note','Auto-check: every 20 hours while the app is open. Refresh data checks immediately.'));
+    host.appendChild(node('p','muted-note','Auto-check: every 20 hours while the app is open; failed checks retry after 5 minutes. Refresh data checks immediately.'));
     host.appendChild(node('p','muted-note','Fetch time is when the app read Sheets; it does not verify when the tracker owner updated the source.'));
     var link=sourceLink(snapshot);if(link)host.appendChild(link);
   }
@@ -81,7 +81,7 @@
     host.appendChild(node('summary',null,'Top 10 stuck SOCs'));
     host.appendChild(node('p','muted-note','By total stuck parcels (# absolute) · all SOC summary rows.'));
     if(snapshot.fetched_at)host.appendChild(node('p','stuck-ranking-stamp',(old(snapshot)?'Cached · ':'Fetched · ')+stamp(snapshot.fetched_at)));
-    if(old(snapshot))host.appendChild(node('p','stuck-warning',notice(snapshot)));
+    if(old(snapshot))host.appendChild(node('p','stuck-warning',notice(snapshot)+' Failed checks retry after 5 minutes while the app is open.'));
     if(!Array.isArray(snapshot.top_stuck)){
       host.appendChild(node('p','muted-note','Ranking is unavailable. Use Account → Refresh data to check Sheets.'));
     }else{

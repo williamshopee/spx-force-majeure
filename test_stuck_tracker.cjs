@@ -72,6 +72,7 @@ assert.equal(rankedList.children[3].children[0].tag,'div','non-SOC index cannot 
 rankSnapshot.status='cached';rankSnapshot.message='Refresh failed';
 api.renderTopStuck(rankSnapshot,rankHost,stations,()=>{});
 assert.ok(rankHost.children.some(el=>/Cached/.test(el.textContent)));
+assert.ok(rankHost.children.some(el=>/retry after 5 minutes/.test(el.textContent)),'failed ranking explains automatic recovery');
 api.renderTopStuck({status:'ok',top_stuck:[]},rankHost,stations,()=>{});
 assert.ok(rankHost.children.some(el=>/No SOCs/.test(el.textContent)));
 api.renderTopStuck({status:'unconfigured'},rankHost,stations,()=>{});

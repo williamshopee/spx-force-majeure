@@ -21,7 +21,7 @@ from pathlib import Path
 
 import streamlit as st
 from build_map import load_stations
-from stuck_tracker import REFRESH_SECONDS, SnapshotStore, embed_snapshot, refresh_due
+from stuck_tracker import SnapshotStore, embed_snapshot, refresh_due
 
 st.set_page_config(
     page_title="SPX BCP — Geospatial Analysis",
@@ -221,11 +221,10 @@ def tracker_store(parser_revision):
     return SnapshotStore()
 
 
-@st.cache_data(ttl=REFRESH_SECONDS, show_spinner=False)
-def cached_tracker(settings, credential_revision, station_revision, parser_revision, _service_info):
+def cached_tracker(settings, credential_revision, station_revision, parser_revision, _service_info, force=False):
     stations = load_stations(HERE / "latlong.csv")
     key = (settings["spreadsheet_id"], settings["worksheet_gid"], credential_revision, station_revision)
-    return tracker_store(parser_revision).refresh(key, settings, _service_info, stations)
+    return tracker_store(parser_revision).refresh(key, settings, _service_info, stations, force=force)
 
 
 def load_tracker():
@@ -246,7 +245,8 @@ def load_tracker():
     revision = hashlib.sha256(json.dumps(service_info, sort_keys=True).encode()).hexdigest()
     return cached_tracker(settings, revision,
                           (HERE / "latlong.csv").stat().st_mtime_ns,
-                          (HERE / "stuck_tracker.py").stat().st_mtime_ns, service_info)
+                          hashlib.sha256((HERE / "stuck_tracker.py").read_bytes()).hexdigest(),
+                          service_info, force=st.session_state.pop("tracker_force_refresh", False))
 
 
 def time_bucket():
@@ -291,6 +291,7 @@ with account.popover("Account"):
         if tracker["status"] != "ok":
             st.warning(tracker["message"])
     if st.button("Refresh data", use_container_width=True):
+        st.session_state["tracker_force_refresh"] = True
         st.cache_data.clear()
         st.rerun()
     csv_data = load_csv()
